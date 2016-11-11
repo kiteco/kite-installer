@@ -13,7 +13,7 @@ div.row {
 }
 
 .install-flow {
-  color: @white;
+  color: white;
   width: 480px;
 
   input[type=text], input[type=email], input[type=password] {
@@ -45,6 +45,27 @@ div.row {
 
   .install-flow-step {
     padding: 1.5rem 2rem;
+
+    .error {
+      color: red;
+      font-size: 1.1rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .secondary-cta {
+      padding: 0.5rem 0.2rem;
+      a {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1.1rem;
+        &:hover {
+          text-decoration: none;
+        }
+        &:nth-child(2) {
+          float: right;
+        }
+      }
+    }
 
     &.install-step {
       .row.cta-row {
