@@ -1,0 +1,112 @@
+@import "variables";
+
+div.inline {
+  display: inline-block;
+}
+
+div.row {
+  display: flex;
+  flex-direction: row;
+  &.vertical-align {
+    align-items: center;
+  }
+}
+
+.install-flow {
+  color: @white;
+  width: 480px;
+
+  input[type=email], input[type=password] {
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: @border-radius;
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 100;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+    padding: 0.5rem 0.75rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    &.ending-paragraph {
+      margin-bottom: 2.5rem;
+    }
+  }
+
+  .cta-btn {
+    border: none;
+    border-radius: @border-radius;
+    font-size: 1.2rem;
+    padding: 0.5rem 5rem;
+  }
+
+  .install-flow-step {
+    padding: 1.5rem 2rem;
+
+    &.install-step {
+      .row.cta-row {
+        justify-content: space-between;
+
+        .logo {
+          background-image: url('atom://kite/styles/logo.png');
+          background-repeat: no-repeat;
+          background-size: contain;
+          height: 40px;
+          width: 100px;
+        }
+
+        .cta-btn {
+          background-color: @cta-green;
+        }
+      }
+
+      .progress-bar {
+        background-color: @cta-green-deactivated;
+        border-radius: @border-radius;
+        height: @progress-bar-height;
+        position: relative;
+        width: 280px;
+
+        .progress-bar-status {
+          height: @progress-bar-height;
+          line-height: @progress-bar-height;
+          position: relative;
+          text-align: center;
+          width: 100%;
+          z-index: 2;
+        }
+
+        .progress-bar-progress {
+          background-color: @cta-green;
+          border-radius: @border-radius 0 0 @border-radius;
+          bottom: 0;
+          height: @progress-bar-height;
+          left: 0;
+          position: absolute;
+          z-index: 1;
+          &.finished {
+            border-radius: @border-radius;
+          }
+        }
+      }
+    }
+
+    &.create-account-step, &.login-step, &.whitelist-step {
+      margin: 0 auto;
+      width: 360px;
+
+      input[type=email], input[type=password] {
+        width: 100%;
+      }
+
+      .cta-btn {
+        background-color: @cta-blue;
+        padding: 0.5rem;
+        width: 100%;
+      }
+    }
+  }
+}
