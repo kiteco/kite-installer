@@ -1,5 +1,5 @@
 {
-  "name": "Kite Installer",
+  "name": "kite-installer",
   "main": "./lib/main",
   "version": "0.0.0",
   "description": "A simple plugin to install Kite from Atom",
@@ -8,5 +8,5 @@
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
-  "dependencies": {},
+  "dependencies": {}
 }
