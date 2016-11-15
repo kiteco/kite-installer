@@ -17,7 +17,6 @@ var findModel = (m) => {
 
 module.exports = {
   installFlow: null,
-  installFlowPanel: null,
 
   activate: function(state) {
     this.installFlow = new InstallFlow();
@@ -32,14 +31,11 @@ module.exports = {
     atom.views.addViewProvider(TestModel, findModel);
 
     StateController.canInstallKite().then(() => {
+      this.installFlow.onSkipInstall(() => {
+        pane.destroyActiveItem();
+      });
       pane.addItem(new TestModel());
     });
-  },
-
-  deactivate: function() {
-    if (this.installFlowPanel) {
-      this.installFlowPanel.destroy();
-    }
   },
 
   config: {

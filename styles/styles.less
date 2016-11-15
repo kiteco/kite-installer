@@ -51,6 +51,20 @@ div.row {
     padding: 0.5rem 5rem;
   }
 
+  .seperator {
+    padding: 3rem 2rem;
+    .seperator-border {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+      width: 40%;
+    }
+    .seperator-text {
+      font-size: 1.4rem;
+      opacity: 0.7;
+      text-align: center;
+      width: 20%;
+    }
+  }
+
   .install-flow-step {
     padding: 1.5rem 2rem;
 
@@ -63,7 +77,7 @@ div.row {
       }
     }
 
-    .secondary-cta {
+    .secondary-cta-section {
       padding: 1rem 0.2rem;
       a {
         color: rgba(255, 255, 255, 0.5);
@@ -80,6 +94,7 @@ div.row {
     &.install-step {
       .row.cta-row {
         justify-content: space-between;
+        padding-bottom: 1rem;
 
         .logo {
           background-image: url('atom://kite-installer/styles/logo.png');
@@ -89,8 +104,17 @@ div.row {
           width: 100px;
         }
 
+        .label {
+          font-size: 1.2rem;
+        }
+
         .cta-btn {
           background-color: @cta-green;
+          &.secondary-cta {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding-left: 2rem;
+            padding-right: 2rem;
+          }
         }
       }
 
