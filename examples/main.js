@@ -2,7 +2,6 @@ var AccountManager = require('../lib/account-manager.js');
 var Installer = require('../lib/installer.js');
 var Installation = require('../lib/models/installation.js');
 var StateController = require('../lib/state-controller.js');
-var utils = require('../lib/utils.js');
 
 module.exports = {
   installation: null,
