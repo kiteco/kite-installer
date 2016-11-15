@@ -1,23 +1,11 @@
 var AccountManager = require('../lib/account-manager.js');
 var Installer = require('../lib/installer.js');
-var InstallFlow = require('../lib/elements/install-flow.js');
+var Installation = require('../lib/models/installation.js');
 var StateController = require('../lib/state-controller.js');
-
 var utils = require('../lib/utils.js');
 
-var TestModel = class {
-  constructor() { }
-  getTitle() {
-    return "Test";
-  }
-};
-
-var findModel = (m) => {
-  return window.flow.element;
-};
-
 module.exports = {
-  installFlow: null,
+  installation: null,
 
   activate: function(state) {
     var hostname = atom.config.get('kite-installer.hostname');
@@ -25,23 +13,24 @@ module.exports = {
     var ssl = atom.config.get('kite-installer.ssl');
     AccountManager.initClient(hostname, port, ssl);
 
-    this.installFlow = new InstallFlow();
-    this.installer = new Installer(atom.project.getPaths());
-    this.installer.init(this.installFlow);
-
-    window.state = StateController;
-    window.flow = this.installFlow;
-    window.installer = this.installer;
-
-    var pane = atom.workspace.getActivePane();
-    atom.views.addViewProvider(TestModel, findModel);
+    atom.views.addViewProvider(Installation, (m) => m.element);
 
     StateController.canInstallKite().then(() => {
-      this.installFlow.onSkipInstall(() => {
+      this.installation = new Installation();
+      var installer = new Installer(atom.project.getPaths());
+      installer.init(this.installation.flow);
+      var pane = atom.workspace.getActivePane();
+      this.installation.flow.onSkipInstall(() => {
         pane.destroyActiveItem();
       });
-      pane.addItem(new TestModel());
+      pane.addItem(this.installation);
     });
+  },
+
+  deactivate: function() {
+    if (this.installation) {
+      this.installation.destroy();
+    }
   },
 
   config: {
