@@ -1,8 +1,8 @@
-var Installer = require('./installer.js');
-var InstallFlow = require('./elements/install-flow.js');
-var StateController = require('./state-controller.js');
+var Installer = require('../lib/installer.js');
+var InstallFlow = require('../lib/elements/install-flow.js');
+var StateController = require('../lib/state-controller.js');
 
-var utils = require('./utils.js');
+var utils = require('../lib/utils.js');
 
 var TestModel = class {
   constructor() { }
@@ -12,7 +12,7 @@ var TestModel = class {
 };
 
 var findModel = (m) => {
-  return document.createElement('div');
+  return window.flow.element;
 };
 
 module.exports = {
@@ -32,10 +32,7 @@ module.exports = {
     atom.views.addViewProvider(TestModel, findModel);
 
     StateController.canInstallKite().then(() => {
-      this.installFlowPanel = atom.workspace.addRightPanel({
-        item: this.installFlow.element,
-        visible: true,
-      });
+      pane.addItem(new TestModel());
     });
   },
 
