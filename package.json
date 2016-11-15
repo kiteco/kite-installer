@@ -1,7 +1,7 @@
 {
   "name": "kite-installer",
   "main": "./lib/index.js",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "A simple plugin to install Kite from Atom",
   "author": "Daniel Hung",
   "keywords": [],
