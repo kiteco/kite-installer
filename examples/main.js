@@ -1,3 +1,4 @@
+var AccountManager = require('../lib/account-manager.js');
 var Installer = require('../lib/installer.js');
 var InstallFlow = require('../lib/elements/install-flow.js');
 var StateController = require('../lib/state-controller.js');
@@ -19,8 +20,13 @@ module.exports = {
   installFlow: null,
 
   activate: function(state) {
+    var hostname = atom.config.get('kite-installer.hostname');
+    var port = atom.config.get('kite-installer.port');
+    var ssl = atom.config.get('kite-installer.ssl');
+    AccountManager.initClient(hostname, port, ssl);
+
     this.installFlow = new InstallFlow();
-    this.installer = new Installer();
+    this.installer = new Installer(atom.project.getPaths());
     this.installer.init(this.installFlow);
 
     window.state = StateController;
