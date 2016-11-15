@@ -22,7 +22,8 @@ module.exports = {
       this.installation.flow.onSkipInstall(() => {
         pane.destroyActiveItem();
       });
-      pane.addItem(this.installation);
+      pane.addItem(this.installation, { index: 0 });
+      pane.activateItemAtIndex(0);
     });
   },
 

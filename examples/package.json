@@ -1,0 +1,13 @@
+{
+  "name": "kite-installer-example",
+  "main": "./examples/main.js",
+  "version": "0.0.0",
+  "description": "A simple plugin to install Kite from Atom",
+  "author": "Daniel Hung",
+  "keywords": [],
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {}
+}
