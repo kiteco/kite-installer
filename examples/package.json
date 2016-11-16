@@ -1,5 +1,5 @@
 {
-  "name": "kite-installer-example",
+  "name": "kite-installer",
   "main": "./examples/main.js",
   "version": "0.0.0",
   "description": "A simple plugin to install Kite from Atom",
