@@ -38,6 +38,10 @@ div.row {
     }
   }
 
+  ul, ul li {
+    font-size: 1.2rem;
+  }
+
   .title {
     font-size: 2rem;
     padding: 1.75rem 0.5rem;
@@ -51,19 +55,68 @@ div.row {
     padding: 0.5rem 5rem;
   }
 
-  .seperator {
+  .separator {
     padding: 3rem 2rem;
-    .seperator-border {
+    .separator-border {
       border-bottom: 1px solid rgba(255, 255, 255, 0.7);
       width: 40%;
     }
-    .seperator-text {
+    .separator-text {
       font-size: 1.4rem;
       opacity: 0.7;
       text-align: center;
       width: 20%;
     }
   }
+
+  /* A/B testing stylings */
+
+  &[data-installCopy="long"] {
+    div[data-installCopy="short"] {
+      display: none;
+    }
+  }
+
+  &[data-installCopy="short"] {
+    div[data-installCopy="long"] {
+      display: none;
+    }
+  }
+
+  &[data-installTitle="thankyou"] {
+
+  }
+
+  &[data-installTitle="choose"] {
+
+  }
+
+  &[data-showKiteLogo="yes"] {
+
+  }
+
+  &[data-showKiteLogo="no"] {
+
+  }
+
+  &[data-buttonPosition="top"] {
+
+  }
+
+  &[data-buttonPosition="bottom"] {
+
+  }
+
+
+  &[data-showScreenshot="yes"] {
+
+  }
+
+  &[data-showScreenshot="yes"] {
+
+  }
+
+  //
 
   .install-flow-step {
     padding: 1.5rem 2rem;
@@ -92,6 +145,14 @@ div.row {
     }
 
     &.install-step {
+      .section {
+        padding: 1rem;
+      }
+
+      .highlighted-section {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
       .row.cta-row {
         justify-content: space-between;
         padding-bottom: 1rem;
