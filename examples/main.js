@@ -16,7 +16,7 @@ module.exports = {
 
     StateController.canInstallKite().then(() => {
       this.installation = new Installation();
-      var installer = new Installer(atom.project.getPaths());
+      var installer = new Installer();
       installer.init(this.installation.flow);
       var pane = atom.workspace.getActivePane();
       this.installation.flow.onSkipInstall(() => {
