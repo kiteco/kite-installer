@@ -17,7 +17,7 @@ div.row {
   font-weight: 200;
   margin: 0 auto;
   overflow: auto;
-  width: 480px;
+  width: 550px;
 
   input[type=text], input[type=email], input[type=password] {
     background-color: transparent;
@@ -164,6 +164,68 @@ div.row {
         padding: 0.5rem;
         width: 100%;
       }
+    }
+  }
+
+  .welcome-to-kite {
+
+    p, ul, li {
+      font-size: 1rem;
+    }
+
+    .welcome-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      align-content: center;
+
+      h3 {
+        font-weight: normal;
+        margin: 0;
+        font-size: 1.4rem;
+      }
+
+      .title-logo {
+        width: 25px;
+        height: 32px;
+        background-image: url('atom://kite-installer/styles/smalllogo.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+    }
+
+    .warning {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .description {
+      display: flex;
+      justify-content: space-between;
+      margin: 1rem 0;
+      align-items: center;
+      align-content: center;
+
+      .description-screenshot {
+        width: 183px;
+        height: 200px;
+        background-image: url('atom://kite-installer/styles/plotscreenshot.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+    }
+
+    p.feedback {
+      border-top: 3px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+      padding-top: 1rem;
+      color: rgba(255, 255, 255, 0.6);
     }
   }
 }
