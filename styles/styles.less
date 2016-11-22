@@ -115,13 +115,21 @@ div.row {
 
   &[data-buttonPosition="top"] {
     .cta-btn.bottom {
-      visibility: hidden;
+      display: none;
+    }
+
+    .cta-btn.top {
+      display: block;
     }
   }
 
   &[data-buttonPosition="bottom"] {
     .cta-btn.top {
-      visibility: hidden;
+      display: none;
+    }
+
+    .cta-btn.bottom {
+      display: block;
     }
   }
 
@@ -176,7 +184,6 @@ div.row {
           padding-right: 2rem;
         }
         &.centered {
-          display: block;
           margin: 0 auto;
           text-align: center;
         }
@@ -233,12 +240,13 @@ div.row {
 
       .screenshot {
         background-image: url('atom://kite-installer/styles/screenshot.png');
-        height: 250px;
+        height: 186px;
         width: 300px;
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
-        margin: 0 auto;
+        margin: 0 auto 1rem;
+        padding: 0;
       }
     }
 
