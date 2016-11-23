@@ -8,7 +8,7 @@ var DecisionMaker = class {
     this.editor = editor;
     this.plugin = plugin;
     this.client = new Client('plugins.kite.com', -1, '', false);
-    this.path = editor.name + '/events';
+    this.path = '/' + editor.name + '/events';
  }
 
   canInstallKite() {
@@ -21,7 +21,7 @@ var DecisionMaker = class {
         plugin: this.plugin.name,
       });
       var req = this.client.request({
-        path: '/'+ this.path,
+        path: this.path,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
