@@ -71,19 +71,19 @@ div.row {
 
   /* A/B testing stylings */
 
-  &[data-installCopy="long"] {
-    div[data-installCopy="short"] {
+  &[data-install-copy="long"] {
+    div[data-install-copy="short"] {
       display: none;
     }
   }
 
-  &[data-installCopy="short"] {
-    div[data-installCopy="long"] {
+  &[data-install-copy="short"] {
+    div[data-install-copy="long"] {
       display: none;
     }
   }
 
-  &[data-installTitle="thankyou"] {
+  &[data-install-title="thankyou"] {
     .title {
       &:before {
         content: 'Thank you for installing autocomplete-python';
@@ -91,7 +91,7 @@ div.row {
     }
   }
 
-  &[data-installTitle="choose"] {
+  &[data-install-title="choose"] {
     .title {
       &:before {
         content: 'Choose your completions engine';
@@ -99,7 +99,7 @@ div.row {
     }
   }
 
-  &[data-showKiteLogo="yes"] {
+  &[data-show-kite-logo="yes"] {
     .logo {
       background-image: url('atom://kite-installer/styles/logo.png');
       color: transparent;
@@ -107,13 +107,13 @@ div.row {
     }
   }
 
-  &[data-showKiteLogo="no"] {
+  &[data-show-kite-logo="no"] {
     .logo {
       color: white;
     }
   }
 
-  &[data-buttonPosition="top"] {
+  &[data-button-position="top"] {
     .cta-btn.bottom {
       display: none;
     }
@@ -123,7 +123,7 @@ div.row {
     }
   }
 
-  &[data-buttonPosition="bottom"] {
+  &[data-button-position="bottom"] {
     .cta-btn.top {
       display: none;
     }
@@ -133,7 +133,7 @@ div.row {
     }
   }
 
-  &[data-showScreenshot="no"] {
+  &[data-show-screenshot="no"] {
     .screenshot {
       display: none;
     }
