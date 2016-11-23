@@ -32,39 +32,115 @@ div.row {
   }
 
   p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     margin: 1rem 0;
     &.ending-paragraph {
       margin-bottom: 2.5rem;
     }
   }
 
+  ul, ul li {
+    font-size: 1rem;
+  }
+
   .title {
-    font-size: 2rem;
-    padding: 1.75rem 0.5rem;
+    font-size: 1.2rem;
+    padding: 1.5rem 0.5rem 0.5rem;
     text-align: center;
   }
 
   .cta-btn {
     border: none;
     border-radius: @border-radius;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     padding: 0.5rem 5rem;
   }
 
-  .seperator {
-    padding: 3rem 2rem;
-    .seperator-border {
+  .separator {
+    padding: 1.5rem 1rem;
+    .separator-border {
       border-bottom: 1px solid rgba(255, 255, 255, 0.7);
       width: 40%;
     }
-    .seperator-text {
+    .separator-text {
       font-size: 1.4rem;
       opacity: 0.7;
       text-align: center;
       width: 20%;
     }
   }
+
+  /* A/B testing stylings */
+
+  &[data-install-copy="long"] {
+    div[data-install-copy="short"] {
+      display: none;
+    }
+  }
+
+  &[data-install-copy="short"] {
+    div[data-install-copy="long"] {
+      display: none;
+    }
+  }
+
+  &[data-install-title="thankyou"] {
+    .title {
+      &:before {
+        content: 'Thank you for installing autocomplete-python';
+      }
+    }
+  }
+
+  &[data-install-title="choose"] {
+    .title {
+      &:before {
+        content: 'Choose your completions engine';
+      }
+    }
+  }
+
+  &[data-show-kite-logo="yes"] {
+    .logo {
+      background-image: url('atom://kite-installer/styles/logo.png');
+      color: transparent;
+      height: 40px;
+    }
+  }
+
+  &[data-show-kite-logo="no"] {
+    .logo {
+      color: white;
+    }
+  }
+
+  &[data-button-position="top"] {
+    .cta-btn.bottom {
+      display: none;
+    }
+
+    .cta-btn.top {
+      display: block;
+    }
+  }
+
+  &[data-button-position="bottom"] {
+    .cta-btn.top {
+      display: none;
+    }
+
+    .cta-btn.bottom {
+      display: block;
+    }
+  }
+
+  &[data-show-screenshot="no"] {
+    .screenshot {
+      display: none;
+    }
+  }
+
+  //
 
   .install-flow-step {
     padding: 1.5rem 2rem;
@@ -93,29 +169,42 @@ div.row {
     }
 
     &.install-step {
+      .section {
+        padding: 1rem;
+      }
+
+      .highlighted-section {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .cta-btn {
+        background-color: @cta-green;
+        &.secondary-cta {
+          background-color: rgba(255, 255, 255, 0.15);
+          padding-left: 2rem;
+          padding-right: 2rem;
+        }
+        &.centered {
+          margin: 0 auto;
+          text-align: center;
+        }
+      }
+
       .row.cta-row {
         justify-content: space-between;
         padding-bottom: 1rem;
+        align-items: center;
+        align-content: center;
 
         .logo {
-          background-image: url('atom://kite-installer/styles/logo.png');
           background-repeat: no-repeat;
           background-size: contain;
-          height: 40px;
           width: 100px;
+          font-size: 1.2rem;
         }
 
         .label {
           font-size: 1.2rem;
-        }
-
-        .cta-btn {
-          background-color: @cta-green;
-          &.secondary-cta {
-            background-color: rgba(255, 255, 255, 0.15);
-            padding-left: 2rem;
-            padding-right: 2rem;
-          }
         }
       }
 
@@ -148,6 +237,17 @@ div.row {
             // border-radius: @border-radius;
           }
         }
+      }
+
+      .screenshot {
+        background-image: url('atom://kite-installer/styles/screenshot.png');
+        height: 186px;
+        width: 300px;
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+        margin: 0 auto 1rem;
+        padding: 0;
       }
     }
 
