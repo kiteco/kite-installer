@@ -1,4 +1,5 @@
 var AccountManager = require('../lib/account-manager.js');
+var DecisionMaker = require('../ext/decision-maker.js');
 var Installer = require('../lib/installer.js');
 var Installation = require('../lib/models/installation.js');
 var StateController = require('../lib/state-controller.js');
@@ -14,7 +15,14 @@ module.exports = {
 
     atom.views.addViewProvider(Installation, (m) => m.element);
 
-    StateController.canInstallKite().then(() => {
+    var editor = { UUID: 'k', name: 'atom' };
+    var plugin = { name: 'kite-installer' };
+    var dm = new DecisionMaker(editor, plugin);
+
+    var throttle = dm.canInstallKite();
+    var canInstall = StateController.canInstallKite();
+
+    Promise.all([throttle, canInstall]).then((values) => {
       this.installation = new Installation();
       var installer = new Installer();
       installer.init(this.installation.flow);
