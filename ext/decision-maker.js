@@ -7,7 +7,7 @@ var DecisionMaker = class {
   constructor(editor, plugin) {
     this.editor = editor;
     this.plugin = plugin;
-    this.client = new Client('plugins.kite.com', -1, '', false);
+    this.client = new Client('plugins.kite.com', -1, '', true);
     this.path = '/' + editor.name + '/events';
  }
 

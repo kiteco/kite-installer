@@ -18,7 +18,7 @@ class AtomTelemetry extends Telemetry {
       editorUUID: localStorage.getItem('metrics.userId'),
       activeNonBundledPackageNames: getPackages(),
       activeEditorFileExtension: getActiveExtension(),
-    }
+    };
   }
 
   observeEditor(editor) {
