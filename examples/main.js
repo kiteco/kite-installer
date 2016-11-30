@@ -4,6 +4,10 @@ var Installer = require('../lib/installer.js');
 var Installation = require('../lib/models/installation.js');
 var StateController = require('../lib/state-controller.js');
 
+var metrics = require('../ext/telemetry/metrics.js');
+
+DEBUG = true;
+
 module.exports = {
   installation: null,
 
@@ -23,11 +27,15 @@ module.exports = {
     var canInstall = StateController.canInstallKite();
 
     Promise.all([throttle, canInstall]).then((values) => {
-      this.installation = new Installation();
+      var variant = values[0];
+      metrics.Tracker.name = "atom autcomplete-python install";
+      metrics.Tracker.props = variant;
+      this.installation = new Installation(variant);
       var installer = new Installer();
       installer.init(this.installation.flow);
       var pane = atom.workspace.getActivePane();
       this.installation.flow.onSkipInstall(() => {
+        Tracker.trackEvent("skipped kite");
         pane.destroyActiveItem();
       });
       pane.addItem(this.installation, { index: 0 });
