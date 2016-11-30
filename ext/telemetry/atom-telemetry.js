@@ -69,7 +69,8 @@ var getAddresses = function() {
 var getPackages = function() {
   var packages = [];
   atom.packages.getActivePackages().forEach((pkg) => {
-    if (!pkg.bundledPackage && pkg.name !== null) {
+    // we only want non-bundled packages and packages from apm
+    if (!pkg.bundledPackage && pkg.name !== null && '_from' in pkg.metadata) {
       packages.push(pkg.name);
     }
   });
