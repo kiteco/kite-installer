@@ -17,7 +17,9 @@ div.row {
   font-weight: 200;
   margin: 0 auto;
   overflow: auto;
-  width: 550px;
+  max-width: 550px;
+  min-width: 310px;
+  width: 85%;
 
   input[type=text], input[type=email], input[type=password] {
     background-color: transparent;
@@ -111,6 +113,7 @@ div.row {
   &[data-show-kite-logo="no"] {
     .logo {
       color: white;
+      background-image: none !important;
     }
   }
 
@@ -207,8 +210,8 @@ div.row {
           font-size: 1.2rem;
         }
 
-        .loading.loading-spinner-small {
-          margin-right: -16rem;
+        .separator {
+          flex-grow: 1;
         }
       }
 
@@ -217,7 +220,6 @@ div.row {
         // border-radius: @border-radius;
         height: @progress-bar-height;
         position: relative;
-        width: 280px;
 
         .progress-bar-status {
           font-size: 1.2rem;
@@ -246,7 +248,8 @@ div.row {
       .screenshot {
         background-image: @install-step-screenshot;
         height: 186px;
-        width: 300px;
+        max-width: 300px;
+        width: 95%;
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
