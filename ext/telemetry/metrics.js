@@ -33,7 +33,7 @@ function track(eventName, properties) {
   if (!DEBUG) {
     client.track(eventName, eventData);
   } else {
-    console.log(`tracking ${ eventName }:`, eventData)
+    console.log(`tracking ${ eventName }:`, eventData);
   }
 }
 
