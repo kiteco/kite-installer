@@ -11,9 +11,10 @@ var DecisionMaker = class {
     this.path = '/' + editor.name + '/events';
  }
 
-  canInstallKite() {
+  shouldOfferKite(event) {
     return new Promise((resolve, reject) => {
       var content = JSON.stringify({
+        event: event,
         editorUUID: this.editor.UUID,
         editor: this.editor.name,
         os: os.platform(),
