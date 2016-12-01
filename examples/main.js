@@ -23,7 +23,7 @@ module.exports = {
     var plugin = { name: 'kite-installer' };
     var dm = new DecisionMaker(editor, plugin);
 
-    var throttle = dm.canInstallKite();
+    var throttle = dm.shouldOfferKite();
     var canInstall = StateController.canInstallKite();
 
     Promise.all([throttle, canInstall]).then((values) => {
@@ -31,6 +31,12 @@ module.exports = {
       metrics.Tracker.name = "atom autcomplete-python install";
       metrics.Tracker.props = variant;
       this.installation = new Installation(variant);
+      this.installation.accountCreated(() => {
+        console.log("welcome to the future");
+      });;
+      this.installation.flowSkipped(() => {
+        console.log("enjoy the stone ages");
+      });
       var installer = new Installer();
       installer.init(this.installation.flow);
       var pane = atom.workspace.getActivePane();
