@@ -41,8 +41,11 @@ function track(eventName, properties) {
 var Tracker = {
   name: null,
   props: null,
-  trackEvent: function(eventName) {
-    track(`${ this.name } - ${ eventName }`, this.props);
+  trackEvent: function(eventName, extras={}) {
+    for (var key in this.props) {
+      extras[key] = this.props[key];
+    }
+    track(`${ this.name } - ${ eventName }`, extras);
   },
 };
 
