@@ -11,7 +11,7 @@ const client = mixpanel.init(MIXPANEL_TOKEN, {
   protocol: 'https',
 });
 
-const DISTINCT_ID = localStorage.getItem('metrics.userId');
+const EDITOR_UUID = localStorage.getItem('metrics.userId');
 
 // Generate a unique ID for this user and save it for future use.
 function distinctID() {
@@ -21,7 +21,8 @@ function distinctID() {
 // Send an event to mixpanel
 function track(eventName, properties) {
   eventData = {
-    distinct_id: DISTINCT_ID,
+    distinct_id: EDITOR_UUID,
+    editor_uuid: EDITOR_UUID,
     editor: "atom",
     atom_version: atom.getVersion(),
     kite_plugin_version: kitePkg.version,
@@ -33,15 +34,18 @@ function track(eventName, properties) {
   if (!DEBUG) {
     client.track(eventName, eventData);
   } else {
-    console.log(`tracking ${ eventName }:`, eventData)
+    console.log(`tracking ${ eventName }:`, eventData);
   }
 }
 
 var Tracker = {
   name: null,
   props: null,
-  trackEvent: function(eventName) {
-    track(`${ this.name } - ${ eventName }`, this.props);
+  trackEvent: function(eventName, extras={}) {
+    for (var key in this.props) {
+      extras[key] = this.props[key];
+    }
+    track(`${ this.name } - ${ eventName }`, extras);
   },
 };
 
