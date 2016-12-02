@@ -1,3 +1,5 @@
+'use strict';
+
 var os = require('os');
 const mixpanel = require('mixpanel');
 const crypto = require('crypto');
@@ -20,7 +22,7 @@ function distinctID() {
 
 // Send an event to mixpanel
 function track(eventName, properties) {
-  eventData = {
+  var eventData = {
     distinct_id: EDITOR_UUID,
     editor_uuid: EDITOR_UUID,
     editor: "atom",
@@ -41,7 +43,8 @@ function track(eventName, properties) {
 var Tracker = {
   name: null,
   props: null,
-  trackEvent: function(eventName, extras={}) {
+  trackEvent: function(eventName, extras) {
+    extras = extras || {};
     for (var key in this.props) {
       extras[key] = this.props[key];
     }
