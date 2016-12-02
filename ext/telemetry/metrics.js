@@ -1,3 +1,5 @@
+'use strict';
+
 var os = require('os');
 const mixpanel = require('mixpanel');
 const crypto = require('crypto');
