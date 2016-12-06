@@ -1,14 +1,11 @@
 {
   "name": "kite-installer",
-  "main": "./examples/main.js",
-  "version": "0.0.0",
-  "description": "A simple plugin to install Kite from Atom",
+  "main": "./lib/index.js",
+  "version": "0.5.0",
+  "description": "Javascript library to install and manage Kite",
   "author": "Daniel Hung",
   "keywords": [],
   "license": "MIT",
-  "engines": {
-    "atom": ">=1.0.0 <2.0.0"
-  },
   "dependencies": {
     "mixpanel": "^0.5.0"
   }
