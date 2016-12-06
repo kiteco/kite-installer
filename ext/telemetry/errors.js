@@ -1,21 +1,18 @@
 'use strict';
 
+var defaultHandler = defaultHandler || window.onerror;
+
 module.exports = function(tracker) {
   return {
     trackUncaught: () => {
       window.onerror = (msg, url, line, col, err) => {
         tracker.trackEvent("uncaught error", {
-          uncaughtError: {
-            msg: msg,
-            url: url,
-            line: line,
-            col: col,
-          }
+          uncaughtError: { msg, url, line, col }
         });
       };
     },
     ignoreUncaught: () => {
-      window.onerror = () => {};
+      window.onerror = defaultHandler;
     },
   };
 };
