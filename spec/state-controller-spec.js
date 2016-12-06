@@ -38,4 +38,28 @@ describe('StateController', () => {
       })
     })
   })
+
+  describe('.canInstallKite()', () => {
+    describe('when kite is installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: __filename }
+      })
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({
+          shouldReject: true
+        }, () => StateController.canInstallKite())
+      })
+    })
+
+    describe('when kite is not installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: '/path/to/file.app' }
+      })
+
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.canInstallKite())
+      })
+    })
+  })
 })
