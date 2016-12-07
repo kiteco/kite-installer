@@ -19,9 +19,15 @@ describe('StateController', () => {
   })
 
   describe('.isKiteInstalled()', () => {
+    let safePaths
     describe('when a file exist at the given path', () => {
       beforeEach(() => {
+        safePaths = StateController.KITE_APP_PATH
         StateController.KITE_APP_PATH = { installed: __filename }
+      })
+
+      afterEach(() => {
+        StateController.KITE_APP_PATH = safePaths
       })
 
       it('returns a resolved promise', () => {
@@ -31,7 +37,12 @@ describe('StateController', () => {
 
     describe('when there is no file at the given path', () => {
       beforeEach(() => {
+        safePaths = StateController.KITE_APP_PATH
         StateController.KITE_APP_PATH = { installed: '/path/to/file.app' }
+      })
+
+      afterEach(() => {
+        StateController.KITE_APP_PATH = safePaths
       })
 
       it('returns a rejected promise', () => {
@@ -43,9 +54,15 @@ describe('StateController', () => {
   })
 
   describe('.canInstallKite()', () => {
+    let safePaths
     describe('when kite is installed', () => {
       beforeEach(() => {
+        safePaths = StateController.KITE_APP_PATH
         StateController.KITE_APP_PATH = { installed: __filename }
+      })
+
+      afterEach(() => {
+        StateController.KITE_APP_PATH = safePaths
       })
 
       it('returns a rejected promise', () => {
@@ -57,7 +74,12 @@ describe('StateController', () => {
 
     describe('when kite is not installed', () => {
       beforeEach(() => {
+        safePaths = StateController.KITE_APP_PATH
         StateController.KITE_APP_PATH = { installed: '/path/to/file.app' }
+      })
+
+      afterEach(() => {
+        StateController.KITE_APP_PATH = safePaths
       })
 
       it('returns a resolved promise', () => {
