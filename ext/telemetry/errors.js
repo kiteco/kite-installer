@@ -1,6 +1,6 @@
 'use strict';
 
-var defaultHandler = defaultHandler || window.onerror;
+var defaultOnError = defaultOnError || window.onerror;
 
 module.exports = function(tracker) {
   return {
@@ -12,7 +12,7 @@ module.exports = function(tracker) {
       };
     },
     ignoreUncaught: () => {
-      window.onerror = defaultHandler;
+      window.onerror = defaultOnError;
     },
   };
 };
