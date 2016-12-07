@@ -99,7 +99,15 @@ describe('StateController', () => {
       })
 
       it('returns a resolved promise', () => {
-        waitsForPromise(() => StateController.installKite())
+        options = {
+          onInstallStart: jasmine.createSpy(),
+          onMount: jasmine.createSpy(),
+          onCopy: jasmine.createSpy(),
+          onUnmount: jasmine.createSpy(),
+          onRemove: jasmine.createSpy(),
+        }
+
+        waitsForPromise(() => StateController.installKite(options))
         runs(() => {
           expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
             'attach', '-nobrowse',
@@ -117,6 +125,12 @@ describe('StateController', () => {
           expect(proc.spawn).toHaveBeenCalledWith('rm', [
             StateController.KITE_DMG_PATH
           ])
+
+          expect(options.onInstallStart).toHaveBeenCalled()
+          expect(options.onMount).toHaveBeenCalled()
+          expect(options.onCopy).toHaveBeenCalled()
+          expect(options.onUnmount).toHaveBeenCalled()
+          expect(options.onRemove).toHaveBeenCalled()
         })
       })
     })
