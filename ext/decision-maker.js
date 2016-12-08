@@ -11,7 +11,7 @@ var DecisionMaker = class {
     this.plugin = plugin;
     this.client = new Client('plugins.kite.com', -1, '', true);
     this.path = '/' + editor.name + '/events';
- }
+  }
 
   shouldOfferKite(event) {
     return new Promise((resolve, reject) => {
@@ -51,7 +51,7 @@ var DecisionMaker = class {
                 content: content,
               });
             }
-          } catch(e) {
+          } catch (e) {
             reject({
               type: 'bad_response',
               data: data,
@@ -64,7 +64,7 @@ var DecisionMaker = class {
         reject({
           type: 'http_error',
           data: err,
-          content: content
+          content: content,
         });
       });
     });

@@ -7,8 +7,6 @@ var StateController = require('../lib/state-controller.js');
 var metrics = require('../ext/telemetry/metrics.js');
 var errors = require('../ext/telemetry/errors.js')(metrics.Tracker);
 
-DEBUG = true;
-
 module.exports = {
   installation: null,
 
@@ -29,7 +27,7 @@ module.exports = {
 
     Promise.all([throttle, canInstall]).then((values) => {
       var variant = values[0];
-      metrics.Tracker.name = "atom kite-installer example";
+      metrics.Tracker.name = 'atom kite-installer example';
       metrics.Tracker.props = variant;
       errors.trackUncaught();
       this.installation = new Installation(variant);
@@ -39,7 +37,7 @@ module.exports = {
       });
       var pane = atom.workspace.getActivePane();
       this.installation.flow.onSkipInstall(() => {
-        metrics.Tracker.trackEvent("skipped kite");
+        metrics.Tracker.trackEvent('skipped kite');
         errors.ignoreUncaught();
         pane.destroyActiveItem();
       });
@@ -58,20 +56,20 @@ module.exports = {
     hostname: {
       type: 'string',
       default: 'alpha.kite.com',
-      title: "Kite Host",
-      description: "Hostname of Kite server",
+      title: 'Kite Host',
+      description: 'Hostname of Kite server',
     },
     port: {
       type: 'integer',
       default: -1,
-      title: "Kite Host Port",
-      description: "Port of Kite server (set to -1 to omit)",
+      title: 'Kite Host Port',
+      description: 'Port of Kite server (set to -1 to omit)',
     },
     ssl: {
       type: 'boolean',
       default: true,
-      title: "Use HTTPS",
-      description: "Use HTTPS when connecting to Kite server",
+      title: 'Use HTTPS',
+      description: 'Use HTTPS when connecting to Kite server',
     },
   },
 };
