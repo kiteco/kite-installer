@@ -289,7 +289,7 @@ describe('StateController', () => {
         beforeEach(() => {
           fakeProcesses({
             '/bin/ps': (ps) => {
-              ps.stdout = ''
+              ps.stdout('')
               return 0
             }
           })
@@ -304,7 +304,7 @@ describe('StateController', () => {
         beforeEach(() => {
           fakeProcesses({
             '/bin/ps': (ps) => {
-              ps.stdout = 'Kite'
+              ps.stdout('Kite')
               return 0
             }
           })
