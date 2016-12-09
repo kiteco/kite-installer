@@ -159,7 +159,7 @@ describe('StateController', () => {
     describe('when unmounting the archive fails', () => {
       beforeEach(() => {
         fakeProcesses({
-          hdiutil: ([command]) => command === 'attach' ? 0 : 1,
+          hdiutil: (ps, [command]) => command === 'attach' ? 0 : 1,
           cp: () => 0,
           rm: () => 0,
         })
@@ -264,6 +264,54 @@ describe('StateController', () => {
 
             expect(StateController.installKite).not.toHaveBeenCalled()
           })
+        })
+      })
+    })
+  })
+
+  describe('.isKiteRunning()', () => {
+    describe('when kite is not installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: '/path/to/file.app' }
+      })
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.isKiteRunning())
+      })
+    })
+
+    describe('when kite is installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: __filename }
+      })
+
+      describe('but not running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            '/bin/ps': (ps) => {
+              ps.stdout = ''
+              return 0
+            }
+          })
+        })
+
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () => StateController.isKiteRunning())
+        })
+      })
+
+      describe('and running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            '/bin/ps': (ps) => {
+              ps.stdout = 'Kite'
+              return 0
+            }
+          })
+        })
+
+        it('returns a resolved promise', () => {
+          waitsForPromise(() => StateController.isKiteRunning())
         })
       })
     })
