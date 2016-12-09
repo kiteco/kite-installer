@@ -411,11 +411,11 @@ describe('StateController', () => {
         it('returns a resolved promise', () => {
           waitsForPromise(() => StateController.runKite())
           runs(() => {
-            expect(proc.spawnSync).toHaveBeenCalledWith('defaults', [
+            expect(proc.spawn).toHaveBeenCalledWith('defaults', [
               'write', 'com.kite.Kite', 'shouldReopenSidebar', '0'
             ])
 
-            expect(proc.spawnSync).toHaveBeenCalledWith('open', [
+            expect(proc.spawn).toHaveBeenCalledWith('open', [
               '-a', StateController.KITE_APP_PATH.installed
             ])
           })
