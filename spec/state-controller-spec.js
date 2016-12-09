@@ -316,4 +316,52 @@ describe('StateController', () => {
       })
     })
   })
+
+  describe('.canRunKite()', () => {
+    describe('when kite is not installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' }
+      })
+
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canRunKite())
+      })
+    })
+
+    describe('when kite is installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: __filename }
+      })
+
+      describe('but not running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            '/bin/ps': (ps) => {
+              ps.stdout('')
+              return 0
+            }
+          })
+        })
+
+        it('returns a resolved promise', () => {
+          waitsForPromise(() => StateController.canRunKite())
+        })
+      })
+
+      describe('and running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            '/bin/ps': (ps) => {
+              ps.stdout('Kite')
+              return 0
+            }
+          })
+        })
+
+        it('returns a rejected function', () => {
+          waitsForPromise({shouldReject: true}, () => StateController.canRunKite())
+        })
+      })
+    })
+  })
 })
