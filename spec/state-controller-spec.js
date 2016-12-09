@@ -364,4 +364,63 @@ describe('StateController', () => {
       })
     })
   })
+
+  describe('.runKite()', () => {
+    describe('when kite is not installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' }
+      })
+
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.runKite())
+      })
+    })
+
+    describe('when kite is installed', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: __filename }
+      })
+
+      describe('and running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            '/bin/ps': (ps) => {
+              ps.stdout('Kite')
+              return 0
+            }
+          })
+        })
+
+        it('returns a rejected function', () => {
+          waitsForPromise({shouldReject: true}, () => StateController.runKite())
+        })
+      })
+
+      describe('but not running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            '/bin/ps': (ps) => {
+              ps.stdout('')
+              return 0
+            },
+            defaults: () => 0,
+            open: () => 0,
+          })
+        })
+
+        it('returns a resolved promise', () => {
+          waitsForPromise(() => StateController.runKite())
+          runs(() => {
+            expect(proc.spawnSync).toHaveBeenCalledWith('defaults', [
+              'write', 'com.kite.Kite', 'shouldReopenSidebar', '0'
+            ])
+
+            expect(proc.spawnSync).toHaveBeenCalledWith('open', [
+              '-a', StateController.KITE_APP_PATH.installed
+            ])
+          })
+        })
+      })
+    })
+  })
 })
