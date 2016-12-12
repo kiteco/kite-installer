@@ -1,3 +1,5 @@
+'use strict'
+
 const os = require('os')
 const proc = require('child_process')
 const StateController = require('../lib/state-controller')
@@ -92,7 +94,7 @@ describe('StateController', () => {
       })
 
       it('returns a resolved promise', () => {
-        options = {
+        const options = {
           onInstallStart: jasmine.createSpy(),
           onMount: jasmine.createSpy(),
           onCopy: jasmine.createSpy(),
@@ -202,7 +204,7 @@ describe('StateController', () => {
 
       describe('with the install option', () => {
         it('returns a promise resolved after the install', () => {
-          options = {
+          const options = {
             install: true,
             onDownload: jasmine.createSpy(),
             onInstallStart: jasmine.createSpy(),
@@ -251,7 +253,7 @@ describe('StateController', () => {
           spyOn(StateController, 'installKite')
         })
         it('returns a resolved promise', () => {
-          options = { onDownload: jasmine.createSpy() }
+          const options = { onDownload: jasmine.createSpy() }
           const url = 'http://kite.com/download'
 
           waitsForPromise(() => StateController.downloadKite(url, options))
