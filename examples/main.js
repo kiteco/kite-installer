@@ -22,9 +22,9 @@ module.exports = {
 
     var editor = { UUID: 'k', name: 'atom' };
     var plugin = { name: 'kite-installer' };
-    var dm = new DecisionMaker(editor, plugin, 1000);
+    var dm = new DecisionMaker(editor, plugin);
 
-    var throttle = dm.shouldOfferKite();
+    var throttle = dm.shouldOfferKite('', 1000);
     var canInstall = StateController.canInstallKite();
 
     Promise.all([throttle, canInstall]).then((values) => {

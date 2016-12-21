@@ -6,15 +6,15 @@ var Client = require('../lib/client.js');
 var utils = require('../lib/utils.js');
 
 var DecisionMaker = class {
-  constructor(editor, plugin, msecs) {
+  constructor(editor, plugin) {
     this.editor = editor;
     this.plugin = plugin;
     this.client = new Client('plugins.kite.com', -1, '', true);
     this.path = '/' + editor.name + '/events';
-    this.msecs = msecs || null;
   }
 
-  shouldOfferKite(event) {
+  shouldOfferKite(event, timeout) {
+    timeout = timeout || null;
     return new Promise((resolve, reject) => {
       var content = JSON.stringify({
         event: event,
@@ -25,10 +25,10 @@ var DecisionMaker = class {
         plugin: this.plugin.name,
       });
 
-      var timeout = null;
-      if (this.msecs !== null) {
-        timeout = {
-          msecs: this.msecs,
+      var timeoutOpts = null;
+      if (timeout !== null) {
+        timeoutOpts = {
+          msecs: timeout,
           callback: () => {
             reject({
               type: 'timeout',
@@ -74,7 +74,7 @@ var DecisionMaker = class {
             });
           }
         });
-      }, content, timeout);
+      }, content, timeoutOpts);
       req.on('error', (err) => {
         reject({
           type: 'http_error',
