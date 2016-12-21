@@ -6,12 +6,13 @@ var Client = require('../lib/client.js');
 var utils = require('../lib/utils.js');
 
 var DecisionMaker = class {
-  constructor(editor, plugin) {
+  constructor(editor, plugin, msecs) {
     this.editor = editor;
     this.plugin = plugin;
     this.client = new Client('plugins.kite.com', -1, '', true);
     this.path = '/' + editor.name + '/events';
- }
+    this.msecs = msecs || null;
+  }
 
   shouldOfferKite(event) {
     return new Promise((resolve, reject) => {
@@ -23,6 +24,20 @@ var DecisionMaker = class {
         osVersion: os.release(),
         plugin: this.plugin.name,
       });
+
+      var timeout = null;
+      if (this.msecs !== null) {
+        timeout = {
+          msecs: this.msecs,
+          callback: () => {
+            reject({
+              type: 'timeout',
+              data: content,
+            });
+          }
+        };
+      }
+
       var req = this.client.request({
         path: this.path,
         method: 'POST',
@@ -59,7 +74,7 @@ var DecisionMaker = class {
             });
           }
         });
-      }, content);
+      }, content, timeout);
       req.on('error', (err) => {
         reject({
           type: 'http_error',

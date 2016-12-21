@@ -22,7 +22,7 @@ module.exports = {
 
     var editor = { UUID: 'k', name: 'atom' };
     var plugin = { name: 'kite-installer' };
-    var dm = new DecisionMaker(editor, plugin);
+    var dm = new DecisionMaker(editor, plugin, 1000);
 
     var throttle = dm.shouldOfferKite();
     var canInstall = StateController.canInstallKite();
@@ -45,6 +45,8 @@ module.exports = {
       });
       pane.addItem(this.installation, { index: 0 });
       pane.activateItemAtIndex(0);
+    }, (err) => {
+      console.log("rejected with data:", err);
     });
   },
 
