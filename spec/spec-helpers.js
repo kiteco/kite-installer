@@ -40,4 +40,18 @@ function fakeProcesses (processes) {
   })
 }
 
-module.exports = { fakeProcesses }
+function fakeRequestMethod (resp) {
+  if (typeof resp == 'boolean' && resp) { resp = {} }
+  if (resp) {
+    resp.headers = resp.headers || {}
+  }
+  return (opts, callback) => ({
+    on: (type, cb) => {
+      if (!resp && type === 'error') { cb({}) }
+    },
+    end: () => resp && callback(resp),
+    write: (data) => {}
+  })
+}
+
+module.exports = { fakeProcesses, fakeRequestMethod }
