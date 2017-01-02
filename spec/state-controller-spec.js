@@ -1,10 +1,11 @@
 'use strict'
 
 const os = require('os')
+const http = require('http')
 const proc = require('child_process')
 const StateController = require('../lib/state-controller')
 
-const {fakeProcesses} = require('./spec-helpers.js')
+const {fakeProcesses, fakeRequestMethod} = require('./spec-helpers.js')
 
 describe('StateController', () => {
   let safePaths
@@ -421,6 +422,57 @@ describe('StateController', () => {
               '-a', StateController.KITE_APP_PATH.installed
             ])
           })
+        })
+      })
+    })
+  })
+
+  describe('.isKiteReachable()', () => {
+    describe('when kite is not running', () => {
+      beforeEach(() => {
+        fakeProcesses({
+          '/bin/ps': (ps) => {
+            ps.stdout('')
+            return 0
+          }
+        })
+      })
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isKiteReachable())
+      })
+    })
+
+    describe('when kite is running', () => {
+      beforeEach(() => {
+        StateController.KITE_APP_PATH = { installed: __filename }
+        fakeProcesses({
+          '/bin/ps': (ps) => {
+            ps.stdout('Kite')
+            return 0
+          }
+        })
+      })
+
+      describe('and is reachable', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(true))
+        })
+
+        it('returns a resolving promise', () => {
+          waitsForPromise(() => StateController.isKiteReachable())
+        })
+      })
+
+      describe('and is not reachable', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(false))
+        })
+
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isKiteReachable())
         })
       })
     })
