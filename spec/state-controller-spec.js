@@ -5,7 +5,7 @@ const http = require('http')
 const proc = require('child_process')
 const StateController = require('../lib/state-controller')
 
-const {fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse, withKiteInstalled, withKiteRunning, withKiteNotRunning} = require('./spec-helpers.js')
+const {fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse, withKiteInstalled, withKiteRunning, withKiteNotRunning, withKiteReachable, withKiteNotReachable} = require('./spec-helpers.js')
 
 describe('StateController', () => {
   fakeKiteInstallPaths()
@@ -469,6 +469,24 @@ describe('StateController', () => {
 
       it('returns a resolving promise', () => {
         waitsForPromise(() => StateController.isUserAuthenticated())
+      })
+    })
+  })
+
+  describe('.canAuthenticateUser()', () => {
+    describe('when kite is reachable', () => {
+      withKiteReachable()
+
+      it('returns a resolving promise', () => {
+        waitsForPromise(() => StateController.canAuthenticateUser())
+      })
+    })
+
+    describe('when kite is not reachable', () => {
+      withKiteNotReachable()
+
+      it('returns a resolving promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser())
       })
     })
   })

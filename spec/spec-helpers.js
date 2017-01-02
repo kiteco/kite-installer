@@ -1,3 +1,4 @@
+const http = require('http')
 const proc = require('child_process')
 const StateController = require('../lib/state-controller')
 
@@ -139,4 +140,25 @@ function withKiteNotRunning () {
   })
 }
 
-module.exports = { fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths, withKiteRunning, withKiteNotRunning, withKiteInstalled }
+function withKiteReachable () {
+  withKiteRunning()
+
+  beforeEach(() => {
+    spyOn(http, 'request').andCallFake(fakeRequestMethod(true))
+  })
+}
+
+function withKiteNotReachable () {
+  withKiteRunning()
+
+  beforeEach(() => {
+    spyOn(http, 'request').andCallFake(fakeRequestMethod(false))
+  })
+}
+
+module.exports = {
+  fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths,
+  withKiteInstalled, 
+  withKiteRunning, withKiteNotRunning,
+  withKiteReachable, withKiteNotReachable
+}
