@@ -41,16 +41,42 @@ function fakeProcesses (processes) {
   })
 }
 
-function fakeResponse (statusCode, data) {
-  const resp = {statusCode}
-  for (let k in data) { resp[k] = data[k] }
+function fakeResponse (statusCode, data, props) {
+  data = data || ''
+  props = props || {}
+
+  const resp = {
+    statusCode,
+    on: (event, callback) => {
+      switch (event) {
+        case 'data':
+          callback(data)
+          break;
+        case 'end':
+          callback()
+          break;
+      }
+    }
+  }
+  for (let k in props) { resp[k] = props[k] }
   resp.headers = resp.headers || {}
   return resp
 }
 
 function fakeRequestMethod (resp) {
-  if (typeof resp == 'boolean' && resp) { resp = {} }
-  if (typeof resp == 'object') { resp = fakeResponse(200, resp) }
+  if (resp) {
+    switch (typeof resp) {
+      case 'boolean':
+        resp = fakeResponse(200);
+        break;
+      case 'object':
+        resp = fakeResponse(200, '', resp);
+        break;
+      case 'string':
+        resp = fakeResponse(200, resp, {});
+        break;
+    }
+  }
 
   return (opts, callback) => ({
     on: (type, cb) => {
