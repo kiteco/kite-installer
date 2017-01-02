@@ -1,4 +1,5 @@
 const proc = require('child_process')
+const StateController = require('../lib/state-controller')
 
 function fakeStream () {
   let streamCallback
@@ -40,18 +41,76 @@ function fakeProcesses (processes) {
   })
 }
 
+function fakeResponse (statusCode, data) {
+  const resp = {statusCode}
+  for (let k in data) { resp[k] = data[k] }
+  resp.headers = resp.headers || {}
+  return resp
+}
+
 function fakeRequestMethod (resp) {
   if (typeof resp == 'boolean' && resp) { resp = {} }
-  if (resp) {
-    resp.headers = resp.headers || {}
-  }
+  if (typeof resp == 'object') { resp = fakeResponse(200, resp) }
+
   return (opts, callback) => ({
     on: (type, cb) => {
       if (!resp && type === 'error') { cb({}) }
     },
-    end: () => resp && callback(resp),
+    end: () => {
+      if (resp) {
+        typeof resp == 'function'
+          ? callback(resp(opts))
+          : callback(resp)
+      }
+    },
     write: (data) => {}
   })
 }
 
-module.exports = { fakeProcesses, fakeRequestMethod }
+function fakeKiteInstallPaths () {
+  let safePaths
+  beforeEach(() => {
+    safePaths = StateController.KITE_APP_PATH
+    StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' }
+  })
+
+  afterEach(() => {
+    StateController.KITE_APP_PATH = safePaths
+  })
+}
+
+function withKiteInstalled () {
+  beforeEach(() => {
+    StateController.KITE_APP_PATH = { installed: __filename }
+  })
+}
+
+function withKiteRunning () {
+  withKiteInstalled()
+
+  beforeEach(() => {
+    fakeProcesses({
+      '/bin/ps': (ps) => {
+        ps.stdout('Kite')
+        return 0
+      }
+    })
+  })
+}
+
+function withKiteNotRunning () {
+  withKiteInstalled()
+
+  beforeEach(() => {
+    fakeProcesses({
+      '/bin/ps': (ps) => {
+        ps.stdout('')
+        return 0
+      },
+      defaults: () => 0,
+      open: () => 0,
+    })
+  })
+}
+
+module.exports = { fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths, withKiteRunning, withKiteNotRunning, withKiteInstalled }

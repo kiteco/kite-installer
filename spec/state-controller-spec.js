@@ -5,18 +5,10 @@ const http = require('http')
 const proc = require('child_process')
 const StateController = require('../lib/state-controller')
 
-const {fakeProcesses, fakeRequestMethod} = require('./spec-helpers.js')
+const {fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse, withKiteInstalled, withKiteRunning, withKiteNotRunning} = require('./spec-helpers.js')
 
 describe('StateController', () => {
-  let safePaths
-  beforeEach(() => {
-    safePaths = StateController.KITE_APP_PATH
-    StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' }
-  })
-
-  afterEach(() => {
-    StateController.KITE_APP_PATH = safePaths
-  })
+  fakeKiteInstallPaths()
 
   describe('.isKiteSupported()', () => {
     it('returns a resolved promise for darwin platform', () => {
@@ -38,9 +30,7 @@ describe('StateController', () => {
 
   describe('.isKiteInstalled()', () => {
     describe('when a file exist at the given path', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: __filename }
-      })
+      withKiteInstalled()
 
       it('returns a resolved promise', () => {
         waitsForPromise(() => StateController.isKiteInstalled())
@@ -48,10 +38,6 @@ describe('StateController', () => {
     })
 
     describe('when there is no file at the given path', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: '/path/to/file.app' }
-      })
-
       it('returns a rejected promise', () => {
         waitsForPromise({
           shouldReject: true
@@ -62,9 +48,7 @@ describe('StateController', () => {
 
   describe('.canInstallKite()', () => {
     describe('when kite is installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: __filename }
-      })
+      withKiteInstalled()
 
       it('returns a rejected promise', () => {
         waitsForPromise({
@@ -74,10 +58,6 @@ describe('StateController', () => {
     })
 
     describe('when kite is not installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: '/path/to/file.app' }
-      })
-
       it('returns a resolved promise', () => {
         waitsForPromise(() => StateController.canInstallKite())
       })
@@ -189,10 +169,6 @@ describe('StateController', () => {
   })
 
   describe('.downloadKite()', () => {
-    beforeEach(() => {
-      StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' }
-    })
-
     describe('when the curl command succeeds', () => {
       beforeEach(() => {
         fakeProcesses({
@@ -274,19 +250,13 @@ describe('StateController', () => {
 
   describe('.isKiteRunning()', () => {
     describe('when kite is not installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: '/path/to/file.app' }
-      })
-
       it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.isKiteRunning())
       })
     })
 
     describe('when kite is installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: __filename }
-      })
+      withKiteInstalled()
 
       describe('but not running', () => {
         beforeEach(() => {
@@ -304,14 +274,7 @@ describe('StateController', () => {
       })
 
       describe('and running', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            '/bin/ps': (ps) => {
-              ps.stdout('Kite')
-              return 0
-            }
-          })
-        })
+        withKiteRunning()
 
         it('returns a resolved promise', () => {
           waitsForPromise(() => StateController.isKiteRunning())
@@ -322,19 +285,13 @@ describe('StateController', () => {
 
   describe('.canRunKite()', () => {
     describe('when kite is not installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' }
-      })
-
       it('returns a rejected function', () => {
         waitsForPromise({shouldReject: true}, () => StateController.canRunKite())
       })
     })
 
     describe('when kite is installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: __filename }
-      })
+      withKiteInstalled()
 
       describe('but not running', () => {
         beforeEach(() => {
@@ -352,14 +309,7 @@ describe('StateController', () => {
       })
 
       describe('and running', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            '/bin/ps': (ps) => {
-              ps.stdout('Kite')
-              return 0
-            }
-          })
-        })
+        withKiteRunning()
 
         it('returns a rejected function', () => {
           waitsForPromise({shouldReject: true}, () => StateController.canRunKite())
@@ -370,29 +320,16 @@ describe('StateController', () => {
 
   describe('.runKite()', () => {
     describe('when kite is not installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' }
-      })
-
       it('returns a rejected function', () => {
         waitsForPromise({shouldReject: true}, () => StateController.runKite())
       })
     })
 
     describe('when kite is installed', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: __filename }
-      })
+      withKiteInstalled()
 
       describe('and running', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            '/bin/ps': (ps) => {
-              ps.stdout('Kite')
-              return 0
-            }
-          })
-        })
+        withKiteRunning()
 
         it('returns a rejected function', () => {
           waitsForPromise({shouldReject: true}, () => StateController.runKite())
@@ -400,16 +337,7 @@ describe('StateController', () => {
       })
 
       describe('but not running', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            '/bin/ps': (ps) => {
-              ps.stdout('')
-              return 0
-            },
-            defaults: () => 0,
-            open: () => 0,
-          })
-        })
+        withKiteNotRunning()
 
         it('returns a resolved promise', () => {
           waitsForPromise(() => StateController.runKite())
@@ -428,15 +356,10 @@ describe('StateController', () => {
   })
 
   describe('.isKiteReachable()', () => {
+    withKiteInstalled()
+
     describe('when kite is not running', () => {
-      beforeEach(() => {
-        fakeProcesses({
-          '/bin/ps': (ps) => {
-            ps.stdout('')
-            return 0
-          }
-        })
-      })
+      withKiteNotRunning()
 
       it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () =>
@@ -445,15 +368,7 @@ describe('StateController', () => {
     })
 
     describe('when kite is running', () => {
-      beforeEach(() => {
-        StateController.KITE_APP_PATH = { installed: __filename }
-        fakeProcesses({
-          '/bin/ps': (ps) => {
-            ps.stdout('Kite')
-            return 0
-          }
-        })
-      })
+      withKiteRunning()
 
       describe('and is reachable', () => {
         beforeEach(() => {
@@ -480,16 +395,10 @@ describe('StateController', () => {
 
   describe('.waitForKite()', () => {
     describe('when kite is running and reachable', () => {
+      withKiteRunning()
+
       beforeEach(() => {
         jasmine.useRealClock()
-
-        StateController.KITE_APP_PATH = { installed: __filename }
-        fakeProcesses({
-          '/bin/ps': (ps) => {
-            ps.stdout('Kite')
-            return 0
-          }
-        })
         spyOn(http, 'request').andCallFake(fakeRequestMethod(true))
       })
 
@@ -497,18 +406,20 @@ describe('StateController', () => {
         waitsForPromise(() => StateController.waitForKite(5, 0))
       })
     })
-  })
 
-  describe('when kite is not reachable', () => {
-    beforeEach(() => {
-      jasmine.useRealClock()
-      spyOn(StateController, 'isKiteReachable').andCallThrough()
-    })
+    describe('when kite is not reachable', () => {
+      withKiteNotRunning()
 
-    it('returns a promise that will be rejected after the specified number of attempts', () => {
-      waitsForPromise({shouldReject: true}, () => StateController.waitForKite(5, 0))
-      runs(() => {
-        expect(StateController.isKiteReachable.callCount).toEqual(5)
+      beforeEach(() => {
+        jasmine.useRealClock()
+        spyOn(StateController, 'isKiteReachable').andCallThrough()
+      })
+
+      it('returns a promise that will be rejected after the specified number of attempts', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.waitForKite(5, 0))
+        runs(() => {
+          expect(StateController.isKiteReachable.callCount).toEqual(5)
+        })
       })
     })
   })
