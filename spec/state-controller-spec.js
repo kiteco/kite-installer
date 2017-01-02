@@ -423,4 +423,53 @@ describe('StateController', () => {
       })
     })
   })
+
+
+  describe('.isUserAuthenticated()', () => {
+    withKiteRunning()
+
+    describe('when the user is not authenticated', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(401)))
+      })
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isUserAuthenticated())
+      })
+    })
+
+    describe('when the request ends with another status code', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(500)))
+      })
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isUserAuthenticated())
+      })
+    })
+
+    describe('when the request ends a 200 status code but the wrong data', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(200)))
+      })
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isUserAuthenticated())
+      })
+    })
+
+    describe('when the user is authenticated', () => {
+      beforeEach(() => {
+        spyOn(http, 'request')
+        .andCallFake(fakeRequestMethod(fakeResponse(200, 'authenticated')))
+      })
+
+      it('returns a resolving promise', () => {
+        waitsForPromise(() => StateController.isUserAuthenticated())
+      })
+    })
+  })
 })
