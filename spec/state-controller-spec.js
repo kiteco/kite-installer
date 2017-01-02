@@ -477,4 +477,39 @@ describe('StateController', () => {
       })
     })
   })
+
+  describe('.waitForKite()', () => {
+    describe('when kite is running and reachable', () => {
+      beforeEach(() => {
+        jasmine.useRealClock()
+
+        StateController.KITE_APP_PATH = { installed: __filename }
+        fakeProcesses({
+          '/bin/ps': (ps) => {
+            ps.stdout('Kite')
+            return 0
+          }
+        })
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(true))
+      })
+
+      it('returns a resolving promise', () => {
+        waitsForPromise(() => StateController.waitForKite(5, 0))
+      })
+    })
+  })
+
+  describe('when kite is not reachable', () => {
+    beforeEach(() => {
+      jasmine.useRealClock()
+      spyOn(StateController, 'isKiteReachable').andCallThrough()
+    })
+
+    it('returns a promise that will be rejected after the specified number of attempts', () => {
+      waitsForPromise({shouldReject: true}, () => StateController.waitForKite(5, 0))
+      runs(() => {
+        expect(StateController.isKiteReachable.callCount).toEqual(5)
+      })
+    })
+  })
 })
