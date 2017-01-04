@@ -5,6 +5,7 @@ var Installation = require('../lib/models/installation.js');
 var StateController = require('../lib/state-controller.js');
 
 var metrics = require('../ext/telemetry/metrics.js');
+var errors = require('../ext/telemetry/errors.js')(metrics.Tracker);
 
 DEBUG = true;
 
@@ -23,29 +24,29 @@ module.exports = {
     var plugin = { name: 'kite-installer' };
     var dm = new DecisionMaker(editor, plugin);
 
-    var throttle = dm.shouldOfferKite();
+    var throttle = dm.shouldOfferKite('', 1000);
     var canInstall = StateController.canInstallKite();
 
     Promise.all([throttle, canInstall]).then((values) => {
       var variant = values[0];
-      metrics.Tracker.name = "atom autcomplete-python install";
+      metrics.Tracker.name = "atom kite-installer example";
       metrics.Tracker.props = variant;
+      errors.trackUncaught();
       this.installation = new Installation(variant);
-      this.installation.accountCreated(() => {
-        console.log("welcome to the future");
-      });;
-      this.installation.flowSkipped(() => {
-        console.log("enjoy the stone ages");
-      });
       var installer = new Installer();
-      installer.init(this.installation.flow);
+      installer.init(this.installation.flow, () => {
+        errors.ignoreUncaught();
+      });
       var pane = atom.workspace.getActivePane();
       this.installation.flow.onSkipInstall(() => {
-        Tracker.trackEvent("skipped kite");
+        metrics.Tracker.trackEvent("skipped kite");
+        errors.ignoreUncaught();
         pane.destroyActiveItem();
       });
       pane.addItem(this.installation, { index: 0 });
       pane.activateItemAtIndex(0);
+    }, (err) => {
+      console.log("rejected with data:", err);
     });
   },
 
