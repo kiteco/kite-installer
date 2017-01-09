@@ -9,7 +9,8 @@ const {
   fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse,
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
-  withKiteWhitelistedPaths, withRoutes,
+  withKiteNotAuthenticated, withKiteWhitelistedPaths,
+  withRoutes,
 } = require('./spec-helpers.js');
 
 describe('StateController', () => {
@@ -533,12 +534,10 @@ describe('StateController', () => {
   });
 
   describe('.isPathWhitelisted()', () => {
-    withKiteReachable(() => {
-      describe('and not authenticated', () => {
-        it('returns a rejected promise', () => {
-          waitsForPromise({shouldReject: true}, () =>
-            StateController.isPathWhitelisted('/path/to/dir'));
-        });
+    withKiteNotAuthenticated(() => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isPathWhitelisted('/path/to/dir'));
       });
     });
 

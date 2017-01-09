@@ -227,6 +227,14 @@ function withKiteAuthenticated(routes, block) {
   });
 }
 
+function withKiteNotAuthenticated(block) {
+  withKiteReachable(() => {
+    describe(', not authenticated', () => {
+      block();
+    });
+  });
+}
+
 function withKiteWhitelistedPaths(paths, block) {
   if (typeof paths == 'function') {
     block = paths;
@@ -258,6 +266,7 @@ module.exports = {
   withKiteInstalled,
   withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
-  withKiteAuthenticated, withKiteWhitelistedPaths,
+  withKiteAuthenticated, withKiteNotAuthenticated,
+  withKiteWhitelistedPaths,
   withRoutes,
 };
