@@ -527,4 +527,41 @@ describe('StateController', () => {
       });
     });
   });
+
+  describe('.authenticateSessionID()', () => {
+    describe('when kite is not reachable', () => {
+      withKiteNotReachable();
+
+      it('returns a resolving promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser());
+      });
+    });
+
+    describe('when kite is reachable', () => {
+      withKiteRunning();
+
+      describe('and the authentication succeeds', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
+        });
+
+        it('returns a resolving promise', () => {
+          waitsForPromise(() =>
+            StateController.authenticateUser('key'));
+        });
+      });
+
+      describe('and the authentication fails', () => {
+        beforeEach(() => {
+          spyOn(http, 'request')
+          .andCallFake(fakeRequestMethod(fakeResponse(401)));
+        });
+
+        it('returns a resolving promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.authenticateUser('key'));
+        });
+      });
+    });
+  });
 });
