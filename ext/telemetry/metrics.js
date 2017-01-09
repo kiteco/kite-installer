@@ -2,8 +2,9 @@
 
 var os = require('os');
 const mixpanel = require('mixpanel');
-const crypto = require('crypto');
+
 const kitePkg = require('../../package.json');
+const DEBUG = require('../../lib/constants');
 
 const MIXPANEL_TOKEN = 'fb6b9b336122a8b29c60f4c28dab6d03';
 
@@ -25,7 +26,7 @@ function track(eventName, properties) {
   var eventData = {
     distinct_id: EDITOR_UUID,
     editor_uuid: EDITOR_UUID,
-    editor: "atom",
+    editor: 'atom',
     atom_version: atom.getVersion(),
     kite_plugin_version: kitePkg.version,
     os: OS_VERSION,
@@ -53,6 +54,7 @@ var Tracker = {
 };
 
 module.exports = {
-  track: track,
-  Tracker: Tracker,
+  distinctID,
+  track,
+  Tracker,
 };

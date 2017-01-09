@@ -7,8 +7,8 @@ module.exports = function(tracker) {
       if (prev === null) {
         prev = window.onerror;
         window.onerror = (msg, url, line, col, err) => {
-          tracker.trackEvent("uncaught error", {
-            uncaughtError: { msg, url, line, col }
+          tracker.trackEvent('uncaught error', {
+            uncaughtError: { msg, url, line, col },
           });
         };
       }
