@@ -1,3 +1,4 @@
+
 'use strict';
 
 const os = require('os');
@@ -242,6 +243,18 @@ describe('StateController', () => {
       it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.installKite());
       });
+    });
+  });
+
+  describe('.downloadKiteRelease()', () => {
+    beforeEach(() => {
+      spyOn(StateController, 'downloadKite');
+    });
+
+    it('calls downloadKite with the release path of the current platform', () => {
+      StateController.downloadKiteRelease();
+      expect(StateController.downloadKite)
+      .toHaveBeenCalledWith(StateController.releaseURL, {});
     });
   });
 
