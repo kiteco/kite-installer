@@ -453,7 +453,7 @@ describe('StateController', () => {
     });
 
     withKiteNotReachable(() => {
-      it('returns a resolving promise', () => {
+      it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser());
       });
     });
@@ -461,7 +461,7 @@ describe('StateController', () => {
 
   describe('.authenticateUser()', () => {
     withKiteNotReachable(() => {
-      it('returns a resolving promise', () => {
+      it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser());
       });
     });
@@ -485,7 +485,7 @@ describe('StateController', () => {
           o => fakeResponse(401),
         ]]);
 
-        it('returns a resolving promise', () => {
+        it('returns a rejected promise', () => {
           waitsForPromise({shouldReject: true}, () =>
             StateController.authenticateUser('email', 'password'));
         });
@@ -495,7 +495,7 @@ describe('StateController', () => {
 
   describe('.authenticateSessionID()', () => {
     withKiteNotReachable(() => {
-      it('returns a resolving promise', () => {
+      it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser());
       });
     });
@@ -519,7 +519,7 @@ describe('StateController', () => {
           o => fakeResponse(401),
         ]]);
 
-        it('returns a resolving promise', () => {
+        it('returns a rejected promise', () => {
           waitsForPromise({shouldReject: true}, () =>
             StateController.authenticateSessionID('key'));
         });
