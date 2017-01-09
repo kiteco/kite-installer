@@ -66,7 +66,7 @@ var DecisionMaker = class {
                 content: content,
               });
             }
-          } catch(e) {
+          } catch (e) {
             reject({
               type: 'bad_response',
               data: data,
@@ -79,7 +79,7 @@ var DecisionMaker = class {
         reject({
           type: 'http_error',
           data: err,
-          content: content
+          content: content,
         });
       });
     });

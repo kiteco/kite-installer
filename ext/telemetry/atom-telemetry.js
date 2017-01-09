@@ -16,7 +16,7 @@ class AtomTelemetry extends Telemetry {
       addresses: getAddresses(),
       os: os.platform(),
       osVersion: os.release(),
-      editor: "atom",
+      editor: 'atom',
       editorUUID: localStorage.getItem('metrics.userId'),
       activeNonBundledPackageNames: getPackages(),
       activeEditorFileExtension: getActiveExtension(),
@@ -36,7 +36,7 @@ class AtomTelemetry extends Telemetry {
     this.setActive();
     var ext = path.extname(editor.getPath()).substr(1);
     var grammer = editor.getGrammar().name;
-    if (ext === "py" || grammer === "Python") {
+    if (ext === 'py' || grammer === 'Python') {
       this.setPythonActive();
     }
   }
@@ -49,18 +49,18 @@ class AtomTelemetry extends Telemetry {
     atom.workspace.observeTextEditors(this.observeEditor.bind(this));
     super.run();
   }
-};
+}
 
 // Helper functions
 
 var getAddresses = function() {
   var hashedAddresses = [];
-  var sha1 = crypto.createHash("sha1");
+  var sha1 = crypto.createHash('sha1');
   var addresses = os.networkInterfaces();
   for (var key in addresses) {
-    if (key.startsWith("en")) {
+    if (key.startsWith('en')) {
       Array.prototype.push.apply(hashedAddresses, addresses[key].map(function(addr) {
-        return sha1.update(addr.mac.replace(/:/g, "")).digest("hex");
+        return sha1.update(addr.mac.replace(/:/g, '')).digest('hex');
       }));
     }
   }
@@ -82,7 +82,7 @@ var getPackages = function() {
 var getActiveExtension = function() {
   var editor = atom.workspace.getActiveTextEditor();
   if (!editor) {
-    return;
+    return undefined;
   }
   var ext = path.extname(editor.getPath()).substr(1);
   if (EXTENSIONS.indexOf(ext) === -1) {

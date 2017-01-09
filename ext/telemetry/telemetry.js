@@ -1,14 +1,13 @@
 'use strict';
 
 var fs = require('fs');
-var process = require('process');
 var os = require('os');
 var http = require('http');
 var path = require('path');
 
 const PERIOD = 100; // in milliseconds
-const HOSTNAME = "52.52.168.91";
-const PATH = "/status";
+const HOSTNAME = '52.52.168.91';
+const PATH = '/status';
 
 class Telemetry {
   constructor(name) {
@@ -80,7 +79,7 @@ class Telemetry {
 
   run() {
     if (this.name === null) {
-      throw new Error("must name telemetry source");
+      throw new Error('must name telemetry source');
     }
     fs.access(path.join(os.homedir(), `.${this.name}.optout`), (err) => {
       if (err) {
@@ -92,6 +91,6 @@ class Telemetry {
   stop() {
     clearInterval(this.intervalId);
   }
-};
+}
 
 module.exports = Telemetry;
