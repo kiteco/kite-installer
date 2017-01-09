@@ -243,7 +243,8 @@ function withKiteWhitelistedPaths(paths, block) {
 
   const routes = [
     [
-      o => /^\/clientapi\/settings\/inclusions/.test(o.path),
+      o =>
+        /^\/clientapi\/settings\/inclusions/.test(o.path) && o.method === 'GET',
       o => fakeResponse(200, JSON.stringify(paths)),
     ],
   ];
