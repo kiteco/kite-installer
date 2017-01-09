@@ -16,6 +16,81 @@ const {
 describe('StateController', () => {
   fakeKiteInstallPaths();
 
+  describe('.handleState()', () => {
+    describe('for an unsupported platform', () => {
+      beforeEach(() => {
+        spyOn(os, 'platform').andReturn('linux');
+      });
+
+      it('returns a promise resolved with the corresponding state', () => {
+        waitsForPromise(() => StateController.handleState().then(state => {
+          expect(state).toEqual(StateController.STATES.UNSUPPORTED);
+        }));
+      });
+    });
+
+    describe('when kite is not installed', () => {
+      it('returns a promise resolved with the corresponding state', () => {
+        waitsForPromise(() => StateController.handleState().then(state => {
+          expect(state).toEqual(StateController.STATES.UNINSTALLED);
+        }));
+      });
+    });
+
+    withKiteNotRunning(() => {
+      it('returns a promise resolved with the corresponding state', () => {
+        waitsForPromise(() => StateController.handleState().then(state => {
+          expect(state).toEqual(StateController.STATES.INSTALLED);
+        }));
+      });
+    });
+
+    withKiteNotReachable(() => {
+      it('returns a promise resolved with the corresponding state', () => {
+        waitsForPromise(() => StateController.handleState().then(state => {
+          expect(state).toEqual(StateController.STATES.RUNNING);
+        }));
+      });
+    });
+
+    withKiteNotAuthenticated(() => {
+      it('returns a promise resolved with the corresponding state', () => {
+        waitsForPromise(() => StateController.handleState().then(state => {
+          expect(state).toEqual(StateController.STATES.REACHABLE);
+        }));
+      });
+    });
+
+    withKiteWhitelistedPaths(['/path/to/dir'], () => {
+      describe('and a path not in the whitelist', () => {
+        it('returns a promise resolved with the corresponding state', () => {
+          waitsForPromise(() => StateController.handleState('/path/to/other/dir').then(state => {
+            expect(state).toEqual(StateController.STATES.AUTHENTICATED);
+          }));
+        });
+      });
+
+      describe('and a path in the whitelist', () => {
+        it('returns a promise resolved with the corresponding state', () => {
+          waitsForPromise(() => StateController.handleState('/path/to/dir').then(state => {
+            expect(state).toEqual(StateController.STATES.WHITELISTED);
+          }));
+        });
+      });
+    });
+
+    withKiteReachable([
+      [o => o.path === '/api/account/authenticated', o => fakeResponse(500)],
+    ], () => {
+      describe('and an unexpected response from Kite', () => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.handleState());
+        });
+      });
+    });
+  });
+
   describe('.isKiteSupported()', () => {
     it('returns a resolved promise for darwin platform', () => {
       waitsForPromise(() => StateController.isKiteSupported());

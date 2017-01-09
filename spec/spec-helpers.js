@@ -179,6 +179,11 @@ function withKiteReachable(routes, block) {
   }
 
   routes.push([
+    o => o.path === '/system',
+    o => fakeResponse(200),
+  ]);
+
+  routes.push([
     o => true,
     o => fakeResponse(404),
   ]);
@@ -228,7 +233,9 @@ function withKiteAuthenticated(routes, block) {
 }
 
 function withKiteNotAuthenticated(block) {
-  withKiteReachable(() => {
+  withKiteReachable([
+    [o => o.path === '/api/account/authenticated', o => fakeResponse(401)],
+  ], () => {
     describe(', not authenticated', () => {
       block();
     });
