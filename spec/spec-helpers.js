@@ -178,16 +178,8 @@ function withKiteReachable(routes, block) {
     routes = [];
   }
 
-  routes.push([
-    o => o.path === '/system',
-    o => fakeResponse(200),
-  ]);
-
-  routes.push([
-    o => true,
-    o => fakeResponse(404),
-  ]);
-
+  routes.push([o => o.path === '/system', o => fakeResponse(200)]);
+  routes.push([o => true, o => fakeResponse(404)]);
 
   withKiteRunning(() => {
     describe(', reachable', () => {
