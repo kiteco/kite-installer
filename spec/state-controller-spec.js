@@ -5,7 +5,12 @@ const http = require('http');
 const proc = require('child_process');
 const StateController = require('../lib/state-controller');
 
-const {fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse, withKiteInstalled, withKiteRunning, withKiteNotRunning, withKiteReachable, withKiteNotReachable, withRoutes} = require('./spec-helpers.js');
+const {
+  fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse,
+  withKiteInstalled, withKiteRunning, withKiteNotRunning,
+  withKiteReachable, withKiteNotReachable,
+  withKiteWhitelistedPaths, withRoutes,
+} = require('./spec-helpers.js');
 
 describe('StateController', () => {
   fakeKiteInstallPaths();
@@ -522,6 +527,33 @@ describe('StateController', () => {
         it('returns a rejected promise', () => {
           waitsForPromise({shouldReject: true}, () =>
             StateController.authenticateSessionID('key'));
+        });
+      });
+    });
+  });
+
+  describe('.isPathWhitelisted()', () => {
+    withKiteReachable(() => {
+      describe('and not authenticated', () => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isPathWhitelisted('/path/to/dir'));
+        });
+      });
+    });
+
+    withKiteWhitelistedPaths(['/path/to/dir'], () => {
+      describe('passing a path not in the whitelist', () => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isPathWhitelisted('/path/to/other/dir'));
+        });
+      });
+
+      describe('passing a path in the whitelist', () => {
+        it('returns a resolving promise', () => {
+          waitsForPromise(() =>
+            StateController.isPathWhitelisted('/path/to/dir'));
         });
       });
     });
