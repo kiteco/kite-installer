@@ -34,7 +34,7 @@ var DecisionMaker = class {
               type: 'timeout',
               data: content,
             });
-          }
+          },
         };
       }
 

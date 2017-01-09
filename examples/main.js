@@ -44,7 +44,7 @@ module.exports = {
       pane.addItem(this.installation, { index: 0 });
       pane.activateItemAtIndex(0);
     }, (err) => {
-      console.log("rejected with data:", err);
+      console.log('rejected with data:', err);
     });
   },
 
