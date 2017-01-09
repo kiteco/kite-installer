@@ -557,4 +557,29 @@ describe('StateController', () => {
       });
     });
   });
+
+  describe('.canWhitelistPath()', () => {
+    withKiteNotAuthenticated(() => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.canWhitelistPath('/path/to/dir'));
+      });
+    });
+
+    withKiteWhitelistedPaths(['/path/to/dir'], () => {
+      describe('passing a path in the whitelist', () => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.canWhitelistPath('/path/to/dir'));
+        });
+      });
+
+      describe('passing a path not in the whitelist', () => {
+        it('returns a resolving promise', () => {
+          waitsForPromise(() =>
+            StateController.canWhitelistPath('/path/to/other/dir'));
+        });
+      });
+    });
+  });
 });
