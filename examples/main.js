@@ -22,7 +22,7 @@ module.exports = {
     var plugin = { name: 'kite-installer' };
     var dm = new DecisionMaker(editor, plugin);
 
-    var throttle = dm.shouldOfferKite();
+    var throttle = dm.shouldOfferKite('', 1000);
     var canInstall = StateController.canInstallKite();
 
     Promise.all([throttle, canInstall]).then((values) => {
@@ -43,6 +43,8 @@ module.exports = {
       });
       pane.addItem(this.installation, { index: 0 });
       pane.activateItemAtIndex(0);
+    }, (err) => {
+      console.log("rejected with data:", err);
     });
   },
 

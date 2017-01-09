@@ -13,7 +13,8 @@ var DecisionMaker = class {
     this.path = '/' + editor.name + '/events';
   }
 
-  shouldOfferKite(event) {
+  shouldOfferKite(event, timeout) {
+    timeout = timeout || null;
     return new Promise((resolve, reject) => {
       var content = JSON.stringify({
         event: event,
@@ -23,6 +24,20 @@ var DecisionMaker = class {
         osVersion: os.release(),
         plugin: this.plugin.name,
       });
+
+      var timeoutOpts = null;
+      if (timeout !== null) {
+        timeoutOpts = {
+          msecs: timeout,
+          callback: () => {
+            reject({
+              type: 'timeout',
+              data: content,
+            });
+          }
+        };
+      }
+
       var req = this.client.request({
         path: this.path,
         method: 'POST',
@@ -59,7 +74,7 @@ var DecisionMaker = class {
             });
           }
         });
-      }, content);
+      }, content, timeoutOpts);
       req.on('error', (err) => {
         reject({
           type: 'http_error',
