@@ -38,14 +38,15 @@ var DecisionMaker = class {
         };
       }
 
-      var req = this.client.request({
+      this.client.request({
         path: this.path,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(content),
         },
-      }, (resp) => {
+      }, content, timeoutOpts)
+      .then((resp) => {
         if (resp.statusCode !== 200) {
           reject({
             type: 'bad_status',
@@ -74,8 +75,7 @@ var DecisionMaker = class {
             });
           }
         });
-      }, content, timeoutOpts);
-      req.on('error', (err) => {
+      }).catch(err => {
         reject({
           type: 'http_error',
           data: err,
