@@ -81,7 +81,14 @@ function fakeRequestMethod(resp) {
 
   return (opts, callback) => ({
     on: (type, cb) => {
-      if (!resp && type === 'error') { cb({}); }
+      switch (type) {
+        case 'error':
+          if (!resp) { cb({}); }
+          break;
+        case 'response':
+          if (resp) { cb(typeof resp == 'function' ? resp(opts) : resp); }
+          break;
+      }
     },
     end: () => {
       if (resp) {
@@ -106,59 +113,151 @@ function fakeKiteInstallPaths() {
   });
 }
 
-function withKiteInstalled() {
-  beforeEach(() => {
-    StateController.KITE_APP_PATH = { installed: __filename };
+function fakeRouter(routes) {
+  return (opts) => {
+    for (let i = 0; i < routes.length; i++) {
+      const [predicate, handler] = routes[i];
+      if (predicate(opts)) { return handler(opts); }
+    }
+    return fakeResponse(200);
+  };
+}
+
+function withKiteInstalled(block) {
+  describe('with kite installed', () => {
+    fakeKiteInstallPaths();
+
+    beforeEach(() => {
+      StateController.KITE_APP_PATH = { installed: __filename };
+    });
+
+    block();
   });
 }
 
-function withKiteRunning() {
-  withKiteInstalled();
+function withKiteRunning(block) {
+  withKiteInstalled(() => {
+    describe(', running', () => {
+      beforeEach(() => {
+        fakeProcesses({
+          ls: (ps) => ps.stdout('kite'),
+          '/bin/ps': (ps) => {
+            ps.stdout('Kite');
+            return 0;
+          },
+        });
+      });
 
-  beforeEach(() => {
-    fakeProcesses({
-      '/bin/ps': (ps) => {
-        ps.stdout('Kite');
-        return 0;
-      },
+      block();
     });
   });
 }
 
-function withKiteNotRunning() {
-  withKiteInstalled();
+function withKiteNotRunning(block) {
+  withKiteInstalled(() => {
+    describe(', not running', () => {
+      beforeEach(() => {
+        fakeProcesses({
+          '/bin/ps': (ps) => {
+            ps.stdout('');
+            return 0;
+          },
+          defaults: () => 0,
+          open: () => 0,
+        });
+      });
 
-  beforeEach(() => {
-    fakeProcesses({
-      '/bin/ps': (ps) => {
-        ps.stdout('');
-        return 0;
-      },
-      defaults: () => 0,
-      open: () => 0,
+      block();
     });
   });
 }
 
-function withKiteReachable() {
-  withKiteRunning();
+function withKiteReachable(routes, block) {
+  if (typeof routes == 'function') {
+    block = routes;
+    routes = [];
+  }
 
-  beforeEach(() => {
-    spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
+  routes.push([
+    o => true,
+    o => fakeResponse(404),
+  ]);
+
+
+  withKiteRunning(() => {
+    describe(', reachable', () => {
+      beforeEach(function() {
+        this.routes = routes.concat();
+        const router = fakeRouter(this.routes);
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(router));
+      });
+
+      block();
+    });
   });
 }
 
-function withKiteNotReachable() {
-  withKiteRunning();
+function withKiteNotReachable(block) {
+  withKiteRunning(() => {
+    describe(', not reachable', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
 
-  beforeEach(() => {
-    spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      block();
+    });
+  });
+}
+
+function withKiteAuthenticated(routes, block) {
+  if (typeof routes == 'function') {
+    block = routes;
+    routes = [];
+  }
+
+  routes.push([
+    o => /^\/api\/account\/authenticated/.test(o.path),
+    o => fakeResponse(200, 'authenticated'),
+  ]);
+
+  withKiteReachable(routes, () => {
+    describe(', authenticated', () => {
+      block();
+    });
+  });
+}
+
+function withKiteWhitelistedPaths(paths, block) {
+  if (typeof paths == 'function') {
+    block = paths;
+    paths = [];
+  }
+
+  const routes = [
+    [
+      o => /^\/clientapi\/settings\/inclusions/.test(o.path),
+      o => fakeResponse(200, JSON.stringify(paths)),
+    ],
+  ];
+
+  withKiteAuthenticated(routes, () => {
+    describe('with whitelisted paths', () => {
+      block();
+    });
+  });
+}
+
+function withRoutes(routes) {
+  beforeEach(function() {
+    routes.reverse().forEach(route => this.routes.unshift(route));
   });
 }
 
 module.exports = {
   fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths,
-  withKiteInstalled, 
+  withKiteInstalled,
   withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
+  withKiteAuthenticated, withKiteWhitelistedPaths,
+  withRoutes,
 };

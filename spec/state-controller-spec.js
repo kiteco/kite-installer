@@ -5,7 +5,7 @@ const http = require('http');
 const proc = require('child_process');
 const StateController = require('../lib/state-controller');
 
-const {fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse, withKiteInstalled, withKiteRunning, withKiteNotRunning, withKiteReachable, withKiteNotReachable} = require('./spec-helpers.js');
+const {fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse, withKiteInstalled, withKiteRunning, withKiteNotRunning, withKiteReachable, withKiteNotReachable, withRoutes} = require('./spec-helpers.js');
 
 describe('StateController', () => {
   fakeKiteInstallPaths();
@@ -29,9 +29,7 @@ describe('StateController', () => {
   });
 
   describe('.isKiteInstalled()', () => {
-    describe('when a file exist at the given path', () => {
-      withKiteInstalled();
-
+    withKiteInstalled(() => {
       it('returns a resolved promise', () => {
         waitsForPromise(() => StateController.isKiteInstalled());
       });
@@ -47,9 +45,7 @@ describe('StateController', () => {
   });
 
   describe('.canInstallKite()', () => {
-    describe('when kite is installed', () => {
-      withKiteInstalled();
-
+    withKiteInstalled(() => {
       it('returns a rejected promise', () => {
         waitsForPromise({
           shouldReject: true,
@@ -255,9 +251,7 @@ describe('StateController', () => {
       });
     });
 
-    describe('when kite is installed', () => {
-      withKiteInstalled();
-
+    withKiteInstalled(() => {
       describe('but not running', () => {
         beforeEach(() => {
           fakeProcesses({
@@ -273,9 +267,7 @@ describe('StateController', () => {
         });
       });
 
-      describe('and running', () => {
-        withKiteRunning();
-
+      withKiteRunning(() => {
         it('returns a resolved promise', () => {
           waitsForPromise(() => StateController.isKiteRunning());
         });
@@ -290,9 +282,7 @@ describe('StateController', () => {
       });
     });
 
-    describe('when kite is installed', () => {
-      withKiteInstalled();
-
+    withKiteInstalled(() => {
       describe('but not running', () => {
         beforeEach(() => {
           fakeProcesses({
@@ -308,9 +298,7 @@ describe('StateController', () => {
         });
       });
 
-      describe('and running', () => {
-        withKiteRunning();
-
+      withKiteRunning(() => {
         it('returns a rejected function', () => {
           waitsForPromise({shouldReject: true}, () => StateController.canRunKite());
         });
@@ -325,20 +313,14 @@ describe('StateController', () => {
       });
     });
 
-    describe('when kite is installed', () => {
-      withKiteInstalled();
-
-      describe('and running', () => {
-        withKiteRunning();
-
+    withKiteInstalled(() => {
+      withKiteRunning(() => {
         it('returns a rejected function', () => {
           waitsForPromise({shouldReject: true}, () => StateController.runKite());
         });
       });
 
-      describe('but not running', () => {
-        withKiteNotRunning();
-
+      withKiteNotRunning(() => {
         it('returns a resolved promise', () => {
           waitsForPromise(() => StateController.runKite());
           runs(() => {
@@ -356,20 +338,14 @@ describe('StateController', () => {
   });
 
   describe('.isKiteReachable()', () => {
-    withKiteInstalled();
-
-    describe('when kite is not running', () => {
-      withKiteNotRunning();
-
+    withKiteNotRunning(() => {
       it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () =>
           StateController.isKiteReachable());
       });
     });
 
-    describe('when kite is running', () => {
-      withKiteRunning();
-
+    withKiteRunning(() => {
       describe('and is reachable', () => {
         beforeEach(() => {
           spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
@@ -394,9 +370,7 @@ describe('StateController', () => {
   });
 
   describe('.waitForKite()', () => {
-    describe('when kite is running and reachable', () => {
-      withKiteRunning();
-
+    withKiteRunning(() => {
       beforeEach(() => {
         jasmine.useRealClock();
         spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
@@ -407,9 +381,7 @@ describe('StateController', () => {
       });
     });
 
-    describe('when kite is not reachable', () => {
-      withKiteNotRunning();
-
+    withKiteNotRunning(() => {
       beforeEach(() => {
         jasmine.useRealClock();
         spyOn(StateController, 'isKiteReachable').andCallThrough();
@@ -426,65 +398,61 @@ describe('StateController', () => {
 
 
   describe('.isUserAuthenticated()', () => {
-    withKiteRunning();
+    withKiteRunning(() => {
+      describe('when the user is not authenticated', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(401)));
+        });
 
-    describe('when the user is not authenticated', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(401)));
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isUserAuthenticated());
+        });
       });
 
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () =>
-          StateController.isUserAuthenticated());
-      });
-    });
+      describe('when the request ends with another status code', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(500)));
+        });
 
-    describe('when the request ends with another status code', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(500)));
-      });
-
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () =>
-          StateController.isUserAuthenticated());
-      });
-    });
-
-    describe('when the request ends a 200 status code but the wrong data', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(200)));
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isUserAuthenticated());
+        });
       });
 
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () =>
-          StateController.isUserAuthenticated());
-      });
-    });
+      describe('when the request ends a 200 status code but the wrong data', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(fakeResponse(200)));
+        });
 
-    describe('when the user is authenticated', () => {
-      beforeEach(() => {
-        spyOn(http, 'request')
-        .andCallFake(fakeRequestMethod(fakeResponse(200, 'authenticated')));
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isUserAuthenticated());
+        });
       });
 
-      it('returns a resolving promise', () => {
-        waitsForPromise(() => StateController.isUserAuthenticated());
+      describe('when the user is authenticated', () => {
+        beforeEach(() => {
+          spyOn(http, 'request')
+          .andCallFake(fakeRequestMethod(fakeResponse(200, 'authenticated')));
+        });
+
+        it('returns a resolving promise', () => {
+          waitsForPromise(() => StateController.isUserAuthenticated());
+        });
       });
     });
   });
 
   describe('.canAuthenticateUser()', () => {
-    describe('when kite is reachable', () => {
-      withKiteReachable();
-
+    withKiteReachable(() => {
       it('returns a resolving promise', () => {
         waitsForPromise(() => StateController.canAuthenticateUser());
       });
     });
 
-    describe('when kite is not reachable', () => {
-      withKiteNotReachable();
-
+    withKiteNotReachable(() => {
       it('returns a resolving promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser());
       });
@@ -492,21 +460,18 @@ describe('StateController', () => {
   });
 
   describe('.authenticateUser()', () => {
-    describe('when kite is not reachable', () => {
-      withKiteNotReachable();
-
+    withKiteNotReachable(() => {
       it('returns a resolving promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser());
       });
     });
 
-    describe('when kite is reachable', () => {
-      withKiteRunning();
-
+    withKiteReachable(() => {
       describe('and the authentication succeeds', () => {
-        beforeEach(() => {
-          spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
-        });
+        withRoutes([[
+          o => /^\/api\/account\/login/.test(o.path),
+          o => fakeResponse(200, 'authenticated'),
+        ]]);
 
         it('returns a resolving promise', () => {
           waitsForPromise(() =>
@@ -515,10 +480,10 @@ describe('StateController', () => {
       });
 
       describe('and the authentication fails', () => {
-        beforeEach(() => {
-          spyOn(http, 'request')
-          .andCallFake(fakeRequestMethod(fakeResponse(401)));
-        });
+        withRoutes([[
+          o => /^\/api\/account\/login/.test(o.path),
+          o => fakeResponse(401),
+        ]]);
 
         it('returns a resolving promise', () => {
           waitsForPromise({shouldReject: true}, () =>
@@ -529,37 +494,34 @@ describe('StateController', () => {
   });
 
   describe('.authenticateSessionID()', () => {
-    describe('when kite is not reachable', () => {
-      withKiteNotReachable();
-
+    withKiteNotReachable(() => {
       it('returns a resolving promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.canAuthenticateUser());
       });
     });
 
-    describe('when kite is reachable', () => {
-      withKiteRunning();
-
+    withKiteReachable(() => {
       describe('and the authentication succeeds', () => {
-        beforeEach(() => {
-          spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
-        });
+        withRoutes([[
+          o => /^\/api\/account\/authenticate/.test(o.path),
+          o => fakeResponse(200, 'authenticated'),
+        ]]);
 
         it('returns a resolving promise', () => {
           waitsForPromise(() =>
-            StateController.authenticateUser('key'));
+            StateController.authenticateSessionID('key'));
         });
       });
 
       describe('and the authentication fails', () => {
-        beforeEach(() => {
-          spyOn(http, 'request')
-          .andCallFake(fakeRequestMethod(fakeResponse(401)));
-        });
+        withRoutes([[
+          o => /^\/api\/account\/authenticate/.test(o.path),
+          o => fakeResponse(401),
+        ]]);
 
         it('returns a resolving promise', () => {
           waitsForPromise({shouldReject: true}, () =>
-            StateController.authenticateUser('key'));
+            StateController.authenticateSessionID('key'));
         });
       });
     });
