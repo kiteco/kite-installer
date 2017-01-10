@@ -281,5 +281,5 @@ module.exports = {
   withKiteReachable, withKiteNotReachable,
   withKiteAuthenticated, withKiteNotAuthenticated,
   withKiteWhitelistedPaths,
-  withRoutes,
+  withFakeServer, withRoutes,
 };
