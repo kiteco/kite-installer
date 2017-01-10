@@ -171,6 +171,24 @@ function withKiteNotRunning(block) {
     });
   });
 }
+function withFakeServer(routes, block) {
+  if (typeof routes == 'function') {
+    block = routes;
+    routes = [];
+  }
+
+  routes.push([o => true, o => fakeResponse(404)]);
+
+  describe('', () => {
+    beforeEach(function() {
+      this.routes = routes.concat();
+      const router = fakeRouter(this.routes);
+      spyOn(http, 'request').andCallFake(fakeRequestMethod(router));
+    });
+
+    block();
+  });
+}
 
 function withKiteReachable(routes, block) {
   if (typeof routes == 'function') {
@@ -179,17 +197,12 @@ function withKiteReachable(routes, block) {
   }
 
   routes.push([o => o.path === '/system', o => fakeResponse(200)]);
-  routes.push([o => true, o => fakeResponse(404)]);
 
   withKiteRunning(() => {
     describe(', reachable', () => {
-      beforeEach(function() {
-        this.routes = routes.concat();
-        const router = fakeRouter(this.routes);
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(router));
+      withFakeServer(routes, () => {
+        block();
       });
-
-      block();
     });
   });
 }
