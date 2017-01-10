@@ -2,7 +2,7 @@
 
 const http = require('http');
 const AccountManager = require('../lib/account-manager');
-const {withFakeServer, fakeResponse} = require('./spec-helpers');
+const {withFakeServer, fakeResponse, fakeRequestMethod} = require('./spec-helpers');
 
 describe('AccountManager', () => {
   beforeEach(() => AccountManager.initClient('127.0.0.1', 46624));
@@ -30,6 +30,38 @@ describe('AccountManager', () => {
             expect(spy).toHaveBeenCalled();
           }));
         });
+      });
+    });
+
+    describe('when called without an email', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.createAccount({}));
+      });
+    });
+
+    describe('when called without any data', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.createAccount());
+      });
+    });
+
+    describe('when the request fails', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.createAccount({
+          email: 'foo@bar.com',
+        }));
       });
     });
   });
