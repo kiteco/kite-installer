@@ -141,4 +141,62 @@ describe('AccountManager', () => {
       });
     });
   });
+
+  describe('.resetPassword()', () => {
+    describe('when the request succeeds', () => {
+      withFakeServer([[
+        o => /\/account\/resetPassword\/request/.test(o.path),
+        o => fakeResponse(200),
+      ]], () => {
+        it('returns a promise that is resolved after calling the endpoint', () => {
+          waitsForPromise(() => AccountManager.resetPassword({
+            email: 'foo@bar.com',
+          }).then(() => {
+            expect(http.request).toHaveBeenCalled();
+          }));
+        });
+
+        it('calls the provided callback', () => {
+          const spy = jasmine.createSpy();
+          waitsForPromise(() => AccountManager.resetPassword({
+            email: 'foo@bar.com',
+          }, spy).then(() => {
+            expect(spy).toHaveBeenCalled();
+          }));
+        });
+      });
+    });
+
+    describe('when called without an email', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword({}));
+      });
+    });
+
+    describe('when called without any data', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword());
+      });
+    });
+
+    describe('when the request fails', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword({
+          email: 'foo@bar.com',
+        }));
+      });
+    });
+  });
 });
