@@ -65,4 +65,80 @@ describe('AccountManager', () => {
       });
     });
   });
+
+  describe('.login()', () => {
+    describe('when the request succeeds', () => {
+      withFakeServer([[
+        o => /\/api\/account\/login/.test(o.path),
+        o => fakeResponse(200),
+      ]], () => {
+        it('returns a promise that is resolved after calling the endpoint', () => {
+          waitsForPromise(() => AccountManager.login({
+            email: 'foo@bar.com',
+            password: 'foo',
+          }).then(() => {
+            expect(http.request).toHaveBeenCalled();
+          }));
+        });
+
+        it('calls the provided callback', () => {
+          const spy = jasmine.createSpy();
+          waitsForPromise(() => AccountManager.login({
+            email: 'foo@bar.com',
+            password: 'foo',
+          }, spy).then(() => {
+            expect(spy).toHaveBeenCalled();
+          }));
+        });
+      });
+    });
+
+    describe('when called without an email', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          AccountManager.login({
+            password: 'foo',
+          }));
+      });
+    });
+
+    describe('when called without a password', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          AccountManager.login({
+            email: 'foo@bar.com',
+          }));
+      });
+    });
+
+    describe('when called without any data', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.login());
+      });
+    });
+
+    describe('when the request fails', () => {
+      beforeEach(() => {
+        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => AccountManager.login({
+          email: 'foo@bar.com',
+        }));
+      });
+    });
+  });
 });
