@@ -1,8 +1,8 @@
 'use strict';
 
 const http = require('http');
-const DecisionMaker = require('../../ext/decision-maker');
-const {withFakeServer, fakeResponse, fakeRequestMethod} = require('../spec-helpers');
+const DecisionMaker = require('../lib/decision-maker');
+const {withFakeServer, fakeResponse, fakeRequestMethod} = require('./spec-helpers');
 
 describe('DecisionMaker', () => {
   let decisionMaker;
