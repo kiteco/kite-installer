@@ -1,11 +1,12 @@
 'use strict';
 
-var os = require('os');
+const os = require('os');
 
-var Client = require('../lib/client.js');
-var utils = require('../lib/utils.js');
+const Client = require('../lib/client.js');
+const KiteError = require('../lib/kite-error.js');
+const utils = require('../lib/utils.js');
 
-var DecisionMaker = class {
+class DecisionMaker {
   constructor(editor, plugin) {
     this.editor = editor;
     this.plugin = plugin;
@@ -14,76 +15,44 @@ var DecisionMaker = class {
   }
 
   shouldOfferKite(event, timeout) {
+    event = event || '';
     timeout = timeout || null;
-    return new Promise((resolve, reject) => {
-      var content = JSON.stringify({
-        event: event,
-        editorUUID: this.editor.UUID,
-        editor: this.editor.name,
-        os: os.platform(),
-        osVersion: os.release(),
-        plugin: this.plugin.name,
-      });
 
-      var timeoutOpts = null;
-      if (timeout !== null) {
-        timeoutOpts = {
-          msecs: timeout,
-          callback: () => {
-            reject({
-              type: 'timeout',
-              data: content,
-            });
-          },
-        };
+    const content = JSON.stringify({
+      event,
+      editorUUID: this.editor.UUID,
+      editor: this.editor.name,
+      os: os.platform(),
+      osVersion: os.release(),
+      plugin: this.plugin.name,
+    });
+
+    return this.client.request({
+      path: this.path,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(content),
+      },
+    }, content, timeout)
+    .catch(err => {
+      throw new KiteError('http_error', err, content);
+    })
+    .then(resp => {
+      if (resp.statusCode !== 200) {
+        throw new KiteError('bad_status', resp.statusCode, content);
       }
-
-      this.client.request({
-        path: this.path,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(content),
-        },
-      }, content, timeoutOpts)
-      .then((resp) => {
-        if (resp.statusCode !== 200) {
-          reject({
-            type: 'bad_status',
-            data: resp.statusCode,
-            content: content,
-          });
-          return;
-        }
-        utils.handleResponseData(resp, (data) => {
-          try {
-            var result = JSON.parse(data);
-            if (result.decision) {
-              resolve(result.variant);
-            } else {
-              reject({
-                type: 'denied',
-                data: result,
-                content: content,
-              });
-            }
-          } catch (e) {
-            reject({
-              type: 'bad_response',
-              data: data,
-              content: content,
-            });
-          }
-        });
-      }).catch(err => {
-        reject({
-          type: 'http_error',
-          data: err,
-          content: content,
-        });
-      });
+      return utils.handleResponseData(resp);
+    })
+    .then((data) => {
+      const result = utils.parseJSON(data, {});
+      if (result.decision) {
+        return result.variant;
+      } else {
+        throw new KiteError('denied', result, content);
+      }
     });
   }
-};
+}
 
 module.exports = DecisionMaker;
