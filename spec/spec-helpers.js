@@ -48,7 +48,7 @@ function fakeResponse(statusCode, data, props) {
 
   const resp = {
     statusCode,
-    on: (event, callback) => {
+    on(event, callback) {
       switch (event) {
         case 'data':
           callback(data);
@@ -80,24 +80,27 @@ function fakeRequestMethod(resp) {
   }
 
   return (opts, callback) => ({
-    on: (type, cb) => {
+    on(type, cb) {
       switch (type) {
         case 'error':
-          if (!resp) { cb({}); }
+          if (resp === false) { cb({}); }
           break;
         case 'response':
           if (resp) { cb(typeof resp == 'function' ? resp(opts) : resp); }
           break;
       }
     },
-    end: () => {
+    end() {
       if (resp) {
         typeof resp == 'function'
           ? callback(resp(opts))
           : callback(resp);
       }
     },
-    write: (data) => {},
+    write(data) {},
+    setTimeout(timeout, callback) {
+      if (resp == null) { callback({}); }
+    },
   });
 }
 

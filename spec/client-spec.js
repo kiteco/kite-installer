@@ -45,6 +45,17 @@ describe('Client', () => {
           waitsForPromise({shouldReject: true}, () => promise);
         });
       });
+
+      describe('and the request timeout', () => {
+        beforeEach(() => {
+          spyOn(https, 'request').andCallFake(fakeRequestMethod());
+          promise = client.request({path: '/foo'}, '', 1000);
+        });
+
+        it('returns a promise that will be rejected', () => {
+          waitsForPromise({shouldReject: true}, () => promise);
+        });
+      });
     });
 
     describe('when ssl protocol is disabled', () => {
