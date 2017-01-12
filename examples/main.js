@@ -1,5 +1,5 @@
 var AccountManager = require('../lib/account-manager.js');
-var DecisionMaker = require('../ext/decision-maker.js');
+var DecisionMaker = require('../lib/decision-maker.js');
 var Installer = require('../lib/installer.js');
 var Installation = require('../lib/models/installation.js');
 var StateController = require('../lib/state-controller.js');
