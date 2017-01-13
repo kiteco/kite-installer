@@ -6,6 +6,7 @@ const http = require('http');
 const https = require('https');
 const proc = require('child_process');
 const StateController = require('../lib/state-controller');
+const OSXSupport = require('../lib/support/osx');
 
 const {
   fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse,
@@ -166,19 +167,19 @@ describe('StateController', () => {
         runs(() => {
           expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
             'attach', '-nobrowse',
-            StateController.KITE_DMG_PATH,
+            OSXSupport.KITE_DMG_PATH,
           ]);
           expect(proc.spawn).toHaveBeenCalledWith('cp', [
             '-r',
-            StateController.KITE_APP_PATH.mounted,
-            StateController.APPS_PATH,
+            OSXSupport.KITE_APP_PATH.mounted,
+            OSXSupport.APPS_PATH,
           ]);
           expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
             'detach',
-            StateController.KITE_VOLUME_PATH,
+            OSXSupport.KITE_VOLUME_PATH,
           ]);
           expect(proc.spawn).toHaveBeenCalledWith('rm', [
-            StateController.KITE_DMG_PATH,
+            OSXSupport.KITE_DMG_PATH,
           ]);
 
           expect(options.onInstallStart).toHaveBeenCalled();
@@ -296,19 +297,19 @@ describe('StateController', () => {
               expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
               expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
                 'attach', '-nobrowse',
-                StateController.KITE_DMG_PATH,
+                OSXSupport.KITE_DMG_PATH,
               ]);
               expect(proc.spawn).toHaveBeenCalledWith('cp', [
                 '-r',
-                StateController.KITE_APP_PATH.mounted,
-                StateController.APPS_PATH,
+                OSXSupport.KITE_APP_PATH.mounted,
+                OSXSupport.APPS_PATH,
               ]);
               expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
                 'detach',
-                StateController.KITE_VOLUME_PATH,
+                OSXSupport.KITE_VOLUME_PATH,
               ]);
               expect(proc.spawn).toHaveBeenCalledWith('rm', [
-                StateController.KITE_DMG_PATH,
+                OSXSupport.KITE_DMG_PATH,
               ]);
 
               expect(options.onDownload).toHaveBeenCalled();
@@ -427,7 +428,7 @@ describe('StateController', () => {
             ]);
 
             expect(proc.spawn).toHaveBeenCalledWith('open', [
-              '-a', StateController.KITE_APP_PATH.installed,
+              '-a', OSXSupport.KITE_APP_PATH.installed,
             ]);
           });
         });
