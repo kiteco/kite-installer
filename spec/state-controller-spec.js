@@ -4,12 +4,10 @@
 const os = require('os');
 const http = require('http');
 const https = require('https');
-const proc = require('child_process');
 const StateController = require('../lib/state-controller');
-const OSXSupport = require('../lib/support/osx');
 
 const {
-  fakeProcesses, fakeRequestMethod, fakeKiteInstallPaths, fakeResponse,
+  fakeRequestMethod, fakeKiteInstallPaths, fakeResponse,
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteNotAuthenticated, withKiteWhitelistedPaths,
@@ -94,40 +92,6 @@ describe('StateController', () => {
     });
   });
 
-  describe('.isKiteSupported()', () => {
-    it('returns a resolved promise for darwin platform', () => {
-      waitsForPromise(() => StateController.isKiteSupported());
-    });
-
-    describe('for another platform', () => {
-      beforeEach(() => {
-        spyOn(os, 'platform').andReturn('linux');
-      });
-
-      it('returns a rejected promise', () => {
-        waitsForPromise({
-          shouldReject: true,
-        }, () => StateController.isKiteSupported());
-      });
-    });
-  });
-
-  describe('.isKiteInstalled()', () => {
-    withKiteInstalled(() => {
-      it('returns a resolved promise', () => {
-        waitsForPromise(() => StateController.isKiteInstalled());
-      });
-    });
-
-    describe('when there is no file at the given path', () => {
-      it('returns a rejected promise', () => {
-        waitsForPromise({
-          shouldReject: true,
-        }, () => StateController.isKiteInstalled());
-      });
-    });
-  });
-
   describe('.canInstallKite()', () => {
     withKiteInstalled(() => {
       it('returns a rejected promise', () => {
@@ -140,110 +104,6 @@ describe('StateController', () => {
     describe('when kite is not installed', () => {
       it('returns a resolved promise', () => {
         waitsForPromise(() => StateController.canInstallKite());
-      });
-    });
-  });
-
-  describe('.installKite()', () => {
-    describe('when every command succeeds', () => {
-      beforeEach(() => {
-        fakeProcesses({
-          hdiutil: () => 0,
-          cp: () => 0,
-          rm: () => 0,
-        });
-      });
-
-      it('returns a resolved promise', () => {
-        const options = {
-          onInstallStart: jasmine.createSpy(),
-          onMount: jasmine.createSpy(),
-          onCopy: jasmine.createSpy(),
-          onUnmount: jasmine.createSpy(),
-          onRemove: jasmine.createSpy(),
-        };
-
-        waitsForPromise(() => StateController.installKite(options));
-        runs(() => {
-          expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
-            'attach', '-nobrowse',
-            OSXSupport.KITE_DMG_PATH,
-          ]);
-          expect(proc.spawn).toHaveBeenCalledWith('cp', [
-            '-r',
-            OSXSupport.KITE_APP_PATH.mounted,
-            OSXSupport.APPS_PATH,
-          ]);
-          expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
-            'detach',
-            OSXSupport.KITE_VOLUME_PATH,
-          ]);
-          expect(proc.spawn).toHaveBeenCalledWith('rm', [
-            OSXSupport.KITE_DMG_PATH,
-          ]);
-
-          expect(options.onInstallStart).toHaveBeenCalled();
-          expect(options.onMount).toHaveBeenCalled();
-          expect(options.onCopy).toHaveBeenCalled();
-          expect(options.onUnmount).toHaveBeenCalled();
-          expect(options.onRemove).toHaveBeenCalled();
-        });
-      });
-    });
-
-    describe('when mounting the archive fails', () => {
-      beforeEach(() => {
-        fakeProcesses({
-          hdiutil: () => 1,
-          cp: () => 0,
-          rm: () => 0,
-        });
-      });
-
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.installKite());
-      });
-    });
-
-    describe('when copying the archive content fails', () => {
-      beforeEach(() => {
-        fakeProcesses({
-          hdiutil: () => 0,
-          cp: () => 1,
-          rm: () => 0,
-        });
-      });
-
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.installKite());
-      });
-    });
-
-    describe('when unmounting the archive fails', () => {
-      beforeEach(() => {
-        fakeProcesses({
-          hdiutil: (ps, [command]) => command === 'attach' ? 0 : 1,
-          cp: () => 0,
-          rm: () => 0,
-        });
-      });
-
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.installKite());
-      });
-    });
-
-    describe('when removing the downloaded archive fails', () => {
-      beforeEach(() => {
-        fakeProcesses({
-          hdiutil: () => 0,
-          cp: () => 0,
-          rm: () => 1,
-        });
-      });
-
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.installKite());
       });
     });
   });
@@ -270,58 +130,7 @@ describe('StateController', () => {
         o => fakeResponse(200, 'foo'),
       ],
     ], () => {
-      describe('when the curl command succeeds', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            hdiutil: () => 0,
-            cp: () => 0,
-            rm: () => 0,
-          });
-        });
-
-        describe('with the install option', () => {
-          it('returns a promise resolved after the install', () => {
-            const options = {
-              install: true,
-              onDownload: jasmine.createSpy(),
-              onInstallStart: jasmine.createSpy(),
-              onMount: jasmine.createSpy(),
-              onCopy: jasmine.createSpy(),
-              onUnmount: jasmine.createSpy(),
-              onRemove: jasmine.createSpy(),
-            };
-            const url = 'http://kite.com/download';
-
-            waitsForPromise(() => StateController.downloadKite(url, options));
-            runs(() => {
-              expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
-              expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
-                'attach', '-nobrowse',
-                OSXSupport.KITE_DMG_PATH,
-              ]);
-              expect(proc.spawn).toHaveBeenCalledWith('cp', [
-                '-r',
-                OSXSupport.KITE_APP_PATH.mounted,
-                OSXSupport.APPS_PATH,
-              ]);
-              expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
-                'detach',
-                OSXSupport.KITE_VOLUME_PATH,
-              ]);
-              expect(proc.spawn).toHaveBeenCalledWith('rm', [
-                OSXSupport.KITE_DMG_PATH,
-              ]);
-
-              expect(options.onDownload).toHaveBeenCalled();
-              expect(options.onInstallStart).toHaveBeenCalled();
-              expect(options.onMount).toHaveBeenCalled();
-              expect(options.onCopy).toHaveBeenCalled();
-              expect(options.onUnmount).toHaveBeenCalled();
-              expect(options.onRemove).toHaveBeenCalled();
-            });
-          });
-        });
-
+      describe('when the download succeeds', () => {
         describe('without the install option', () => {
           beforeEach(() => {
             spyOn(StateController, 'installKite');
@@ -337,99 +146,6 @@ describe('StateController', () => {
 
               expect(StateController.installKite).not.toHaveBeenCalled();
             });
-          });
-        });
-      });
-    });
-  });
-
-  describe('.isKiteRunning()', () => {
-    describe('when kite is not installed', () => {
-      it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.isKiteRunning());
-      });
-    });
-
-    withKiteInstalled(() => {
-      describe('but not running', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            '/bin/ps': (ps) => {
-              ps.stdout('');
-              return 0;
-            },
-          });
-        });
-
-        it('returns a rejected promise', () => {
-          waitsForPromise({shouldReject: true}, () => StateController.isKiteRunning());
-        });
-      });
-
-      withKiteRunning(() => {
-        it('returns a resolved promise', () => {
-          waitsForPromise(() => StateController.isKiteRunning());
-        });
-      });
-    });
-  });
-
-  describe('.canRunKite()', () => {
-    describe('when kite is not installed', () => {
-      it('returns a rejected function', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.canRunKite());
-      });
-    });
-
-    withKiteInstalled(() => {
-      describe('but not running', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            '/bin/ps': (ps) => {
-              ps.stdout('');
-              return 0;
-            },
-          });
-        });
-
-        it('returns a resolved promise', () => {
-          waitsForPromise(() => StateController.canRunKite());
-        });
-      });
-
-      withKiteRunning(() => {
-        it('returns a rejected function', () => {
-          waitsForPromise({shouldReject: true}, () => StateController.canRunKite());
-        });
-      });
-    });
-  });
-
-  describe('.runKite()', () => {
-    describe('when kite is not installed', () => {
-      it('returns a rejected function', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.runKite());
-      });
-    });
-
-    withKiteInstalled(() => {
-      withKiteRunning(() => {
-        it('returns a rejected function', () => {
-          waitsForPromise({shouldReject: true}, () => StateController.runKite());
-        });
-      });
-
-      withKiteNotRunning(() => {
-        it('returns a resolved promise', () => {
-          waitsForPromise(() => StateController.runKite());
-          runs(() => {
-            expect(proc.spawn).toHaveBeenCalledWith('defaults', [
-              'write', 'com.kite.Kite', 'shouldReopenSidebar', '0',
-            ]);
-
-            expect(proc.spawn).toHaveBeenCalledWith('open', [
-              '-a', OSXSupport.KITE_APP_PATH.installed,
-            ]);
           });
         });
       });
@@ -494,7 +210,6 @@ describe('StateController', () => {
       });
     });
   });
-
 
   describe('.isUserAuthenticated()', () => {
     withKiteRunning(() => {

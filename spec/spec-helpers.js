@@ -1,3 +1,4 @@
+const os = require('os');
 const http = require('http');
 const https = require('https');
 const proc = require('child_process');
@@ -123,12 +124,22 @@ function fakeRequestMethod(resp) {
 function fakeKiteInstallPaths() {
   let safePaths;
   beforeEach(() => {
-    safePaths = OSXSupport.KITE_APP_PATH;
-    OSXSupport.KITE_APP_PATH = { installed: '/path/to/Kite.app' };
+    switch (os.platform()) {
+      case 'darwin':
+        safePaths = OSXSupport.KITE_APP_PATH;
+        OSXSupport.KITE_APP_PATH = {
+          installed: '/path/to/Kite.app',
+        };
+        break;
+    }
   });
 
   afterEach(() => {
-    OSXSupport.KITE_APP_PATH = safePaths;
+    switch (os.platform()) {
+      case 'darwin':
+        OSXSupport.KITE_APP_PATH = safePaths;
+        break;
+    }
   });
 }
 
@@ -147,7 +158,11 @@ function withKiteInstalled(block) {
     fakeKiteInstallPaths();
 
     beforeEach(() => {
-      OSXSupport.KITE_APP_PATH = { installed: __filename };
+      switch (os.platform()) {
+        case 'darwin':
+          OSXSupport.KITE_APP_PATH = { installed: __filename };
+          break;
+      }
     });
 
     block();
@@ -158,13 +173,17 @@ function withKiteRunning(block) {
   withKiteInstalled(() => {
     describe(', running', () => {
       beforeEach(() => {
-        fakeProcesses({
-          ls: (ps) => ps.stdout('kite'),
-          '/bin/ps': (ps) => {
-            ps.stdout('Kite');
-            return 0;
-          },
-        });
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              ls: (ps) => ps.stdout('kite'),
+              '/bin/ps': (ps) => {
+                ps.stdout('Kite');
+                return 0;
+              },
+            });
+            break;
+        }
       });
 
       block();
@@ -176,14 +195,18 @@ function withKiteNotRunning(block) {
   withKiteInstalled(() => {
     describe(', not running', () => {
       beforeEach(() => {
-        fakeProcesses({
-          '/bin/ps': (ps) => {
-            ps.stdout('');
-            return 0;
-          },
-          defaults: () => 0,
-          open: () => 0,
-        });
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              '/bin/ps': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              defaults: () => 0,
+              open: () => 0,
+            });
+            break;
+        }
       });
 
       block();
