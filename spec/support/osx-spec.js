@@ -21,7 +21,7 @@ describe('StateController - OSX Support', () => {
   fakeKiteInstallPaths();
 
   describe('.isKiteSupported()', () => {
-    it('returns a resolved promise for darwin platform', () => {
+    it('returns a resolved promise', () => {
       waitsForPromise(() => StateController.isKiteSupported());
     });
   });
