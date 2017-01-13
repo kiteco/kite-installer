@@ -3,6 +3,7 @@
 
 const os = require('os');
 const http = require('http');
+const https = require('https');
 const proc = require('child_process');
 const StateController = require('../lib/state-controller');
 
@@ -11,7 +12,7 @@ const {
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteNotAuthenticated, withKiteWhitelistedPaths,
-  withRoutes,
+  withRoutes, withFakeServer,
 } = require('./spec-helpers.js');
 
 describe('StateController', () => {
@@ -259,79 +260,82 @@ describe('StateController', () => {
   });
 
   describe('.downloadKite()', () => {
-    describe('when the curl command succeeds', () => {
-      beforeEach(() => {
-        fakeProcesses({
-          curl: () => 0,
-          hdiutil: () => 0,
-          cp: () => 0,
-          rm: () => 0,
-        });
-      });
-
-      describe('with the install option', () => {
-        it('returns a promise resolved after the install', () => {
-          const options = {
-            install: true,
-            onDownload: jasmine.createSpy(),
-            onInstallStart: jasmine.createSpy(),
-            onMount: jasmine.createSpy(),
-            onCopy: jasmine.createSpy(),
-            onUnmount: jasmine.createSpy(),
-            onRemove: jasmine.createSpy(),
-          };
-          const url = 'http://kite.com/download';
-
-          waitsForPromise(() => StateController.downloadKite(url, options));
-          runs(() => {
-            expect(proc.spawn).toHaveBeenCalledWith('curl', [
-              '-L', url,
-              '--output', StateController.KITE_DMG_PATH,
-            ]);
-            expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
-              'attach', '-nobrowse',
-              StateController.KITE_DMG_PATH,
-            ]);
-            expect(proc.spawn).toHaveBeenCalledWith('cp', [
-              '-r',
-              StateController.KITE_APP_PATH.mounted,
-              StateController.APPS_PATH,
-            ]);
-            expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
-              'detach',
-              StateController.KITE_VOLUME_PATH,
-            ]);
-            expect(proc.spawn).toHaveBeenCalledWith('rm', [
-              StateController.KITE_DMG_PATH,
-            ]);
-
-            expect(options.onDownload).toHaveBeenCalled();
-            expect(options.onInstallStart).toHaveBeenCalled();
-            expect(options.onMount).toHaveBeenCalled();
-            expect(options.onCopy).toHaveBeenCalled();
-            expect(options.onUnmount).toHaveBeenCalled();
-            expect(options.onRemove).toHaveBeenCalled();
+    withFakeServer([
+      [
+        o => /^https:\/\/alpha\.kite\.com/.test(o),
+        o => fakeResponse(303, '', {headers: {location: 'https://download.kite.com'}}),
+      ], [
+        o => /^https:\/\/download\.kite\.com/.test(o),
+        o => fakeResponse(200, 'foo'),
+      ],
+    ], () => {
+      describe('when the curl command succeeds', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            hdiutil: () => 0,
+            cp: () => 0,
+            rm: () => 0,
           });
         });
-      });
 
-      describe('without the install option', () => {
-        beforeEach(() => {
-          spyOn(StateController, 'installKite');
+        describe('with the install option', () => {
+          it('returns a promise resolved after the install', () => {
+            const options = {
+              install: true,
+              onDownload: jasmine.createSpy(),
+              onInstallStart: jasmine.createSpy(),
+              onMount: jasmine.createSpy(),
+              onCopy: jasmine.createSpy(),
+              onUnmount: jasmine.createSpy(),
+              onRemove: jasmine.createSpy(),
+            };
+            const url = 'http://kite.com/download';
+
+            waitsForPromise(() => StateController.downloadKite(url, options));
+            runs(() => {
+              expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
+              expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
+                'attach', '-nobrowse',
+                StateController.KITE_DMG_PATH,
+              ]);
+              expect(proc.spawn).toHaveBeenCalledWith('cp', [
+                '-r',
+                StateController.KITE_APP_PATH.mounted,
+                StateController.APPS_PATH,
+              ]);
+              expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
+                'detach',
+                StateController.KITE_VOLUME_PATH,
+              ]);
+              expect(proc.spawn).toHaveBeenCalledWith('rm', [
+                StateController.KITE_DMG_PATH,
+              ]);
+
+              expect(options.onDownload).toHaveBeenCalled();
+              expect(options.onInstallStart).toHaveBeenCalled();
+              expect(options.onMount).toHaveBeenCalled();
+              expect(options.onCopy).toHaveBeenCalled();
+              expect(options.onUnmount).toHaveBeenCalled();
+              expect(options.onRemove).toHaveBeenCalled();
+            });
+          });
         });
-        it('returns a resolved promise', () => {
-          const options = { onDownload: jasmine.createSpy() };
-          const url = 'http://kite.com/download';
 
-          waitsForPromise(() => StateController.downloadKite(url, options));
-          runs(() => {
-            expect(proc.spawn).toHaveBeenCalledWith('curl', [
-              '-L', url,
-              '--output', StateController.KITE_DMG_PATH,
-            ]);
-            expect(options.onDownload).toHaveBeenCalled();
+        describe('without the install option', () => {
+          beforeEach(() => {
+            spyOn(StateController, 'installKite');
+          });
+          it('returns a resolved promise', () => {
+            const options = { onDownload: jasmine.createSpy() };
+            const url = 'http://kite.com/download';
 
-            expect(StateController.installKite).not.toHaveBeenCalled();
+            waitsForPromise(() => StateController.downloadKite(url, options));
+            runs(() => {
+              expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
+              expect(options.onDownload).toHaveBeenCalled();
+
+              expect(StateController.installKite).not.toHaveBeenCalled();
+            });
           });
         });
       });

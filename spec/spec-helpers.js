@@ -1,8 +1,9 @@
 const http = require('http');
+const https = require('https');
 const proc = require('child_process');
 const StateController = require('../lib/state-controller');
 
-function fakeStream() {
+function fakeStdStream() {
   let streamCallback;
   function stream(data) {
     streamCallback && streamCallback(data);
@@ -19,8 +20,8 @@ function fakeProcesses(processes) {
   spyOn(proc, 'spawn').andCallFake((process, options) => {
     const mock = processes[process];
     const ps = {
-      stdout: fakeStream(),
-      stderr: fakeStream(),
+      stdout: fakeStdStream(),
+      stderr: fakeStdStream(),
       on: (evt, callback) => {
         if (evt === 'close') { callback(mock ? mock(ps, options) : 1); }
       },
@@ -42,12 +43,25 @@ function fakeProcesses(processes) {
   });
 }
 
+function fakeStream() {
+  return {
+    on(evt, callback) {
+      if (evt === 'finish') {
+        callback && callback();
+      }
+    },
+  };
+}
+
 function fakeResponse(statusCode, data, props) {
   data = data || '';
   props = props || {};
 
   const resp = {
     statusCode,
+    pipe(stream) {
+      return fakeStream();
+    },
     on(event, callback) {
       switch (event) {
         case 'data':
@@ -60,7 +74,9 @@ function fakeResponse(statusCode, data, props) {
     },
   };
   for (let k in props) { resp[k] = props[k]; }
-  resp.headers = resp.headers || {};
+  resp.headers = resp.headers || {
+    'content-length': data.length,
+  };
   return resp;
 }
 
@@ -91,7 +107,7 @@ function fakeRequestMethod(resp) {
       }
     },
     end() {
-      if (resp) {
+      if (resp && callback) {
         typeof resp == 'function'
           ? callback(resp(opts))
           : callback(resp);
@@ -187,6 +203,7 @@ function withFakeServer(routes, block) {
       this.routes = routes.concat();
       const router = fakeRouter(this.routes);
       spyOn(http, 'request').andCallFake(fakeRequestMethod(router));
+      spyOn(https, 'request').andCallFake(fakeRequestMethod(router));
     });
 
     block();
