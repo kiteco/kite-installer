@@ -5,7 +5,7 @@
   "description": "Javascript library to install and manage Kite",
   "author": "Daniel Hung",
   "keywords": [],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
