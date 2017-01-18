@@ -24,6 +24,16 @@ describe('StateController - OSX Support', () => {
     it('returns a resolved promise', () => {
       waitsForPromise(() => StateController.isKiteSupported());
     });
+
+    describe('when the os release is below 10.10', () => {
+      beforeEach(() => {
+        spyOn(os, 'release').andReturn('13.0.0');
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.isKiteSupported());
+      });
+    });
   });
 
   describe('.isKiteInstalled()', () => {
