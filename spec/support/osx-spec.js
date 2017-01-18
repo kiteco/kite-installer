@@ -16,6 +16,7 @@ const {
 describe('StateController - OSX Support', () => {
   beforeEach(() => {
     spyOn(os, 'platform').andReturn('darwin');
+    spyOn(os, 'release').andReturn('14.0.0');
   });
 
   fakeKiteInstallPaths();
@@ -27,7 +28,7 @@ describe('StateController - OSX Support', () => {
 
     describe('when the os release is below 10.10', () => {
       beforeEach(() => {
-        spyOn(os, 'release').andReturn('13.0.0');
+        os.release.andReturn('13.0.0');
       });
 
       it('returns a rejected promise', () => {
