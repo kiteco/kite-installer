@@ -21,6 +21,10 @@ div.row {
   min-width: 310px;
   width: 85%;
 
+  &.disabled {
+    pointer-events: none;
+  }
+
   input[type=text], input[type=email], input[type=password] {
     background-color: transparent;
     border: 1px solid white;
