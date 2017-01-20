@@ -260,26 +260,15 @@ describe('StateController - OSX Support', () => {
       });
     });
 
-    withKiteInstalled(() => {
-      describe('but not running', () => {
-        beforeEach(() => {
-          fakeProcesses({
-            '/bin/ps': (ps) => {
-              ps.stdout('');
-              return 0;
-            },
-          });
-        });
-
-        it('returns a resolved promise', () => {
-          waitsForPromise(() => StateController.canRunKite());
-        });
+    withKiteNotRunning(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.canRunKite());
       });
+    });
 
-      withKiteRunning(() => {
-        it('returns a rejected function', () => {
-          waitsForPromise({shouldReject: true}, () => StateController.canRunKite());
-        });
+    withKiteRunning(() => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canRunKite());
       });
     });
   });
@@ -291,25 +280,23 @@ describe('StateController - OSX Support', () => {
       });
     });
 
-    withKiteInstalled(() => {
-      withKiteRunning(() => {
-        it('returns a rejected function', () => {
-          waitsForPromise({shouldReject: true}, () => StateController.runKite());
-        });
+    withKiteRunning(() => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.runKite());
       });
+    });
 
-      withKiteNotRunning(() => {
-        it('returns a resolved promise', () => {
-          waitsForPromise(() => StateController.runKite());
-          runs(() => {
-            expect(proc.spawn).toHaveBeenCalledWith('defaults', [
-              'write', 'com.kite.Kite', 'shouldReopenSidebar', '0',
-            ]);
+    withKiteNotRunning(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.runKite());
+        runs(() => {
+          expect(proc.spawn).toHaveBeenCalledWith('defaults', [
+            'write', 'com.kite.Kite', 'shouldReopenSidebar', '0',
+          ]);
 
-            expect(proc.spawn).toHaveBeenCalledWith('open', [
-              '-a', OSXSupport.KITE_APP_PATH.installed,
-            ]);
-          });
+          expect(proc.spawn).toHaveBeenCalledWith('open', [
+            '-a', OSXSupport.KITE_APP_PATH.installed,
+          ]);
         });
       });
     });
