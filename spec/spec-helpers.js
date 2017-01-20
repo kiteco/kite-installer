@@ -3,6 +3,7 @@ const http = require('http');
 const https = require('https');
 const proc = require('child_process');
 const OSXSupport = require('../lib/support/osx');
+const WindowsSupport = require('../lib/support/windows');
 
 function fakeStdStream() {
   let streamCallback;
@@ -131,6 +132,10 @@ function fakeKiteInstallPaths() {
           installed: '/path/to/Kite.app',
         };
         break;
+      case 'win32':
+        safePaths = WindowsSupport.KITE_EXE_PATH;
+        WindowsSupport.KITE_EXE_PATH = 'C:\\Windows\\Kite.exe';
+        break;
     }
   });
 
@@ -138,6 +143,9 @@ function fakeKiteInstallPaths() {
     switch (os.platform()) {
       case 'darwin':
         OSXSupport.KITE_APP_PATH = safePaths;
+        break;
+      case 'win32':
+        WindowsSupport.KITE_EXE_PATH = safePaths;
         break;
     }
   });
@@ -162,6 +170,9 @@ function withKiteInstalled(block) {
         case 'darwin':
           OSXSupport.KITE_APP_PATH = { installed: __filename };
           break;
+        case 'win32':
+          WindowsSupport.KITE_EXE_PATH = __filename;
+          break;
       }
     });
 
@@ -176,9 +187,16 @@ function withKiteRunning(block) {
         switch (os.platform()) {
           case 'darwin':
             fakeProcesses({
-              ls: (ps) => ps.stdout('kite'),
               '/bin/ps': (ps) => {
                 ps.stdout('Kite');
+                return 0;
+              },
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('kited.exe');
                 return 0;
               },
             });
@@ -204,6 +222,15 @@ function withKiteNotRunning(block) {
               },
               defaults: () => 0,
               open: () => 0,
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              [WindowsSupport.KITE_EXE_PATH]: () => 0,
             });
             break;
         }

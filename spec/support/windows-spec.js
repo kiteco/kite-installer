@@ -2,15 +2,15 @@
 'use strict';
 
 const os = require('os');
-// const https = require('https');
-// const proc = require('child_process');
+const https = require('https');
+const proc = require('child_process');
 const StateController = require('../../lib/state-controller');
-// const WindowsSupport = require('../../lib/support/windows');
+const WindowsSupport = require('../../lib/support/windows');
 
 const {
-  fakeKiteInstallPaths, /*fakeProcesses, fakeResponse,
+  fakeKiteInstallPaths, fakeProcesses, fakeResponse,
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
-  withFakeServer,*/
+  withFakeServer,
 } = require('../spec-helpers.js');
 
 describe('StateController - Windows Support', () => {
@@ -44,6 +44,201 @@ describe('StateController - Windows Support', () => {
 
       it('returns a rejected promise', () => {
         waitsForPromise({shouldReject: true}, () => StateController.isKiteSupported());
+      });
+    });
+  });
+
+  describe('.isKiteInstalled()', () => {
+    withKiteInstalled(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.isKiteInstalled());
+      });
+    });
+
+    describe('when there is no file at the given path', () => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({
+          shouldReject: true,
+        }, () => StateController.isKiteInstalled());
+      });
+    });
+  });
+
+  describe('.installKite()', () => {
+    describe('when every command succeeds', () => {
+      beforeEach(() => {
+        fakeProcesses({
+          [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+          del: () => 0,
+        });
+      });
+
+      it('returns a resolved promise', () => {
+        const options = {
+          onInstallStart: jasmine.createSpy(),
+          onCopy: jasmine.createSpy(),
+          onRemove: jasmine.createSpy(),
+        };
+
+        waitsForPromise(() => StateController.installKite(options));
+        runs(() => {
+          expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
+          expect(proc.spawn).toHaveBeenCalledWith('del', [
+            WindowsSupport.KITE_INSTALLER_PATH,
+          ]);
+
+          expect(options.onInstallStart).toHaveBeenCalled();
+          expect(options.onCopy).toHaveBeenCalled();
+          expect(options.onRemove).toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('when installing the app fails', () => {
+      beforeEach(() => {
+        fakeProcesses({
+          [WindowsSupport.KITE_INSTALLER_PATH]: () => 1,
+          del: () => 0,
+        });
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.installKite());
+      });
+    });
+
+    describe('when removing the downloaded archive fails', () => {
+      beforeEach(() => {
+        fakeProcesses({
+          [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+          del: () => 1,
+        });
+      });
+
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.installKite());
+      });
+    });
+  });
+
+  describe('.downloadKite()', () => {
+    withFakeServer([
+      [
+        o => /^https:\/\/alpha\.kite\.com/.test(o),
+        o => fakeResponse(303, '', {headers: {location: 'https://download.kite.com'}}),
+      ], [
+        o => /^https:\/\/download\.kite\.com/.test(o),
+        o => fakeResponse(200, 'foo'),
+      ],
+    ], () => {
+      describe('when the download succeeds', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+            del: () => 0,
+          });
+        });
+
+        describe('with the install option', () => {
+          it('returns a promise resolved after the install', () => {
+            const options = {
+              install: true,
+              onDownload: jasmine.createSpy(),
+              onInstallStart: jasmine.createSpy(),
+              onCopy: jasmine.createSpy(),
+              onRemove: jasmine.createSpy(),
+            };
+            const url = 'http://kite.com/download';
+
+            waitsForPromise(() => StateController.downloadKite(url, options));
+            runs(() => {
+              expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
+
+              expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
+              expect(proc.spawn).toHaveBeenCalledWith('del', [
+                WindowsSupport.KITE_INSTALLER_PATH,
+              ]);
+
+              expect(options.onInstallStart).toHaveBeenCalled();
+              expect(options.onCopy).toHaveBeenCalled();
+              expect(options.onRemove).toHaveBeenCalled();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('.isKiteRunning()', () => {
+    describe('when kite is not installed', () => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.isKiteRunning());
+      });
+    });
+
+    withKiteInstalled(() => {
+      describe('but not running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            'tasklist': (ps) => {
+              ps.stdout('');
+              return 0;
+            },
+          });
+        });
+
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () => StateController.isKiteRunning());
+        });
+      });
+
+      withKiteRunning(() => {
+        it('returns a resolved promise', () => {
+          waitsForPromise(() => StateController.isKiteRunning());
+        });
+      });
+    });
+  });
+
+  describe('.canRunKite()', () => {
+    describe('when kite is not installed', () => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canRunKite());
+      });
+    });
+
+    withKiteNotRunning(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.canRunKite());
+      });
+    });
+
+    withKiteRunning(() => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canRunKite());
+      });
+    });
+  });
+
+  describe('.runKite()', () => {
+    describe('when kite is not installed', () => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.runKite());
+      });
+    });
+
+    withKiteRunning(() => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.runKite());
+      });
+    });
+
+    withKiteNotRunning(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.runKite());
+        runs(() => {
+          expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_EXE_PATH);
+        });
       });
     });
   });
