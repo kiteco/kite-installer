@@ -134,9 +134,6 @@ function fakeRequestMethod(resp) {
         }
       },
       write(data) {},
-      hasHeader(header, headers) {
-        return header in headers ? header : false;
-      },
       setTimeout(timeout, callback) {
         if (resp == null) { callback({}); }
       },
