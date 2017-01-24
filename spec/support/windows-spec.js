@@ -2,6 +2,7 @@
 'use strict';
 
 const os = require('os');
+const fs = require('fs');
 const https = require('https');
 const proc = require('child_process');
 const StateController = require('../../lib/state-controller');
@@ -67,9 +68,9 @@ describe('StateController - Windows Support', () => {
   describe('.installKite()', () => {
     describe('when every command succeeds', () => {
       beforeEach(() => {
+        spyOn(fs, 'unlinkSync');
         fakeProcesses({
           [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
-          del: () => 0,
         });
       });
 
@@ -83,9 +84,7 @@ describe('StateController - Windows Support', () => {
         waitsForPromise(() => StateController.installKite(options));
         runs(() => {
           expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
-          expect(proc.spawn).toHaveBeenCalledWith('del', [
-            WindowsSupport.KITE_INSTALLER_PATH,
-          ]);
+          expect(fs.unlinkSync).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
 
           expect(options.onInstallStart).toHaveBeenCalled();
           expect(options.onCopy).toHaveBeenCalled();
@@ -98,7 +97,6 @@ describe('StateController - Windows Support', () => {
       beforeEach(() => {
         fakeProcesses({
           [WindowsSupport.KITE_INSTALLER_PATH]: () => 1,
-          del: () => 0,
         });
       });
 
@@ -109,9 +107,11 @@ describe('StateController - Windows Support', () => {
 
     describe('when removing the downloaded archive fails', () => {
       beforeEach(() => {
+        spyOn(fs, 'unlinkSync').andCallFake(() => {
+          throw new Error('unlink failed');
+        });
         fakeProcesses({
           [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
-          del: () => 1,
         });
       });
 
@@ -133,6 +133,7 @@ describe('StateController - Windows Support', () => {
     ], () => {
       describe('when the download succeeds', () => {
         beforeEach(() => {
+          spyOn(fs, 'unlinkSync');
           fakeProcesses({
             [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
             del: () => 0,
@@ -155,9 +156,7 @@ describe('StateController - Windows Support', () => {
               expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
 
               expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
-              expect(proc.spawn).toHaveBeenCalledWith('del', [
-                WindowsSupport.KITE_INSTALLER_PATH,
-              ]);
+              expect(fs.unlinkSync).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
 
               expect(options.onInstallStart).toHaveBeenCalled();
               expect(options.onCopy).toHaveBeenCalled();
