@@ -97,29 +97,44 @@ function fakeRequestMethod(resp) {
     }
   }
 
-  return (opts, callback) => ({
-    on(type, cb) {
-      switch (type) {
-        case 'error':
-          if (resp === false) { cb({}); }
-          break;
-        case 'response':
-          if (resp) { cb(typeof resp == 'function' ? resp(opts) : resp); }
-          break;
-      }
-    },
-    end() {
-      if (resp && callback) {
-        typeof resp == 'function'
-          ? callback(resp(opts))
-          : callback(resp);
-      }
-    },
-    write(data) {},
-    setTimeout(timeout, callback) {
-      if (resp == null) { callback({}); }
-    },
-  });
+  return (opts, callback) => {
+    const req = {
+      on(type, cb) {
+        switch (type) {
+          case 'error':
+            if (resp === false) { cb({}); }
+            break;
+          case 'response':
+            if (resp) {
+              const respObject = typeof resp == 'function'
+                ? resp(opts)
+                : resp;
+              respObject.req = req;
+              cb(respObject);
+            }
+            break;
+        }
+      },
+      end() {
+        if (resp && callback) {
+          const respObject = typeof resp == 'function'
+            ? resp(opts)
+            : resp;
+          respObject.req = req;
+          callback(respObject);
+        }
+      },
+      write(data) {},
+      hasHeader(header, headers) {
+        return header in headers ? header : false;
+      },
+      setTimeout(timeout, callback) {
+        if (resp == null) { callback({}); }
+      },
+    };
+
+    return req;
+  };
 }
 
 function fakeKiteInstallPaths() {
