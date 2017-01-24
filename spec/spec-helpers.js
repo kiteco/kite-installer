@@ -1,9 +1,18 @@
+
+let OSXSupport, WindowsSupport;
+
 const os = require('os');
 const http = require('http');
 const https = require('https');
 const proc = require('child_process');
-const OSXSupport = require('../lib/support/osx');
-const WindowsSupport = require('../lib/support/windows');
+
+// This ensure that the env variables required by the
+// windows support object are available even on another platform.
+if (os.platform() !== 'win32') {
+  process.env.TMP = os.tmpDir();
+  process.env.ProgramW6432 = os.tmpDir();
+  process.env.LOCALAPPDATA = os.tmpDir();
+}
 
 function fakeStdStream() {
   let streamCallback;
@@ -142,12 +151,18 @@ function fakeKiteInstallPaths() {
   beforeEach(() => {
     switch (os.platform()) {
       case 'darwin':
+        if (!OSXSupport) {
+          OSXSupport = require('../lib/support/osx');
+        }
         safePaths = OSXSupport.KITE_APP_PATH;
         OSXSupport.KITE_APP_PATH = {
           installed: '/path/to/Kite.app',
         };
         break;
       case 'win32':
+        if (!WindowsSupport) {
+          WindowsSupport = require('../lib/support/windows');
+        }
         safePaths = WindowsSupport.KITE_EXE_PATH;
         WindowsSupport.KITE_EXE_PATH = 'C:\\Windows\\Kite.exe';
         break;
@@ -183,9 +198,15 @@ function withKiteInstalled(block) {
     beforeEach(() => {
       switch (os.platform()) {
         case 'darwin':
+          if (!OSXSupport) {
+            OSXSupport = require('../lib/support/osx');
+          }
           OSXSupport.KITE_APP_PATH = { installed: __filename };
           break;
         case 'win32':
+          if (!WindowsSupport) {
+            WindowsSupport = require('../lib/support/windows');
+          }
           WindowsSupport.KITE_EXE_PATH = __filename;
           break;
       }
