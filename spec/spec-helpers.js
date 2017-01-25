@@ -1,8 +1,20 @@
-const http = require('http');
-const proc = require('child_process');
-const StateController = require('../lib/state-controller');
 
-function fakeStream() {
+let OSXSupport, WindowsSupport;
+
+const os = require('os');
+const http = require('http');
+const https = require('https');
+const proc = require('child_process');
+
+// This ensure that the env variables required by the
+// windows support object are available even on another platform.
+if (os.platform() !== 'win32') {
+  process.env.TMP = os.tmpDir();
+  process.env.ProgramW6432 = os.tmpDir();
+  process.env.LOCALAPPDATA = os.tmpDir();
+}
+
+function fakeStdStream() {
   let streamCallback;
   function stream(data) {
     streamCallback && streamCallback(data);
@@ -19,8 +31,8 @@ function fakeProcesses(processes) {
   spyOn(proc, 'spawn').andCallFake((process, options) => {
     const mock = processes[process];
     const ps = {
-      stdout: fakeStream(),
-      stderr: fakeStream(),
+      stdout: fakeStdStream(),
+      stderr: fakeStdStream(),
       on: (evt, callback) => {
         if (evt === 'close') { callback(mock ? mock(ps, options) : 1); }
       },
@@ -42,12 +54,25 @@ function fakeProcesses(processes) {
   });
 }
 
+function fakeStream() {
+  return {
+    on(evt, callback) {
+      if (evt === 'finish') {
+        callback && callback();
+      }
+    },
+  };
+}
+
 function fakeResponse(statusCode, data, props) {
   data = data || '';
   props = props || {};
 
   const resp = {
     statusCode,
+    pipe(stream) {
+      return fakeStream();
+    },
     on(event, callback) {
       switch (event) {
         case 'data':
@@ -60,7 +85,9 @@ function fakeResponse(statusCode, data, props) {
     },
   };
   for (let k in props) { resp[k] = props[k]; }
-  resp.headers = resp.headers || {};
+  resp.headers = resp.headers || {
+    'content-length': data.length,
+  };
   return resp;
 }
 
@@ -79,40 +106,75 @@ function fakeRequestMethod(resp) {
     }
   }
 
-  return (opts, callback) => ({
-    on(type, cb) {
-      switch (type) {
-        case 'error':
-          if (resp === false) { cb({}); }
-          break;
-        case 'response':
-          if (resp) { cb(typeof resp == 'function' ? resp(opts) : resp); }
-          break;
-      }
-    },
-    end() {
-      if (resp) {
-        typeof resp == 'function'
-          ? callback(resp(opts))
-          : callback(resp);
-      }
-    },
-    write(data) {},
-    setTimeout(timeout, callback) {
-      if (resp == null) { callback({}); }
-    },
-  });
+  return (opts, callback) => {
+    const req = {
+      on(type, cb) {
+        switch (type) {
+          case 'error':
+            if (resp === false) { cb({}); }
+            break;
+          case 'response':
+            if (resp) {
+              const respObject = typeof resp == 'function'
+                ? resp(opts)
+                : resp;
+              respObject.req = req;
+              cb(respObject);
+            }
+            break;
+        }
+      },
+      end() {
+        if (resp && callback) {
+          const respObject = typeof resp == 'function'
+            ? resp(opts)
+            : resp;
+          respObject.req = req;
+          callback(respObject);
+        }
+      },
+      write(data) {},
+      setTimeout(timeout, callback) {
+        if (resp == null) { callback({}); }
+      },
+    };
+
+    return req;
+  };
 }
 
 function fakeKiteInstallPaths() {
   let safePaths;
   beforeEach(() => {
-    safePaths = StateController.KITE_APP_PATH;
-    StateController.KITE_APP_PATH = { installed: '/path/to/Kite.app' };
+    switch (os.platform()) {
+      case 'darwin':
+        if (!OSXSupport) {
+          OSXSupport = require('../lib/support/osx');
+        }
+        safePaths = OSXSupport.KITE_APP_PATH;
+        OSXSupport.KITE_APP_PATH = {
+          installed: '/path/to/Kite.app',
+        };
+        break;
+      case 'win32':
+        if (!WindowsSupport) {
+          WindowsSupport = require('../lib/support/windows');
+        }
+        safePaths = WindowsSupport.KITE_EXE_PATH;
+        WindowsSupport.KITE_EXE_PATH = 'C:\\Windows\\Kite.exe';
+        break;
+    }
   });
 
   afterEach(() => {
-    StateController.KITE_APP_PATH = safePaths;
+    switch (os.platform()) {
+      case 'darwin':
+        OSXSupport.KITE_APP_PATH = safePaths;
+        break;
+      case 'win32':
+        WindowsSupport.KITE_EXE_PATH = safePaths;
+        break;
+    }
   });
 }
 
@@ -131,7 +193,20 @@ function withKiteInstalled(block) {
     fakeKiteInstallPaths();
 
     beforeEach(() => {
-      StateController.KITE_APP_PATH = { installed: __filename };
+      switch (os.platform()) {
+        case 'darwin':
+          if (!OSXSupport) {
+            OSXSupport = require('../lib/support/osx');
+          }
+          OSXSupport.KITE_APP_PATH = { installed: __filename };
+          break;
+        case 'win32':
+          if (!WindowsSupport) {
+            WindowsSupport = require('../lib/support/windows');
+          }
+          WindowsSupport.KITE_EXE_PATH = __filename;
+          break;
+      }
     });
 
     block();
@@ -142,13 +217,24 @@ function withKiteRunning(block) {
   withKiteInstalled(() => {
     describe(', running', () => {
       beforeEach(() => {
-        fakeProcesses({
-          ls: (ps) => ps.stdout('kite'),
-          '/bin/ps': (ps) => {
-            ps.stdout('Kite');
-            return 0;
-          },
-        });
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              '/bin/ps': (ps) => {
+                ps.stdout('Kite');
+                return 0;
+              },
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('kited.exe');
+                return 0;
+              },
+            });
+            break;
+        }
       });
 
       block();
@@ -160,14 +246,27 @@ function withKiteNotRunning(block) {
   withKiteInstalled(() => {
     describe(', not running', () => {
       beforeEach(() => {
-        fakeProcesses({
-          '/bin/ps': (ps) => {
-            ps.stdout('');
-            return 0;
-          },
-          defaults: () => 0,
-          open: () => 0,
-        });
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              '/bin/ps': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              defaults: () => 0,
+              open: () => 0,
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              [WindowsSupport.KITE_EXE_PATH]: () => 0,
+            });
+            break;
+        }
       });
 
       block();
@@ -187,6 +286,7 @@ function withFakeServer(routes, block) {
       this.routes = routes.concat();
       const router = fakeRouter(this.routes);
       spyOn(http, 'request').andCallFake(fakeRequestMethod(router));
+      spyOn(https, 'request').andCallFake(fakeRequestMethod(router));
     });
 
     block();
