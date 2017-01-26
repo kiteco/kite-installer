@@ -13,5 +13,5 @@ FOR /F "usebackq skip=2 tokens=1-2*" %%A IN (`REG QUERY %KEY_NAME% /v %VALUE_NAM
 if defined ValueName (
     @echo %ValueValue%
 ) else (
-    @echo not found %KEY_NAME%
+    @echo not found
 )
