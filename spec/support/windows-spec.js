@@ -18,7 +18,7 @@ describe('StateController - Windows Support', () => {
   beforeEach(() => {
     spyOn(os, 'platform').andReturn('win32');
     spyOn(os, 'release').andReturn('6.1.3'); // NT6.1 = Windows 7
-    spyOn(os, 'arch').andReturn('x64'); // NT6.1 = Windows 7
+    spyOn(WindowsSupport, 'arch').andReturn('64bit'); // NT6.1 = Windows 7
   });
 
   fakeKiteInstallPaths();
@@ -40,7 +40,7 @@ describe('StateController - Windows Support', () => {
 
     describe('when the arch is not 64bit', () => {
       beforeEach(() => {
-        os.arch.andReturn('x86');
+        WindowsSupport.arch.andReturn('32bit');
       });
 
       it('returns a rejected promise', () => {
