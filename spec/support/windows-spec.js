@@ -127,7 +127,7 @@ describe('StateController - Windows Support', () => {
         o => o === 'https://s3-us-west-1.amazonaws.com/kite-downloads/windows/KiteSetup.exe',
         o => fakeResponse(303, '', {headers: {location: 'https://download.kite.com'}}),
       ], [
-        o => /^https:\/\/download\.kite\.com/.test(o),
+        o => o === 'https://download.kite.com',
         o => fakeResponse(200, 'foo'),
       ],
     ], () => {
@@ -227,8 +227,8 @@ describe('StateController - Windows Support', () => {
     });
 
     withKiteRunning(() => {
-      it('returns a rejected function', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.runKite());
+      it('returns a resolved function', () => {
+        waitsForPromise(() => StateController.runKite());
       });
     });
 

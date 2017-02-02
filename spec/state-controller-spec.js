@@ -123,7 +123,8 @@ describe('StateController', () => {
   describe('.downloadKite()', () => {
     withFakeServer([
       [
-        o => /^https:\/\/alpha\.kite\.com/.test(o),
+        o => /^https:\/\/alpha\.kite\.com/.test(o) ||
+             o === 'https://s3-us-west-1.amazonaws.com/kite-downloads/windows/KiteSetup.exe',
         o => fakeResponse(303, '', {headers: {location: 'https://download.kite.com'}}),
       ], [
         o => /^https:\/\/download\.kite\.com/.test(o),

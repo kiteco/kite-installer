@@ -281,8 +281,8 @@ describe('StateController - OSX Support', () => {
     });
 
     withKiteRunning(() => {
-      it('returns a rejected function', () => {
-        waitsForPromise({shouldReject: true}, () => StateController.runKite());
+      it('returns a resolved function', () => {
+        waitsForPromise(() => StateController.runKite());
       });
     });
 
