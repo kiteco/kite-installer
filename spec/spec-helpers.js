@@ -52,6 +52,23 @@ function fakeProcesses(processes) {
 
     return ps;
   });
+
+  if (processes.exec) {
+    spyOn(proc, 'exec').andCallFake((process, options, callback) => {
+      const mock = processes.exec[process];
+
+      let stdout, stderr;
+
+      const status = mock ? mock({
+        stdout(data) { stdout = data; },
+        stderr(data) { stderr = data; },
+      }, options) : 1;
+
+      status === 0
+        ? callback(null, stdout)
+        : callback({}, stdout, stderr);
+    });
+  }
 }
 
 function fakeStream() {

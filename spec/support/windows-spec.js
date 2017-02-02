@@ -70,7 +70,9 @@ describe('StateController - Windows Support', () => {
       beforeEach(() => {
         spyOn(fs, 'unlinkSync');
         fakeProcesses({
-          [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+          exec: {
+            [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+          },
         });
       });
 
@@ -83,7 +85,7 @@ describe('StateController - Windows Support', () => {
 
         waitsForPromise(() => StateController.installKite(options));
         runs(() => {
-          expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
+          expect(proc.exec).toHaveBeenCalled();
           expect(fs.unlinkSync).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
 
           expect(options.onInstallStart).toHaveBeenCalled();
@@ -96,7 +98,9 @@ describe('StateController - Windows Support', () => {
     describe('when installing the app fails', () => {
       beforeEach(() => {
         fakeProcesses({
-          [WindowsSupport.KITE_INSTALLER_PATH]: () => 1,
+          exec: {
+            [WindowsSupport.KITE_INSTALLER_PATH]: () => 1,
+          },
         });
       });
 
@@ -111,7 +115,9 @@ describe('StateController - Windows Support', () => {
           throw new Error('unlink failed');
         });
         fakeProcesses({
-          [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+          exec: {
+            [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+          },
         });
       });
 
@@ -135,7 +141,9 @@ describe('StateController - Windows Support', () => {
         beforeEach(() => {
           spyOn(fs, 'unlinkSync');
           fakeProcesses({
-            [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+            exec: {
+              [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+            },
             del: () => 0,
           });
         });
@@ -155,7 +163,7 @@ describe('StateController - Windows Support', () => {
             runs(() => {
               expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
 
-              expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
+              expect(proc.exec).toHaveBeenCalled();
               expect(fs.unlinkSync).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);
 
               expect(options.onInstallStart).toHaveBeenCalled();
