@@ -351,6 +351,13 @@ describe('StateController', () => {
     });
 
     withKiteWhitelistedPaths(['/path/to/dir'], () => {
+      describe('called without a path', () => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isPathWhitelisted());
+        });
+      });
+
       describe('passing a path not in the whitelist', () => {
         it('returns a rejected promise', () => {
           waitsForPromise({shouldReject: true}, () =>
