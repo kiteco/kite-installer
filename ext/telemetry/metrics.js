@@ -3,6 +3,7 @@
 var os = require('os');
 const mixpanel = require('mixpanel');
 
+const localconfig = require('./localconfig.js');
 const kitePkg = require('../../package.json');
 const DEBUG = require('../../lib/constants');
 
@@ -18,13 +19,19 @@ const EDITOR_UUID = localStorage.getItem('metrics.userId');
 
 // Generate a unique ID for this user and save it for future use.
 function distinctID() {
-  localStorage.getItem('metrics.userId');
+  var id = localconfig.get('distinctID');
+  if (id === undefined) {
+    // use the atom UUID
+    id = EDITOR_UUID || crypto.randomBytes(32).toString('hex');
+    localconfig.set('distinctID', id);
+  }
+  return id;
 }
 
 // Send an event to mixpanel
 function track(eventName, properties) {
   var eventData = {
-    distinct_id: EDITOR_UUID,
+    distinct_id: distinctID(),
     editor_uuid: EDITOR_UUID,
     editor: 'atom',
     atom_version: atom.getVersion(),
