@@ -1,8 +1,7 @@
-@echo off
+@echo OFF
 setlocal EnableDelayedExpansion
 
-if exist "%SYSTEMDRIVE%\Program Files (x86)" (
-    @echo 64bit
-) else (
-    @echo 32bit
-)
+reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
+
+if %OS%==32BIT echo 32bit
+if %OS%==64BIT echo 64bit
