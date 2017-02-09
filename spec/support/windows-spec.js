@@ -130,7 +130,7 @@ describe('StateController - Windows Support', () => {
   describe('.downloadKite()', () => {
     withFakeServer([
       [
-        o => o === 'https://s3-us-west-1.amazonaws.com/kite-downloads/windows/KiteSetup.exe',
+        o => o === 'http://kite.com/download',
         o => fakeResponse(303, '', {headers: {location: 'https://download.kite.com'}}),
       ], [
         o => o === 'https://download.kite.com',
@@ -161,7 +161,7 @@ describe('StateController - Windows Support', () => {
 
             waitsForPromise(() => StateController.downloadKite(url, options));
             runs(() => {
-              expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
+              expect(https.request).toHaveBeenCalledWith('http://kite.com/download');
 
               expect(proc.exec).toHaveBeenCalled();
               expect(fs.unlinkSync).toHaveBeenCalledWith(WindowsSupport.KITE_INSTALLER_PATH);

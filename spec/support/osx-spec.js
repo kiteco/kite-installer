@@ -160,7 +160,7 @@ describe('StateController - OSX Support', () => {
   describe('.downloadKite()', () => {
     withFakeServer([
       [
-        o => /^https:\/\/alpha\.kite\.com/.test(o),
+        o => /^http:\/\/kite\.com/.test(o),
         o => fakeResponse(303, '', {headers: {location: 'https://download.kite.com'}}),
       ], [
         o => /^https:\/\/download\.kite\.com/.test(o),
@@ -191,7 +191,7 @@ describe('StateController - OSX Support', () => {
 
             waitsForPromise(() => StateController.downloadKite(url, options));
             runs(() => {
-              expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
+              expect(https.request).toHaveBeenCalledWith('http://kite.com/download');
               expect(proc.spawn).toHaveBeenCalledWith('hdiutil', [
                 'attach', '-nobrowse',
                 OSXSupport.KITE_DMG_PATH,

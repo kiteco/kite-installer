@@ -123,7 +123,7 @@ describe('StateController', () => {
   describe('.downloadKite()', () => {
     withFakeServer([
       [
-        o => /^https:\/\/alpha\.kite\.com/.test(o) ||
+        o => /^http:\/\/kite\.com/.test(o) ||
              o === 'https://s3-us-west-1.amazonaws.com/kite-downloads/windows/KiteSetup.exe',
         o => fakeResponse(303, '', {headers: {location: 'https://download.kite.com'}}),
       ], [
@@ -142,7 +142,7 @@ describe('StateController', () => {
 
             waitsForPromise(() => StateController.downloadKite(url, options));
             runs(() => {
-              expect(https.request).toHaveBeenCalledWith('https://download.kite.com');
+              expect(https.request).toHaveBeenCalledWith('http://kite.com/download');
               expect(options.onDownload).toHaveBeenCalled();
 
               expect(StateController.installKite).not.toHaveBeenCalled();
