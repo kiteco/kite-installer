@@ -3,8 +3,9 @@
 var os = require('os');
 const mixpanel = require('mixpanel');
 
-const localconfig = require('./localconfig.js');
+const localconfig = require('./localconfig');
 const kitePkg = require('../../package.json');
+const Logger = require('../../lib/logger');
 const {DEBUG} = require('../../lib/constants');
 
 const MIXPANEL_TOKEN = 'fb6b9b336122a8b29c60f4c28dab6d03';
@@ -41,10 +42,9 @@ function track(eventName, properties) {
   for (var key in properties || {}) {
     eventData[key] = properties[key];
   }
+  Logger.verbose('tracking', eventName, eventData);
   if (!DEBUG) {
     client.track(eventName, eventData);
-  } else {
-    console.log(`tracking ${ eventName }:`, eventData);
   }
 }
 
