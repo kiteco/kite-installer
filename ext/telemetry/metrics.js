@@ -42,7 +42,7 @@ function track(eventName, properties) {
   for (var key in properties || {}) {
     eventData[key] = properties[key];
   }
-  Logger.debug('tracking', eventName, eventData);
+  Logger.debug('mixpanel:', eventName, eventData);
   if (!DEBUG) {
     client.track(eventName, eventData);
   }
