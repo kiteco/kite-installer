@@ -42,7 +42,7 @@ function track(eventName, properties) {
   for (var key in properties || {}) {
     eventData[key] = properties[key];
   }
-  Logger.verbose('tracking', eventName, eventData);
+  Logger.debug('tracking', eventName, eventData);
   if (!DEBUG) {
     client.track(eventName, eventData);
   }
