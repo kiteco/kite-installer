@@ -1,6 +1,7 @@
 'use strict';
 
 var os = require('os');
+const crypto = require('crypto');
 const mixpanel = require('mixpanel');
 
 const localconfig = require('./localconfig');
