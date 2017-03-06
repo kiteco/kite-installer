@@ -419,7 +419,7 @@ describe('StateController', () => {
         describe('and the request succeeds', () => {
           withRoutes([[
             o =>
-              /^\/clientapi\/settings\/inclusions/.test(o.path) &&
+              /^\/clientapi\/permissions\/whitelist/.test(o.path) &&
               o.method === 'PUT',
             o => fakeResponse(200),
           ]]);
@@ -433,7 +433,7 @@ describe('StateController', () => {
         describe('and the request fails', () => {
           withRoutes([[
             o =>
-              /^\/clientapi\/settings\/inclusions/.test(o.path) &&
+              /^\/clientapi\/permissions\/whitelist/.test(o.path) &&
               o.method === 'PUT',
             o => fakeResponse(401),
           ]]);
