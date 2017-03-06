@@ -446,4 +446,52 @@ describe('StateController', () => {
       });
     });
   });
+
+  describe('.blacklistPath()', () => {
+    withKiteNotAuthenticated(() => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.blacklistPath('/path/to/dir'));
+      });
+    });
+
+    withKiteWhitelistedPaths(['/path/to/dir'], () => {
+      describe('passing a path in the whitelist', () => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.blacklistPath('/path/to/dir'));
+        });
+      });
+
+      describe('passing a path not in the whitelist', () => {
+        describe('and the request succeeds', () => {
+          withRoutes([[
+            o =>
+              /^\/clientapi\/permissions\/blacklist/.test(o.path) &&
+              o.method === 'PUT',
+            o => fakeResponse(200),
+          ]]);
+
+          it('returns a resolving promise', () => {
+            waitsForPromise(() =>
+            StateController.blacklistPath('/path/to/other/dir'));
+          });
+        });
+
+        describe('and the request fails', () => {
+          withRoutes([[
+            o =>
+              /^\/clientapi\/settings\/inclusions/.test(o.path) &&
+              o.method === 'PUT',
+            o => fakeResponse(401),
+          ]]);
+
+          it('returns a rejected promise', () => {
+            waitsForPromise({shouldReject: true}, () =>
+            StateController.blacklistPath('/path/to/other/dir'));
+          });
+        });
+      });
+    });
+  });
 });
