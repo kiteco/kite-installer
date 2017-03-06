@@ -373,11 +373,26 @@ function withKiteWhitelistedPaths(paths, block) {
     paths = [];
   }
 
+  const authRe = /^\/clientapi\/permissions\/authorized\?filename=(.+)&/;
+  const projectDirRe = /^\/clientapi\/projectdir\?filename=(.+)&/;
+  const whitelisted = match => paths.some(p => match.indexOf(p) !== -1);
+
   const routes = [
     [
-      o =>
-        /^\/clientapi\/settings\/inclusions/.test(o.path) && o.method === 'GET',
-      o => fakeResponse(200, JSON.stringify(paths)),
+      o => {
+        const match = authRe.exec(o.path);
+        return match && whitelisted(match[1]);
+      },
+      o => fakeResponse(200),
+    ], [
+      o => {
+        const match = authRe.exec(o.path);
+        return match && !whitelisted(match[1]);
+      },
+      o => fakeResponse(403),
+    ], [
+      o => projectDirRe.test(o.path),
+      o => fakeResponse(200, os.homedir()),
     ],
   ];
 
@@ -386,6 +401,37 @@ function withKiteWhitelistedPaths(paths, block) {
       block();
     });
   });
+}
+
+function withKiteIgnoredPaths(paths) {
+  const authRe = /^\/clientapi\/permissions\/authorized\?filename=(.+)&/;
+  const ignored = match => paths.some(p => match.indexOf(p) !== -1);
+
+  withKiteBlacklistedPaths(paths);
+  withRoutes([
+    [
+      o => {
+        const match = authRe.exec(o.path);
+        return o.method === 'GET' && match && ignored(match[1]);
+      },
+      o => fakeResponse(403),
+    ],
+  ]);
+}
+
+function withKiteBlacklistedPaths(paths) {
+  const projectDirRe = /^\/clientapi\/projectdir\?filename=(.*)&/;
+  const blacklisted = path => paths.some(p => path.indexOf(p) !== -1);
+
+  withRoutes([
+    [
+      o => {
+        const match = projectDirRe.exec(o.path);
+        return o.method === 'GET' && match && blacklisted(match[1]);
+      },
+      o => fakeResponse(403),
+    ],
+  ]);
 }
 
 function withRoutes(routes) {
@@ -400,6 +446,6 @@ module.exports = {
   withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteAuthenticated, withKiteNotAuthenticated,
-  withKiteWhitelistedPaths,
+  withKiteWhitelistedPaths, withKiteIgnoredPaths, withKiteBlacklistedPaths,
   withFakeServer, withRoutes,
 };
