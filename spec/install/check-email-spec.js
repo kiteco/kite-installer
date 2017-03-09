@@ -89,4 +89,19 @@ describe('CheckEmail', () => {
       });
     });
   });
+
+  describe('when a server error occurs', () => {
+    withFakeServer([
+      [
+        o => o.method === 'POST' && o.path === '/api/account/check-email',
+        o => fakeResponse(500),
+      ],
+    ], () => {
+      it('rejects the promise', () => {
+        waitsForPromise({
+          shouldReject: true,
+        }, () => step.start({email: 'some.email@company.com'}));
+      });
+    });
+  });
 });
