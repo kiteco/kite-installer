@@ -1,19 +1,19 @@
 'use strict';
 
-const CreateAccount = require('../../lib/install/create-account');
-const CreateAccountElement = require('../../lib/elements/atom/create-account-element');
+const InputEmail = require('../../lib/install/input-email');
+const InputEmailElement = require('../../lib/elements/atom/input-email-element');
 
-describe('CreateAccount', () => {
+describe('InputEmail', () => {
   let step, view, promise;
 
   beforeEach(() => {
-    view = new CreateAccountElement();
-    step = new CreateAccount(view);
+    view = new InputEmailElement();
+    step = new InputEmail(view);
   });
 
   describe('when started with an email', () => {
     beforeEach(() => {
-      promise = step.start('some.email@company.com');
+      promise = step.start({email: 'some.email@company.com'});
     });
 
     it('fills the input with the provided email', () => {
