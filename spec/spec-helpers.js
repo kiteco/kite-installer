@@ -23,6 +23,11 @@ beforeEach(() => {
   jasmine.useRealClock();
 });
 
+function sleep(duration) {
+  const t = new Date();
+  waitsFor(`${duration}ms`, () => { return new Date() - t > duration; });
+}
+
 function fakeStdStream() {
   let streamCallback;
   function stream(data) {
@@ -596,4 +601,5 @@ module.exports = {
   withKiteAuthenticated, withKiteNotAuthenticated,
   withKiteWhitelistedPaths, withKiteIgnoredPaths, withKiteBlacklistedPaths,
   withFakeServer, withRoutes,
+  sleep,
 };
