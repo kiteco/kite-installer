@@ -5,6 +5,8 @@ const os = require('os');
 const http = require('http');
 const https = require('https');
 const proc = require('child_process');
+const metrics = require('../ext/telemetry/metrics');
+const AccountManager = require('../lib/account-manager');
 
 // This ensure that the env variables required by the
 // windows support object are available even on another platform.
@@ -20,6 +22,8 @@ const NodeClient = require('../lib/node-client');
 StateController.client = new NodeClient('127.0.0.1', 46624, '', false);
 
 beforeEach(() => {
+  spyOn(metrics, 'track').andCallFake(() => {});
+  spyOn(metrics.Tracker, 'trackEvent').andCallFake(() => {});
   jasmine.useRealClock();
 });
 
@@ -592,6 +596,12 @@ function withRoutes(routes) {
   });
 }
 
+function withAccountManager() {
+  beforeEach(() => {
+    AccountManager.initClient('localhost', -1);
+  });
+}
+
 module.exports = {
   fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths,
   withKiteInstalled, withKiteEnterpriseInstalled, withBothKiteInstalled,
@@ -600,6 +610,6 @@ module.exports = {
   withKiteReachable, withKiteNotReachable,
   withKiteAuthenticated, withKiteNotAuthenticated,
   withKiteWhitelistedPaths, withKiteIgnoredPaths, withKiteBlacklistedPaths,
-  withFakeServer, withRoutes,
+  withFakeServer, withRoutes, withAccountManager,
   sleep,
 };
