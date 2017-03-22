@@ -244,7 +244,7 @@ describe('StateController - Windows Support', () => {
       it('returns a resolved promise', () => {
         waitsForPromise(() => StateController.runKite());
         runs(() => {
-          expect(proc.spawn).toHaveBeenCalledWith(WindowsSupport.KITE_EXE_PATH, {detached: true});
+          expect(proc.spawn.mostRecentCall.args[0]).toEqual(WindowsSupport.KITE_EXE_PATH);
         });
       });
     });
