@@ -14,6 +14,10 @@ if (os.platform() !== 'win32') {
   process.env.LOCALAPPDATA = os.tmpDir();
 }
 
+beforeEach(() => {
+  jasmine.useRealClock();
+});
+
 function fakeStdStream() {
   let streamCallback;
   function stream(data) {

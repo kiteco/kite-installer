@@ -188,7 +188,6 @@ describe('StateController', () => {
   describe('.waitForKite()', () => {
     withKiteRunning(() => {
       beforeEach(() => {
-        jasmine.useRealClock();
         spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
       });
 
@@ -199,7 +198,6 @@ describe('StateController', () => {
 
     withKiteNotRunning(() => {
       beforeEach(() => {
-        jasmine.useRealClock();
         spyOn(StateController, 'isKiteReachable').andCallThrough();
       });
 
