@@ -52,12 +52,15 @@ function track(eventName, properties) {
 var Tracker = {
   name: null,
   props: null,
+  enabled: true,
   trackEvent: function(eventName, extras) {
-    extras = extras || {};
-    for (var key in this.props) {
-      extras[key] = this.props[key];
+    if (this.enabled) {
+      extras = extras || {};
+      for (var key in this.props) {
+        extras[key] = this.props[key];
+      }
+      track(`${ this.name } - ${ eventName }`, extras);
     }
-    track(`${ this.name } - ${ eventName }`, extras);
   },
 };
 
