@@ -11,6 +11,10 @@ describe('GetEmail', () => {
   });
 
   describe('.start()', () => {
+    afterEach(() => {
+      fs.readFileSync.andCallThrough();
+    });
+
     describe('when the user has a .gitconfig file', () => {
       beforeEach(() => {
         spyOn(fs, 'readFileSync').andReturn(`[user]
