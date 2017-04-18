@@ -23,6 +23,7 @@
     "eslint-plugin-jasmine": "^2.2.0",
     "eslint-plugin-prefer-object-spread": "^1.1.0",
     "eslint-plugin-react": "^6.8.0",
-    "fbjs": "^0.8.6"
+    "fbjs": "^0.8.6",
+    "opn": "^4.0.0"
   }
 }
