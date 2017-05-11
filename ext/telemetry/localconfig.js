@@ -1,22 +1,23 @@
 'use strict';
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
-const configPath = path.join(path.dirname(atom.config.getUserConfigPath()), 'kite-config.json');
 const Logger = require('../../lib/logger');
+const configPath = typeof atom !== 'undefined'
+  ? path.join(path.dirname(atom.config.getUserConfigPath()), 'kite-config.json')
+  : path.join(os.homedir(), '.kite', 'kite-config.json');
 
 var config = null;
 
-(function() {
-  try {
-    Logger.verbose(`initializing localconfig from ${ configPath }...`);
-    var str = fs.readFileSync(configPath, {encoding: 'utf8'});
-    config = JSON.parse(str);
-  } catch (err) {
-    config = {};
-  }
-})();
+try {
+  Logger.verbose(`initializing localconfig from ${ configPath }...`);
+  var str = fs.readFileSync(configPath, {encoding: 'utf8'});
+  config = JSON.parse(str);
+} catch (err) {
+  config = {};
+}
 
 function persist() {
   var str = JSON.stringify(config, null, 2); // serialize with whitespace for human readability

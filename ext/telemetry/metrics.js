@@ -17,7 +17,9 @@ const client = mixpanel.init(MIXPANEL_TOKEN, {
   protocol: 'https',
 });
 
-const EDITOR_UUID = localStorage.getItem('metrics.userId');
+const EDITOR_UUID = typeof localStorage !== 'undefined'
+  ? localStorage.getItem('metrics.userId')
+  : undefined;
 
 // Generate a unique ID for this user and save it for future use.
 function distinctID() {
