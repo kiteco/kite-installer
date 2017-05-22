@@ -44,7 +44,7 @@ describe('StateController - OSX Support', () => {
       });
     });
 
-    describe('when there is no file at the given path', () => {
+    describe('when kite is not installed', () => {
       it('returns a rejected promise', () => {
         waitsForPromise({
           shouldReject: true,

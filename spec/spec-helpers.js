@@ -1,5 +1,5 @@
 
-let OSXSupport, WindowsSupport;
+let WindowsSupport;
 
 const os = require('os');
 const http = require('http');
@@ -31,35 +31,50 @@ function fakeStdStream() {
   return stream;
 }
 
+const merge = (a, b) => {
+  const c = {};
+  for (const k in a) { c[k] = a[k]; }
+  for (const k in b) { c[k] = b[k]; }
+  return c;
+};
+
+let _processes;
 function fakeProcesses(processes) {
-  spyOn(proc, 'spawn').andCallFake((process, options) => {
-    const mock = processes[process];
-    const ps = {
-      stdout: fakeStdStream(),
-      stderr: fakeStdStream(),
-      on: (evt, callback) => {
-        if (evt === 'close') { callback(mock ? mock(ps, options) : 1); }
-      },
-    };
+  if (proc.spawn.isSpy) {
+    _processes = merge(_processes, processes);
+  } else {
+    spyOn(proc, 'spawn').andCallFake((process, options) => {
+      const mock = _processes[process];
+      const ps = {
+        stdout: fakeStdStream(),
+        stderr: fakeStdStream(),
+        on: (evt, callback) => {
+          if (evt === 'close') { callback(mock ? mock(ps, options) : 1); }
+        },
+      };
 
-    return ps;
-  });
+      return ps;
+    });
 
-  spyOn(proc, 'spawnSync').andCallFake((process, options) => {
-    const mock = processes[process];
+    spyOn(proc, 'spawnSync').andCallFake((process, options) => {
+      const mock = _processes[process];
 
-    const ps = {};
-    ps.status = mock ? mock({
-      stdout(data) { ps.stdout = data; },
-      stderr(data) { ps.stderr = data; },
-    }, options) : 1;
+      const ps = {};
+      ps.status = mock ? mock({
+        stdout(data) { ps.stdout = data; },
+        stderr(data) { ps.stderr = data; },
+      }, options) : 1;
 
-    return ps;
-  });
+      return ps;
+    });
 
-  if (processes.exec) {
+
+    _processes = processes;
+  }
+
+  if (processes.exec && !proc.exec.isSpy) {
     spyOn(proc, 'exec').andCallFake((process, options, callback) => {
-      const mock = processes.exec[process];
+      const mock = _processes.exec[process];
 
       let stdout, stderr;
 
@@ -69,8 +84,8 @@ function fakeProcesses(processes) {
       }, options) : 1;
 
       status === 0
-        ? callback(null, stdout)
-        : callback({}, stdout, stderr);
+      ? callback(null, stdout)
+      : callback({}, stdout, stderr);
     });
   }
 }
@@ -169,13 +184,12 @@ function fakeKiteInstallPaths() {
   beforeEach(() => {
     switch (os.platform()) {
       case 'darwin':
-        if (!OSXSupport) {
-          OSXSupport = require('../lib/support/osx');
-        }
-        safePaths = OSXSupport.KITE_APP_PATH;
-        OSXSupport.KITE_APP_PATH = {
-          installed: '/path/to/Kite.app',
-        };
+        fakeProcesses({
+          'mdfind': (ps) => {
+            ps.stdout('');
+            return 0;
+          },
+        });
         break;
       case 'win32':
         if (!WindowsSupport) {
@@ -189,9 +203,6 @@ function fakeKiteInstallPaths() {
 
   afterEach(() => {
     switch (os.platform()) {
-      case 'darwin':
-        OSXSupport.KITE_APP_PATH = safePaths;
-        break;
       case 'win32':
         WindowsSupport.KITE_EXE_PATH = safePaths;
         break;
@@ -216,10 +227,12 @@ function withKiteInstalled(block) {
     beforeEach(() => {
       switch (os.platform()) {
         case 'darwin':
-          if (!OSXSupport) {
-            OSXSupport = require('../lib/support/osx');
-          }
-          OSXSupport.KITE_APP_PATH = { installed: __filename };
+          fakeProcesses({
+            'mdfind': (ps) => {
+              ps.stdout('/Applications/Kite.app');
+              return 0;
+            },
+          });
           break;
         case 'win32':
           if (!WindowsSupport) {
