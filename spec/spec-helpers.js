@@ -228,8 +228,71 @@ function withKiteInstalled(block) {
       switch (os.platform()) {
         case 'darwin':
           fakeProcesses({
-            'mdfind': (ps) => {
-              ps.stdout('/Applications/Kite.app');
+            'mdfind': (ps, args) => {
+              const [, key] = args[0].split(/\s=\s/);
+              key === '"com.kite.Kite"'
+                ? ps.stdout('/Applications/Kite.app')
+                : ps.stdout('');
+              return 0;
+            },
+          });
+          break;
+        case 'win32':
+          if (!WindowsSupport) {
+            WindowsSupport = require('../lib/support/windows');
+          }
+          WindowsSupport.KITE_EXE_PATH = __filename;
+          break;
+      }
+    });
+
+    block();
+  });
+}
+
+function withKiteEntrepriseInstalled(block) {
+  describe('with kite entreprise installed', () => {
+    fakeKiteInstallPaths();
+
+    beforeEach(() => {
+      switch (os.platform()) {
+        case 'darwin':
+          fakeProcesses({
+            'mdfind': (ps, args) => {
+              const [, key] = args[0].split(/\s=\s/);
+              key === '"entreprise.kite.Kite"'
+                ? ps.stdout('/Applications/KiteEntreprise.app')
+                : ps.stdout('');
+              return 0;
+            },
+          });
+          break;
+        case 'win32':
+          if (!WindowsSupport) {
+            WindowsSupport = require('../lib/support/windows');
+          }
+          WindowsSupport.KITE_EXE_PATH = __filename;
+          break;
+      }
+    });
+
+    block();
+  });
+}
+
+function withBothKiteInstalled(block) {
+  describe('with both kite and kite entreprise installed', () => {
+    fakeKiteInstallPaths();
+
+    beforeEach(() => {
+      switch (os.platform()) {
+        case 'darwin':
+          fakeProcesses({
+            'mdfind': (ps, args) => {
+              const [, key] = args[0].split(/\s=\s/);
+              key === '"entreprise.kite.Kite"'
+                ? ps.stdout('/Applications/KiteEntreprise.app')
+                : ps.stdout('/Applications/Kite.app');
               return 0;
             },
           });
@@ -459,7 +522,7 @@ function withRoutes(routes) {
 
 module.exports = {
   fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths,
-  withKiteInstalled,
+  withKiteInstalled, withKiteEntrepriseInstalled, withBothKiteInstalled,
   withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteAuthenticated, withKiteNotAuthenticated,

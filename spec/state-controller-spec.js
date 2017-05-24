@@ -62,24 +62,6 @@ describe('StateController', () => {
       });
     });
 
-    // withKiteWhitelistedPaths(['/path/to/dir'], () => {
-    //   describe('and a path not in the whitelist', () => {
-    //     it('returns a promise resolved with the corresponding state', () => {
-    //       waitsForPromise(() => StateController.handleState('/path/to/other/dir').then(state => {
-    //         expect(state).toEqual(StateController.STATES.AUTHENTICATED);
-    //       }));
-    //     });
-    //   });
-    //
-    //   describe('and a path in the whitelist', () => {
-    //     it('returns a promise resolved with the corresponding state', () => {
-    //       waitsForPromise(() => StateController.handleState('/path/to/dir').then(state => {
-    //         expect(state).toEqual(StateController.STATES.WHITELISTED);
-    //       }));
-    //     });
-    //   });
-    // });
-
     withKiteReachable([
       [o => o.path === '/api/account/authenticated', o => fakeResponse(500)],
     ], () => {
