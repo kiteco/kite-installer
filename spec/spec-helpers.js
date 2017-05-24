@@ -370,6 +370,68 @@ function withKiteNotRunning(block) {
     });
   });
 }
+
+function withKiteEntrepriseRunning(block) {
+  withKiteEntrepriseInstalled(() => {
+    describe(', running', () => {
+      beforeEach(() => {
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              '/bin/ps': (ps) => {
+                ps.stdout('KiteEntreprise');
+                return 0;
+              },
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('kited.exe');
+                return 0;
+              },
+            });
+            break;
+        }
+      });
+
+      block();
+    });
+  });
+}
+
+function withKiteEntrepriseNotRunning(block) {
+  withKiteEntrepriseInstalled(() => {
+    describe(', not running', () => {
+      beforeEach(() => {
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              '/bin/ps': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              defaults: () => 0,
+              open: () => 0,
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              [WindowsSupport.KITE_EXE_PATH]: () => 0,
+            });
+            break;
+        }
+      });
+
+      block();
+    });
+  });
+}
+
 function withFakeServer(routes, block) {
   if (typeof routes == 'function') {
     block = routes;
@@ -523,7 +585,8 @@ function withRoutes(routes) {
 module.exports = {
   fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths,
   withKiteInstalled, withKiteEntrepriseInstalled, withBothKiteInstalled,
-  withKiteRunning, withKiteNotRunning,
+  withKiteRunning, withKiteNotRunning, withKiteEntrepriseRunning,
+  withKiteEntrepriseNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteAuthenticated, withKiteNotAuthenticated,
   withKiteWhitelistedPaths, withKiteIgnoredPaths, withKiteBlacklistedPaths,

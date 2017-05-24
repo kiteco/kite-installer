@@ -11,9 +11,10 @@ const {
   fakeProcesses, fakeKiteInstallPaths, fakeResponse,
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
   withFakeServer, withKiteEntrepriseInstalled, withBothKiteInstalled,
+  withKiteEntrepriseRunning, withKiteEntrepriseNotRunning,
 } = require('../spec-helpers.js');
 
-fdescribe('StateController - OSX Support', () => {
+describe('StateController - OSX Support', () => {
   beforeEach(() => {
     spyOn(os, 'platform').andReturn('darwin');
     spyOn(os, 'release').andReturn('14.0.0');
