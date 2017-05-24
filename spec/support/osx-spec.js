@@ -295,7 +295,7 @@ describe('StateController - OSX Support', () => {
           ]);
 
           expect(proc.spawn).toHaveBeenCalledWith('open', [
-            '-a', OSXSupport.KITE_APP_PATH.installed,
+            '-a', OSXSupport.installPath,
           ]);
         });
       });
