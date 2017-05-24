@@ -390,8 +390,8 @@ function withKiteWhitelistedPaths(paths, block) {
     paths = [];
   }
 
-  const authRe = /^\/clientapi\/permissions\/authorized\?filename=(.+)&/;
-  const projectDirRe = /^\/clientapi\/projectdir\?filename=(.+)&/;
+  const authRe = /^\/clientapi\/permissions\/authorized\?filename=(.+)$/;
+  const projectDirRe = /^\/clientapi\/projectdir\?filename=(.+)$/;
   const whitelisted = match => paths.some(p => match.indexOf(p) !== -1);
 
   const routes = [
@@ -421,7 +421,7 @@ function withKiteWhitelistedPaths(paths, block) {
 }
 
 function withKiteIgnoredPaths(paths) {
-  const authRe = /^\/clientapi\/permissions\/authorized\?filename=(.+)&/;
+  const authRe = /^\/clientapi\/permissions\/authorized\?filename=(.+)$/;
   const ignored = match => paths.some(p => match.indexOf(p) !== -1);
 
   withKiteBlacklistedPaths(paths);
@@ -437,7 +437,7 @@ function withKiteIgnoredPaths(paths) {
 }
 
 function withKiteBlacklistedPaths(paths) {
-  const projectDirRe = /^\/clientapi\/projectdir\?filename=(.*)&/;
+  const projectDirRe = /^\/clientapi\/projectdir\?filename=(.*)$/;
   const blacklisted = path => paths.some(p => path.indexOf(p) !== -1);
 
   withRoutes([
