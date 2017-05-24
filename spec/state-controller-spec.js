@@ -11,7 +11,7 @@ const {
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteNotAuthenticated, withKiteWhitelistedPaths,
-  withRoutes, withFakeServer,
+  withRoutes, withFakeServer, withKiteEntrepriseRunning,
 } = require('./spec-helpers.js');
 
 describe('StateController', () => {
@@ -144,6 +144,29 @@ describe('StateController', () => {
     });
 
     withKiteRunning(() => {
+      describe('and is reachable', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
+        });
+
+        it('returns a resolving promise', () => {
+          waitsForPromise(() => StateController.isKiteReachable());
+        });
+      });
+
+      describe('and is not reachable', () => {
+        beforeEach(() => {
+          spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
+        });
+
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+            StateController.isKiteReachable());
+        });
+      });
+    });
+
+    withKiteEntrepriseRunning(() => {
       describe('and is reachable', () => {
         beforeEach(() => {
           spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
