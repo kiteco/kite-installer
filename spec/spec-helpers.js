@@ -250,8 +250,8 @@ function withKiteInstalled(block) {
   });
 }
 
-function withKiteEntrepriseInstalled(block) {
-  describe('with kite entreprise installed', () => {
+function withKiteEnterpriseInstalled(block) {
+  describe('with kite enterprise installed', () => {
     fakeKiteInstallPaths();
 
     beforeEach(() => {
@@ -260,8 +260,8 @@ function withKiteEntrepriseInstalled(block) {
           fakeProcesses({
             'mdfind': (ps, args) => {
               const [, key] = args[0].split(/\s=\s/);
-              key === '"entreprise.kite.Kite"'
-                ? ps.stdout('/Applications/KiteEntreprise.app')
+              key === '"enterprise.kite.Kite"'
+                ? ps.stdout('/Applications/KiteEnterprise.app')
                 : ps.stdout('');
               return 0;
             },
@@ -281,7 +281,7 @@ function withKiteEntrepriseInstalled(block) {
 }
 
 function withBothKiteInstalled(block) {
-  describe('with both kite and kite entreprise installed', () => {
+  describe('with both kite and kite enterprise installed', () => {
     fakeKiteInstallPaths();
 
     beforeEach(() => {
@@ -290,8 +290,8 @@ function withBothKiteInstalled(block) {
           fakeProcesses({
             'mdfind': (ps, args) => {
               const [, key] = args[0].split(/\s=\s/);
-              key === '"entreprise.kite.Kite"'
-                ? ps.stdout('/Applications/KiteEntreprise.app')
+              key === '"enterprise.kite.Kite"'
+                ? ps.stdout('/Applications/KiteEnterprise.app')
                 : ps.stdout('/Applications/Kite.app');
               return 0;
             },
@@ -371,15 +371,15 @@ function withKiteNotRunning(block) {
   });
 }
 
-function withKiteEntrepriseRunning(block) {
-  withKiteEntrepriseInstalled(() => {
+function withKiteEnterpriseRunning(block) {
+  withKiteEnterpriseInstalled(() => {
     describe(', running', () => {
       beforeEach(() => {
         switch (os.platform()) {
           case 'darwin':
             fakeProcesses({
               '/bin/ps': (ps) => {
-                ps.stdout('KiteEntreprise');
+                ps.stdout('KiteEnterprise');
                 return 0;
               },
             });
@@ -400,8 +400,8 @@ function withKiteEntrepriseRunning(block) {
   });
 }
 
-function withKiteEntrepriseNotRunning(block) {
-  withKiteEntrepriseInstalled(() => {
+function withKiteEnterpriseNotRunning(block) {
+  withKiteEnterpriseInstalled(() => {
     describe(', not running', () => {
       beforeEach(() => {
         switch (os.platform()) {
@@ -584,9 +584,9 @@ function withRoutes(routes) {
 
 module.exports = {
   fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths,
-  withKiteInstalled, withKiteEntrepriseInstalled, withBothKiteInstalled,
-  withKiteRunning, withKiteNotRunning, withKiteEntrepriseRunning,
-  withKiteEntrepriseNotRunning,
+  withKiteInstalled, withKiteEnterpriseInstalled, withBothKiteInstalled,
+  withKiteRunning, withKiteNotRunning, withKiteEnterpriseRunning,
+  withKiteEnterpriseNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteAuthenticated, withKiteNotAuthenticated,
   withKiteWhitelistedPaths, withKiteIgnoredPaths, withKiteBlacklistedPaths,

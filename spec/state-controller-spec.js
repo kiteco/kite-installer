@@ -11,7 +11,7 @@ const {
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteNotAuthenticated, withKiteWhitelistedPaths,
-  withRoutes, withFakeServer, withKiteEntrepriseRunning,
+  withRoutes, withFakeServer, withKiteEnterpriseRunning,
 } = require('./spec-helpers.js');
 
 describe('StateController', () => {
@@ -166,7 +166,7 @@ describe('StateController', () => {
       });
     });
 
-    withKiteEntrepriseRunning(() => {
+    withKiteEnterpriseRunning(() => {
       describe('and is reachable', () => {
         beforeEach(() => {
           spyOn(http, 'request').andCallFake(fakeRequestMethod(true));
