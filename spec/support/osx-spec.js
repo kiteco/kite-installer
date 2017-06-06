@@ -10,7 +10,8 @@ const OSXSupport = require('../../lib/support/osx');
 const {
   fakeProcesses, fakeKiteInstallPaths, fakeResponse,
   withKiteInstalled, withKiteRunning, withKiteNotRunning,
-  withFakeServer,
+  withFakeServer, withKiteEnterpriseInstalled, withBothKiteInstalled,
+  withKiteEnterpriseRunning, withKiteEnterpriseNotRunning,
 } = require('../spec-helpers.js');
 
 describe('StateController - OSX Support', () => {
@@ -49,6 +50,68 @@ describe('StateController - OSX Support', () => {
         waitsForPromise({
           shouldReject: true,
         }, () => StateController.isKiteInstalled());
+      });
+    });
+
+    withKiteEnterpriseInstalled(() => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isKiteInstalled());
+      });
+    });
+  });
+
+  describe('.isKiteEnterpriseInstalled()', () => {
+    describe('when kite enterprise is not installed', () => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isKiteEnterpriseInstalled());
+      });
+    });
+
+    withKiteInstalled(() => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+          StateController.isKiteEnterpriseInstalled());
+      });
+    });
+
+    withKiteEnterpriseInstalled(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.isKiteEnterpriseInstalled());
+      });
+    });
+  });
+
+  describe('.hasBothKiteInstalled()', () => {
+    describe('when no kite is installed', () => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () =>
+        StateController.hasBothKiteInstalled());
+      });
+    });
+
+    describe('when kite enterprise is not installed', () => {
+      withKiteInstalled(() => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+          StateController.hasBothKiteInstalled());
+        });
+      });
+    });
+
+    describe('when kite is not installed', () => {
+      withKiteEnterpriseInstalled(() => {
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () =>
+          StateController.hasBothKiteInstalled());
+        });
+      });
+    });
+
+    withBothKiteInstalled(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.hasBothKiteInstalled());
       });
     });
   });
@@ -296,6 +359,86 @@ describe('StateController - OSX Support', () => {
 
           expect(proc.spawn).toHaveBeenCalledWith('open', [
             '-a', OSXSupport.installPath,
+          ]);
+        });
+      });
+    });
+  });
+
+  describe('.isKiteEnterpriseRunning()', () => {
+    describe('when kite is not installed', () => {
+      it('returns a rejected promise', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.isKiteEnterpriseRunning());
+      });
+    });
+
+    withKiteEnterpriseInstalled(() => {
+      describe('but not running', () => {
+        beforeEach(() => {
+          fakeProcesses({
+            '/bin/ps': (ps) => {
+              ps.stdout('');
+              return 0;
+            },
+          });
+        });
+
+        it('returns a rejected promise', () => {
+          waitsForPromise({shouldReject: true}, () => StateController.isKiteEnterpriseRunning());
+        });
+      });
+
+      withKiteEnterpriseRunning(() => {
+        it('returns a resolved promise', () => {
+          waitsForPromise(() => StateController.isKiteEnterpriseRunning());
+        });
+      });
+    });
+  });
+
+  describe('.canRunKiteEnterprise()', () => {
+    describe('when kite is not installed', () => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canRunKiteEnterprise());
+      });
+    });
+
+    withKiteEnterpriseNotRunning(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.canRunKiteEnterprise());
+      });
+    });
+
+    withKiteEnterpriseRunning(() => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.canRunKiteEnterprise());
+      });
+    });
+  });
+
+  describe('.runKiteEnterprise()', () => {
+    describe('when kite is not installed', () => {
+      it('returns a rejected function', () => {
+        waitsForPromise({shouldReject: true}, () => StateController.runKiteEnterprise());
+      });
+    });
+
+    withKiteEnterpriseRunning(() => {
+      it('returns a resolved function', () => {
+        waitsForPromise(() => StateController.runKiteEnterprise());
+      });
+    });
+
+    withKiteEnterpriseNotRunning(() => {
+      it('returns a resolved promise', () => {
+        waitsForPromise(() => StateController.runKiteEnterprise());
+        runs(() => {
+          expect(proc.spawn).toHaveBeenCalledWith('defaults', [
+            'write', 'enterprise.kite.Kite', 'shouldReopenSidebar', '0',
+          ]);
+
+          expect(proc.spawn).toHaveBeenCalledWith('open', [
+            '-a', OSXSupport.enterpriseInstallPath,
           ]);
         });
       });

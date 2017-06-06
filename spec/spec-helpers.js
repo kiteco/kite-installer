@@ -228,8 +228,71 @@ function withKiteInstalled(block) {
       switch (os.platform()) {
         case 'darwin':
           fakeProcesses({
-            'mdfind': (ps) => {
-              ps.stdout('/Applications/Kite.app');
+            'mdfind': (ps, args) => {
+              const [, key] = args[0].split(/\s=\s/);
+              key === '"com.kite.Kite"'
+                ? ps.stdout('/Applications/Kite.app')
+                : ps.stdout('');
+              return 0;
+            },
+          });
+          break;
+        case 'win32':
+          if (!WindowsSupport) {
+            WindowsSupport = require('../lib/support/windows');
+          }
+          WindowsSupport.KITE_EXE_PATH = __filename;
+          break;
+      }
+    });
+
+    block();
+  });
+}
+
+function withKiteEnterpriseInstalled(block) {
+  describe('with kite enterprise installed', () => {
+    fakeKiteInstallPaths();
+
+    beforeEach(() => {
+      switch (os.platform()) {
+        case 'darwin':
+          fakeProcesses({
+            'mdfind': (ps, args) => {
+              const [, key] = args[0].split(/\s=\s/);
+              key === '"enterprise.kite.Kite"'
+                ? ps.stdout('/Applications/KiteEnterprise.app')
+                : ps.stdout('');
+              return 0;
+            },
+          });
+          break;
+        case 'win32':
+          if (!WindowsSupport) {
+            WindowsSupport = require('../lib/support/windows');
+          }
+          WindowsSupport.KITE_EXE_PATH = __filename;
+          break;
+      }
+    });
+
+    block();
+  });
+}
+
+function withBothKiteInstalled(block) {
+  describe('with both kite and kite enterprise installed', () => {
+    fakeKiteInstallPaths();
+
+    beforeEach(() => {
+      switch (os.platform()) {
+        case 'darwin':
+          fakeProcesses({
+            'mdfind': (ps, args) => {
+              const [, key] = args[0].split(/\s=\s/);
+              key === '"enterprise.kite.Kite"'
+                ? ps.stdout('/Applications/KiteEnterprise.app')
+                : ps.stdout('/Applications/Kite.app');
               return 0;
             },
           });
@@ -307,6 +370,68 @@ function withKiteNotRunning(block) {
     });
   });
 }
+
+function withKiteEnterpriseRunning(block) {
+  withKiteEnterpriseInstalled(() => {
+    describe(', running', () => {
+      beforeEach(() => {
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              '/bin/ps': (ps) => {
+                ps.stdout('KiteEnterprise');
+                return 0;
+              },
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('kited.exe');
+                return 0;
+              },
+            });
+            break;
+        }
+      });
+
+      block();
+    });
+  });
+}
+
+function withKiteEnterpriseNotRunning(block) {
+  withKiteEnterpriseInstalled(() => {
+    describe(', not running', () => {
+      beforeEach(() => {
+        switch (os.platform()) {
+          case 'darwin':
+            fakeProcesses({
+              '/bin/ps': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              defaults: () => 0,
+              open: () => 0,
+            });
+            break;
+          case 'win32':
+            fakeProcesses({
+              'tasklist': (ps) => {
+                ps.stdout('');
+                return 0;
+              },
+              [WindowsSupport.KITE_EXE_PATH]: () => 0,
+            });
+            break;
+        }
+      });
+
+      block();
+    });
+  });
+}
+
 function withFakeServer(routes, block) {
   if (typeof routes == 'function') {
     block = routes;
@@ -459,8 +584,9 @@ function withRoutes(routes) {
 
 module.exports = {
   fakeProcesses, fakeRequestMethod, fakeResponse, fakeKiteInstallPaths,
-  withKiteInstalled,
-  withKiteRunning, withKiteNotRunning,
+  withKiteInstalled, withKiteEnterpriseInstalled, withBothKiteInstalled,
+  withKiteRunning, withKiteNotRunning, withKiteEnterpriseRunning,
+  withKiteEnterpriseNotRunning,
   withKiteReachable, withKiteNotReachable,
   withKiteAuthenticated, withKiteNotAuthenticated,
   withKiteWhitelistedPaths, withKiteIgnoredPaths, withKiteBlacklistedPaths,
