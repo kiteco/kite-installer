@@ -57,7 +57,7 @@ module.exports = {
   config: {
     hostname: {
       type: 'string',
-      default: 'alpha.kite.com',
+      default: 'kite.com',
       title: 'Kite Host',
       description: 'Hostname of Kite server',
     },
