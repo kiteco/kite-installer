@@ -1,5 +1,9 @@
 @import "variables";
 
+atom-pane-container atom-pane div.item-views {
+  overflow-x: scroll;
+}
+
 div.kite.inline {
   display: inline-block;
 }
@@ -17,10 +21,9 @@ div.kite.row {
   font-weight: 200;
   margin: 0 auto;
   overflow: auto;
-  // max-width: 550px;
-  // min-width: 310px;
-  // width: 85%;
-  width: 800px;
+  max-width: 800px;
+  min-width: 640px;
+  width: 85%;
 
   &.disabled {
     pointer-events: none;
@@ -67,7 +70,7 @@ div.kite.row {
     border: none;
     border-radius: @border-radius;
     font-size: 1.1rem;
-    padding: 0.5rem 5rem;
+    padding: 0.5rem 2rem;
   }
 
   .separator {
