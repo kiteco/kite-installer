@@ -35,7 +35,7 @@ describe('BranchStep', () => {
       branch = new BranchStep([step1, step2]);
     });
 
-    it('calls the corresponding step start method', () => {
+    it('rejects the whole promise', () => {
       waitsForPromise({shouldReject: true}, () => branch.start());
     });
   });

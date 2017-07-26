@@ -32,7 +32,7 @@ describe('ParallelSteps', () => {
       steps = new ParallelSteps([step1, step2]);
     });
 
-    it('resolves when both substeps are resolved', () => {
+    it('rejects the whole promise', () => {
       waitsForPromise({shouldReject: true}, () => steps.start());
     });
   });
