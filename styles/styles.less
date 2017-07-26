@@ -177,25 +177,27 @@ div.kite.row {
     }
 
     &.install-step {
-      align-items: flex-start;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+      .comparison {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+     }
 
       .section {
         padding: 1rem;
       }
 
       .highlighted-section {
-        border: 2px solid rgb(26, 26, 26);
+        border: 1px solid white;
         border-radius: 1rem;
         background-color: rgb(29, 54, 74);
-        height: 480px;
+        height: 400px;
         width: 48%;
       }
 
       .features {
-        height: 180px;
+        height: 140px;
         .feature {
           display: flex;
           flex-direction: row;
@@ -246,7 +248,7 @@ div.kite.row {
         }
       }
 
-      .row.title-row {
+      .row.title-row, .row.loading-row {
         justify-content: space-between;
         padding-bottom: 1rem;
         align-items: center;
@@ -262,12 +264,25 @@ div.kite.row {
           }
         }
 
+        .tagline {
+          font-size: 1.1rem;
+        }
+
         .label {
           font-size: 1.2rem;
         }
 
         .separator {
           flex-grow: 1;
+        }
+      }
+
+      .row.loading-row {
+        font-size: 1.1rem;
+        margin: 0 auto;
+        width: 400px;
+        .loading-message {
+          align-items: center;
         }
       }
 
