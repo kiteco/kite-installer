@@ -38,7 +38,7 @@ describe('Login', () => {
       describe('filling the password field and submitting the step', () => {
         it('resolves the pending promise', () => {
           view.querySelector('input[type="password"]').value = 'password';
-          view.submit.dispatchEvent(new Event('click'));
+          view.form.dispatchEvent(new Event('submit'));
 
           waitsForPromise(() => promise);
         });
@@ -46,7 +46,7 @@ describe('Login', () => {
 
       describe('clicking on the forgot password button', () => {
         it('opens the reset password form in a browser', () => {
-          spyOn(child_process, 'spawn');
+          spyOn(child_process, 'spawn').andReturn({once: () => {}});
 
           view.forgotPassword.dispatchEvent(new Event('click'));
 
@@ -65,7 +65,7 @@ describe('Login', () => {
 
         it('rejects the pending promise', () => {
           view.querySelector('input[type="password"]').value = 'password';
-          view.submit.dispatchEvent(new Event('click'));
+          view.form.dispatchEvent(new Event('submit'));
 
           waitsForPromise({shouldReject: true}, () => promise);
         });
