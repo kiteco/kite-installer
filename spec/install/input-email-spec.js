@@ -22,7 +22,7 @@ describe('InputEmail', () => {
 
     describe('submitting the step', () => {
       it('resolves the pending promise', () => {
-        view.submit.dispatchEvent(new Event('click'));
+        view.form.dispatchEvent(new Event('submit'));
 
         waitsForPromise(() => promise.then(data => {
           expect(data.email).toEqual('some.email@company.com');
