@@ -7,8 +7,6 @@ var StateController = require('../lib/state-controller.js');
 var metrics = require('../ext/telemetry/metrics.js');
 var errors = require('../ext/telemetry/errors.js')(metrics.Tracker);
 
-window.state = StateController;
-
 module.exports = {
   installation: null,
 
