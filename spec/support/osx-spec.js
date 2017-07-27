@@ -161,6 +161,7 @@ describe('StateController - OSX Support', () => {
             OSXSupport.KITE_DMG_PATH,
           ]);
           expect(proc.spawn).toHaveBeenCalledWith('mdfind', [
+            'kMDItemCFBundleIdentifier = "com.kite.Kite"',
           ]);
 
           expect(options.onInstallStart).toHaveBeenCalled();
