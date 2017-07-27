@@ -16,7 +16,7 @@ module.exports = () => {
 
   const install = new Install([
     new GetEmail({name: 'get-email'}),
-    new InputEmail(new InputEmailElement(), {name: 'input-email'}),
+    new InputEmail({name: 'input-email', view: new InputEmailElement()}),
     new BranchStep([
       {match: () => true, step: new PassStep()},
       {match: () => false, step: new PassStep()},

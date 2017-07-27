@@ -12,7 +12,7 @@ describe('Login', () => {
 
   beforeEach(() => {
     view = new LoginElement();
-    step = new Login(view);
+    step = new Login({view});
   });
 
   withFakeServer([[

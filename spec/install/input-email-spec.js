@@ -8,7 +8,7 @@ describe('InputEmail', () => {
 
   beforeEach(() => {
     view = new InputEmailElement();
-    step = new InputEmail(view);
+    step = new InputEmail({view});
   });
 
   describe('when started with an email', () => {
