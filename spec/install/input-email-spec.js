@@ -2,6 +2,7 @@
 
 const InputEmail = require('../../lib/install/input-email');
 const InputEmailElement = require('../../lib/elements/atom/input-email-element');
+const {startStep} = require('../spec-helpers');
 
 describe('InputEmail', () => {
   let step, view, promise;
@@ -13,7 +14,7 @@ describe('InputEmail', () => {
 
   describe('when started with an email', () => {
     beforeEach(() => {
-      promise = step.start({account: { email: 'some.email@company.com' }});
+      promise = startStep(step, {account: { email: 'some.email@company.com' }});
     });
 
     it('fills the input with the provided email', () => {
@@ -33,7 +34,7 @@ describe('InputEmail', () => {
 
   describe('when started without an email', () => {
     beforeEach(() => {
-      promise = step.start({account: { email: undefined }});
+      promise = startStep(step, {account: { email: undefined }});
     });
 
     it('leaves the input empty', () => {

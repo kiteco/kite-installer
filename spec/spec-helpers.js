@@ -7,6 +7,7 @@ const https = require('https');
 const proc = require('child_process');
 const metrics = require('../ext/telemetry/metrics');
 const AccountManager = require('../lib/account-manager');
+const Install = require('../lib/install');
 
 // This ensure that the env variables required by the
 // windows support object are available even on another platform.
@@ -26,6 +27,11 @@ beforeEach(() => {
   spyOn(metrics.Tracker, 'trackEvent').andCallFake(() => {});
   jasmine.useRealClock();
 });
+
+function startStep(step, state) {
+  const install = new Install([step], state);
+  return install.start();
+}
 
 function sleep(duration) {
   const t = new Date();
@@ -611,5 +617,5 @@ module.exports = {
   withKiteAuthenticated, withKiteNotAuthenticated,
   withKiteWhitelistedPaths, withKiteIgnoredPaths, withKiteBlacklistedPaths,
   withFakeServer, withRoutes, withAccountManager,
-  sleep,
+  sleep, startStep,
 };

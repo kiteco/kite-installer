@@ -23,14 +23,12 @@ describe('CheckEmail', () => {
         it('resolves with a passwordless account', () => {
           waitsForPromise(() =>
           step.start({account: {email: 'some.email@company.com'}}).then(data => {
-            expect(data).toEqual({
-              account: {
-                email: 'some.email@company.com',
-                invalid: false,
-                exists: false,
-                hasPassword: false,
-                reason: null,
-              },
+            expect(data.account).toEqual({
+              email: 'some.email@company.com',
+              invalid: false,
+              exists: false,
+              hasPassword: false,
+              reason: null,
             });
           }));
         });
@@ -52,14 +50,12 @@ describe('CheckEmail', () => {
         it('resolves with an existing account', () => {
           waitsForPromise(() =>
           step.start({account: {email: 'some.email@company.com'}}).then(data => {
-            expect(data).toEqual({
-              account: {
-                email: 'some.email@company.com',
-                invalid: false,
-                exists: true,
-                hasPassword: true,
-                reason: 'email address already in use',
-              },
+            expect(data.account).toEqual({
+              email: 'some.email@company.com',
+              invalid: false,
+              exists: true,
+              hasPassword: true,
+              reason: 'email address already in use',
             });
           }));
         });
@@ -81,14 +77,12 @@ describe('CheckEmail', () => {
         it('resolves with an existing account', () => {
           waitsForPromise(() =>
           step.start({account: {email: 'some.email@company.com'}}).then(data => {
-            expect(data).toEqual({
-              account: {
-                email: 'some.email@company.com',
-                invalid: false,
-                exists: true,
-                hasPassword: false,
-                reason: 'email address already in use',
-              },
+            expect(data.account).toEqual({
+              email: 'some.email@company.com',
+              invalid: false,
+              exists: true,
+              hasPassword: false,
+              reason: 'email address already in use',
             });
           }));
         });
