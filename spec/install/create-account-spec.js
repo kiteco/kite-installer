@@ -21,16 +21,20 @@ describe('CreateAccount', () => {
     ]], () => {
       beforeEach(() => {
         promise = step.start({
-          email: 'some.email@company.com',
-          invalid: false,
-          exists: false,
-          hasPassword: false,
-          reason: null,
+          account: {
+            email: 'some.email@company.com',
+            invalid: false,
+            exists: false,
+            hasPassword: false,
+            reason: null,
+          },
         });
       });
 
       it('calls the account creation endpoint', () => {
-        expect(AccountManager.createAccount).toHaveBeenCalled();
+        expect(AccountManager.createAccount).toHaveBeenCalledWith({
+          email: 'some.email@company.com',
+        });
       });
 
       it('returns a promise that resolve when the request succeeds', () => {

@@ -23,7 +23,7 @@ describe('GetEmail', () => {
 
       it('returns a promise that is resolved with the user email', () => {
         waitsForPromise(() => step.start().then(data => {
-          expect(data.email).toEqual('some.email@company.com');
+          expect(data.account.email).toEqual('some.email@company.com');
         }));
       });
     });
@@ -35,7 +35,7 @@ describe('GetEmail', () => {
 
       it('returns a promise that is resolved with null', () => {
         waitsForPromise(() => step.start().then(data => {
-          expect(data).toEqual({email: undefined});
+          expect(data).toEqual({account: { email: undefined }});
         }));
       });
     });
@@ -47,7 +47,7 @@ describe('GetEmail', () => {
 
       it('returns a promise that is resolved with null', () => {
         waitsForPromise(() => step.start().then(data => {
-          expect(data).toEqual({email: undefined});
+          expect(data).toEqual({account: { email: undefined }});
         }));
       });
     });

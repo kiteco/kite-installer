@@ -22,11 +22,13 @@ describe('Login', () => {
     describe('when started with an account with email and password', () => {
       beforeEach(() => {
         promise = step.start({
-          email: 'some.email@company.com',
-          invalid: false,
-          exists: true,
-          hasPassword: true,
-          reason: 'email address already in use',
+          account: {
+            email: 'some.email@company.com',
+            invalid: false,
+            exists: true,
+            hasPassword: true,
+            reason: 'email address already in use',
+          },
         });
       });
 

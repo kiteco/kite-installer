@@ -13,7 +13,7 @@ describe('InputEmail', () => {
 
   describe('when started with an email', () => {
     beforeEach(() => {
-      promise = step.start({email: 'some.email@company.com'});
+      promise = step.start({account: { email: 'some.email@company.com' }});
     });
 
     it('fills the input with the provided email', () => {
@@ -25,7 +25,7 @@ describe('InputEmail', () => {
         view.form.dispatchEvent(new Event('submit'));
 
         waitsForPromise(() => promise.then(data => {
-          expect(data.email).toEqual('some.email@company.com');
+          expect(data.account.email).toEqual('some.email@company.com');
         }));
       });
     });
@@ -33,7 +33,7 @@ describe('InputEmail', () => {
 
   describe('when started without an email', () => {
     beforeEach(() => {
-      promise = step.start();
+      promise = step.start({account: { email: undefined }});
     });
 
     it('leaves the input empty', () => {

@@ -21,10 +21,10 @@ module.exports = () => {
     new CheckEmail({name: 'check-email', retryStep: 'input-email'}),
     new BranchStep([
       {
-        match: (data) => data.exists,
+        match: (data) => data.account.exists,
         step: new Login({view: new LoginElement()}),
       }, {
-        match: (data) => false,
+        match: (data) => !data.account.exists,
         step: new CreateAccount(),
       },
     ], {
@@ -40,6 +40,6 @@ module.exports = () => {
   atom.workspace.getActivePane().activateItem(install);
 
   install.start()
-  .then(result => console.log(result))
-  .catch(err => console.error(err));
+  .then(result => console.log(result));
+  // .catch(err => console.error(err));
 };

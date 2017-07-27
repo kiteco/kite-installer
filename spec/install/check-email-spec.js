@@ -22,13 +22,15 @@ describe('CheckEmail', () => {
       ], () => {
         it('resolves with a passwordless account', () => {
           waitsForPromise(() =>
-          step.start({email: 'some.email@company.com'}).then(data => {
+          step.start({account: {email: 'some.email@company.com'}}).then(data => {
             expect(data).toEqual({
-              email: 'some.email@company.com',
-              invalid: false,
-              exists: false,
-              hasPassword: false,
-              reason: null,
+              account: {
+                email: 'some.email@company.com',
+                invalid: false,
+                exists: false,
+                hasPassword: false,
+                reason: null,
+              },
             });
           }));
         });
@@ -49,13 +51,15 @@ describe('CheckEmail', () => {
       ], () => {
         it('resolves with an existing account', () => {
           waitsForPromise(() =>
-          step.start({email: 'some.email@company.com'}).then(data => {
+          step.start({account: {email: 'some.email@company.com'}}).then(data => {
             expect(data).toEqual({
-              email: 'some.email@company.com',
-              invalid: false,
-              exists: true,
-              hasPassword: true,
-              reason: 'email address already in use',
+              account: {
+                email: 'some.email@company.com',
+                invalid: false,
+                exists: true,
+                hasPassword: true,
+                reason: 'email address already in use',
+              },
             });
           }));
         });
@@ -76,13 +80,15 @@ describe('CheckEmail', () => {
       ], () => {
         it('resolves with an existing account', () => {
           waitsForPromise(() =>
-          step.start({email: 'some.email@company.com'}).then(data => {
+          step.start({account: {email: 'some.email@company.com'}}).then(data => {
             expect(data).toEqual({
-              email: 'some.email@company.com',
-              invalid: false,
-              exists: true,
-              hasPassword: false,
-              reason: 'email address already in use',
+              account: {
+                email: 'some.email@company.com',
+                invalid: false,
+                exists: true,
+                hasPassword: false,
+                reason: 'email address already in use',
+              },
             });
           }));
         });
@@ -103,13 +109,15 @@ describe('CheckEmail', () => {
       ], () => {
         it('resolves with an existing account', () => {
           waitsForPromise({shouldReject: true}, () =>
-          step.start({email: 'some'}).catch(err => {
+          step.start({account: {email: 'some'}}).catch(err => {
             expect(err.data).toEqual({
-              email: 'some',
-              invalid: true,
-              exists: false,
-              hasPassword: false,
-              reason: 'invalid email address',
+              account: {
+                email: 'some',
+                invalid: true,
+                exists: false,
+                hasPassword: false,
+                reason: 'invalid email address',
+              },
             });
 
             throw err;
@@ -129,7 +137,7 @@ describe('CheckEmail', () => {
       it('rejects the promise', () => {
         waitsForPromise({
           shouldReject: true,
-        }, () => step.start({email: 'some.email@company.com'}));
+        }, () => step.start({account: {email: 'some.email@company.com'}}));
       });
     });
   });
