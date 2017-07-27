@@ -22,8 +22,8 @@ describe('BranchStep', () => {
     });
 
     it('calls the corresponding step start method', () => {
-      waitsForPromise(() => branch.start().then(() => {
-        expect(step1.start).toHaveBeenCalled();
+      waitsForPromise(() => branch.start().then((data) => {
+        expect(data.step).toEqual(step1);
       }));
     });
   });
