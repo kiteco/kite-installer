@@ -88,6 +88,35 @@ describe('CheckEmail', () => {
         });
       });
     });
+
+    describe('that is not a valid email', () => {
+      withFakeServer([
+        [
+          o => o.method === 'POST' && o.path === '/api/account/check-email',
+          o => fakeResponse(403, JSON.stringify({
+            fail_reason: 'invalid email address',
+            email_invalid: true,
+            account_exists: false,
+            has_password: false,
+          })),
+        ],
+      ], () => {
+        it('resolves with an existing account', () => {
+          waitsForPromise({shouldReject: true}, () =>
+          step.start({email: 'some'}).catch(err => {
+            expect(err.data).toEqual({
+              email: 'some',
+              invalid: true,
+              exists: false,
+              hasPassword: false,
+              reason: 'invalid email address',
+            });
+
+            throw err;
+          }));
+        });
+      });
+    });
   });
 
   describe('when a server error occurs', () => {
