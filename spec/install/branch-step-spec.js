@@ -5,9 +5,11 @@ const BranchStep = require('../../lib/install/branch-step');
 const dummyStep = (match = true) => {
   return {
     match() { return match; },
-    start: jasmine.createSpy().andCallFake(() => {
-      return Promise.resolve();
-    }),
+    step: {
+      start: jasmine.createSpy().andCallFake(() => {
+        return Promise.resolve();
+      }),
+    },
   };
 };
 
@@ -23,7 +25,7 @@ describe('BranchStep', () => {
 
     it('calls the corresponding step start method', () => {
       waitsForPromise(() => branch.start().then((data) => {
-        expect(data.step).toEqual(step1);
+        expect(data.step).toEqual(step1.step);
       }));
     });
   });
