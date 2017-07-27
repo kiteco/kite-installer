@@ -6,6 +6,7 @@ module.exports = () => {
   const PassStep = require('../lib/install/pass-step');
   const CheckEmail = require('../lib/install/check-email');
   const InputEmail = require('../lib/install/input-email');
+  const CreateAccount = require('../lib/install/create-account');
   const Login = require('../lib/install/login');
   const BranchStep = require('../lib/install/branch-step');
   const ParallelSteps = require('../lib/install/parallel-steps');
@@ -17,13 +18,18 @@ module.exports = () => {
   const install = new Install([
     new GetEmail({name: 'get-email'}),
     new InputEmail({name: 'input-email', view: new InputEmailElement()}),
-    new BranchStep([
-      {match: () => true, step: new PassStep()},
-      {match: () => false, step: new PassStep()},
-    ], {
-      name: 'branch-test',
-    }),
     new CheckEmail({name: 'check-email', retryStep: 'input-email'}),
+    new BranchStep([
+      {
+        match: (data) => data.exists,
+        step: new Login({view: new LoginElement()}),
+      }, {
+        match: (data) => false,
+        step: new CreateAccount(),
+      },
+    ], {
+      name: 'account-switch',
+    }),
   ]);
 
   Logger.LEVEL = Logger.LEVELS.VERBOSE;
