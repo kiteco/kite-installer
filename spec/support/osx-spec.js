@@ -274,7 +274,13 @@ describe('StateController - OSX Support', () => {
                 });
               },
             };
-            spyOn(options, 'onRemove');
+            spyOn(options, 'onRemove').and.callFake((ps, args) => {
+              const [, key] = args[0].split(/\s=\s/);
+              key === '"com.kite.Kite"'
+                ? ps.stdout('/Applications/Kite.app')
+                : ps.stdout('');
+              return 0;
+            });
             const url = 'http://kite.com/download';
 
             waitsForPromise(() => StateController.downloadKite(url, options));
