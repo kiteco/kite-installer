@@ -272,6 +272,7 @@ describe('StateController - OSX Support', () => {
                     return 0;
                   },
                 });
+                return jasmine.createSpy();
               },
             };
             const url = 'http://kite.com/download';
