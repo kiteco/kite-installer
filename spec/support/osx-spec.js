@@ -246,17 +246,21 @@ describe('StateController - OSX Support', () => {
             hdiutil: () => 0,
             cp: () => 0,
             rm: () => 0,
-            mdfind: (ps, args) => {
-              const [, key] = args[0].split(/\s=\s/);
-              key === '"com.kite.Kite"'
-                ? ps.stdout('/Applications/Kite.app')
-                : ps.stdout('');
-              return 0;
-            },
           });
         });
 
         describe('with the install option', () => {
+          beforeEach(() => {
+            fakeProcesses({
+              mdfind: (ps, args) => {
+                const [, key] = args[0].split(/\s=\s/);
+                key === '"com.kite.Kite"'
+                  ? ps.stdout('/Applications/Kite.app')
+                  : ps.stdout('');
+                return 0;
+              },
+            });
+          })
           it('returns a promise resolved after the install', () => {
             const options = {
               install: true,
