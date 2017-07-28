@@ -274,6 +274,7 @@ describe('StateController - OSX Support', () => {
                 });
               },
             };
+            spyOn(options, 'onRemove');
             const url = 'http://kite.com/download';
 
             waitsForPromise(() => StateController.downloadKite(url, options));
@@ -301,7 +302,7 @@ describe('StateController - OSX Support', () => {
               expect(options.onMount).toHaveBeenCalled();
               expect(options.onCopy).toHaveBeenCalled();
               expect(options.onUnmount).toHaveBeenCalled();
-              // expect(options.onRemove).toHaveBeenCalled();
+              expect(options.onRemove).toHaveBeenCalled();
             });
           });
         });
