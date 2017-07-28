@@ -274,14 +274,7 @@ describe('StateController - OSX Support', () => {
                 });
               },
             };
-            spyOn(options, 'onRemove').and.callFake((ps, args) => {
-              const [, key] = args[0].split(/\s=\s/);
-              key === '"com.kite.Kite"'
-                ? ps.stdout('/Applications/Kite.app')
-                : ps.stdout('');
-              return 0;
-            });
-            const url = 'http://kite.com/download';
+           const url = 'http://kite.com/download';
 
             waitsForPromise(() => StateController.downloadKite(url, options));
             runs(() => {
@@ -308,7 +301,6 @@ describe('StateController - OSX Support', () => {
               expect(options.onMount).toHaveBeenCalled();
               expect(options.onCopy).toHaveBeenCalled();
               expect(options.onUnmount).toHaveBeenCalled();
-              expect(options.onRemove).toHaveBeenCalled();
             });
           });
         });
