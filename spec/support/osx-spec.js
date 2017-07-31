@@ -262,7 +262,7 @@ describe('StateController - OSX Support', () => {
               onMount: jasmine.createSpy(),
               onCopy: jasmine.createSpy(),
               onUnmount: jasmine.createSpy(),
-              onRemove: () => {
+              onRemove: jasmine.createSpy().andCallFake(() => {
                 fakeProcesses({
                   mdfind: (ps, args) => {
                     const [, key] = args[0].split(/\s=\s/);
@@ -272,7 +272,7 @@ describe('StateController - OSX Support', () => {
                     return 0;
                   },
                 });
-              },
+              }),
             };
            const url = 'http://kite.com/download';
 
@@ -301,6 +301,7 @@ describe('StateController - OSX Support', () => {
               expect(options.onMount).toHaveBeenCalled();
               expect(options.onCopy).toHaveBeenCalled();
               expect(options.onUnmount).toHaveBeenCalled();
+              expect(options.onRemove).toHaveBeenCalled();
             });
           });
         });
