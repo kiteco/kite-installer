@@ -17,7 +17,11 @@ describe('Login', () => {
 
   withFakeServer([[
     o => o.method === 'POST' && o.path === '/api/account/login',
-    o => fakeResponse(200),
+    o => fakeResponse(200, '', {
+      headers: {
+        'set-cookie': ['kite-session=foobar'],
+      },
+    }),
   ]], () => {
     describe('when started with an account with email and password', () => {
       beforeEach(() => {
@@ -42,7 +46,9 @@ describe('Login', () => {
           view.querySelector('input[type="password"]').value = 'password';
           view.form.dispatchEvent(new Event('submit'));
 
-          waitsForPromise(() => promise);
+          waitsForPromise(() => promise.then(state => {
+            expect(state.account.sessionId).toEqual('foobar');
+          }));
         });
       });
 

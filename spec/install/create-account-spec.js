@@ -14,10 +14,14 @@ describe('CreateAccount', () => {
     spyOn(AccountManager, 'createAccount').andCallThrough();
   });
 
-  describe('with a valid email', () => {
+  describe('with a valid email that', () => {
     withFakeServer([[
       o => o.method === 'POST' && o.path === '/api/account/createPasswordless',
-      o => fakeResponse(200),
+      o => fakeResponse(200, '', {
+        headers: {
+          'set-cookie': ['kite-session=foobar'],
+        },
+      }),
     ]], () => {
       beforeEach(() => {
         promise = step.start({
@@ -38,7 +42,9 @@ describe('CreateAccount', () => {
       });
 
       it('returns a promise that resolve when the request succeeds', () => {
-        waitsForPromise(() => promise);
+        waitsForPromise(() => promise.then(state => {
+          expect(state.account.sessionId).toEqual('foobar');
+        }));
       });
     });
   });
