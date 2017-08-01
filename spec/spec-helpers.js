@@ -8,6 +8,7 @@ const proc = require('child_process');
 const metrics = require('../ext/telemetry/metrics');
 const AccountManager = require('../lib/account-manager');
 const Install = require('../lib/install');
+const InstallElement = require('../lib/elements/atom/install-element');
 
 // This ensure that the env variables required by the
 // windows support object are available even on another platform.
@@ -30,6 +31,8 @@ beforeEach(() => {
 
 function startStep(step, state) {
   const install = new Install([step], state);
+  const element = new InstallElement();
+  element.setModel(install);
   return install.start();
 }
 

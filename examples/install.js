@@ -22,7 +22,10 @@ module.exports = () => {
     new BranchStep([
       {
         match: (data) => data.account.exists,
-        step: new Login({view: new LoginElement()}),
+        step: new Login({
+          view: new LoginElement(),
+          retryStep: 'account-switch',
+        }),
       }, {
         match: (data) => !data.account.exists,
         step: new CreateAccount(),

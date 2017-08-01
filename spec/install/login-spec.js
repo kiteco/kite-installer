@@ -3,7 +3,7 @@
 const child_process = require('child_process');
 const Login = require('../../lib/install/login');
 const LoginElement = require('../../lib/elements/atom/login-element');
-const {withFakeServer, fakeResponse, withAccountManager, withRoutes} = require('../spec-helpers');
+const {withFakeServer, fakeResponse, withAccountManager, withRoutes, startStep} = require('../spec-helpers');
 
 describe('Login', () => {
   let step, view, promise;
@@ -21,7 +21,7 @@ describe('Login', () => {
   ]], () => {
     describe('when started with an account with email and password', () => {
       beforeEach(() => {
-        promise = step.start({
+        promise = startStep(step, {
           account: {
             email: 'some.email@company.com',
             invalid: false,
