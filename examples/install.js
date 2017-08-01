@@ -12,9 +12,10 @@ module.exports = () => {
   const BranchStep = require('../lib/install/branch-step');
   const ParallelSteps = require('../lib/install/parallel-steps');
 
-  const InstallElement = require('../lib/elements/atom/install-element');
   const InputEmailElement = require('../lib/elements/atom/input-email-element');
   const LoginElement = require('../lib/elements/atom/login-element');
+
+  require('../lib/elements/atom/install-element');
 
   const install = new Install([
     new GetEmail({name: 'get-email'}),
