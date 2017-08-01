@@ -123,6 +123,13 @@ describe('StateController - OSX Support', () => {
           hdiutil: () => 0,
           cp: () => 0,
           rm: () => 0,
+          mdfind: (ps, args) => {
+            const [, key] = args[0].split(/\s=\s/);
+            key === '"com.kite.Kite"'
+              ? ps.stdout('/Applications/Kite.app')
+              : ps.stdout('');
+            return 0;
+          },
         });
       });
 
@@ -152,6 +159,9 @@ describe('StateController - OSX Support', () => {
           ]);
           expect(proc.spawn).toHaveBeenCalledWith('rm', [
             OSXSupport.KITE_DMG_PATH,
+          ]);
+          expect(proc.spawn).toHaveBeenCalledWith('mdfind', [
+            'kMDItemCFBundleIdentifier = "com.kite.Kite"',
           ]);
 
           expect(options.onInstallStart).toHaveBeenCalled();
@@ -236,6 +246,10 @@ describe('StateController - OSX Support', () => {
             hdiutil: () => 0,
             cp: () => 0,
             rm: () => 0,
+            mdfind: (ps) => {
+              ps.stdout('');
+              return 0;
+            },
           });
         });
 
@@ -248,9 +262,19 @@ describe('StateController - OSX Support', () => {
               onMount: jasmine.createSpy(),
               onCopy: jasmine.createSpy(),
               onUnmount: jasmine.createSpy(),
-              onRemove: jasmine.createSpy(),
+              onRemove: jasmine.createSpy().andCallFake(() => {
+                fakeProcesses({
+                  mdfind: (ps, args) => {
+                    const [, key] = args[0].split(/\s=\s/);
+                    key === '"com.kite.Kite"'
+                      ? ps.stdout('/Applications/Kite.app')
+                      : ps.stdout('');
+                    return 0;
+                  },
+                });
+              }),
             };
-            const url = 'http://kite.com/download';
+           const url = 'http://kite.com/download';
 
             waitsForPromise(() => StateController.downloadKite(url, options));
             runs(() => {

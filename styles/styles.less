@@ -17,12 +17,15 @@ div.kite.row {
   font-weight: 200;
   margin: 0 auto;
   overflow: auto;
-  max-width: 550px;
-  min-width: 310px;
+  max-width: 800px;
+  min-width: 640px;
   width: 85%;
 
   &.disabled {
     pointer-events: none;
+    .ignore-disabled {
+      pointer-events: initial;
+    }
   }
 
   input[type=text], input[type=email], input[type=password] {
@@ -43,6 +46,13 @@ div.kite.row {
     &.ending-paragraph {
       margin-bottom: 2.5rem;
     }
+    &.strong {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    a {
+      text-decoration: underline;
+    }
   }
 
   ul, ul li {
@@ -59,7 +69,7 @@ div.kite.row {
     border: none;
     border-radius: @border-radius;
     font-size: 1.1rem;
-    padding: 0.5rem 5rem;
+    padding: 0.5rem 2rem;
   }
 
   .separator {
@@ -93,7 +103,7 @@ div.kite.row {
   &[data-install-title="thankyou"] {
     .title {
       &:before {
-        content: 'Thank you for installing autocomplete-python';
+        content: 'Choose your autocomplete-python engine';
       }
     }
   }
@@ -176,16 +186,66 @@ div.kite.row {
     }
 
     &.install-step {
+      .comparison {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+     }
+
       .section {
         padding: 1rem;
       }
 
       .highlighted-section {
-        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid white;
+        border-radius: 1rem;
+        background-color: rgb(29, 54, 74);
+        height: 400px;
+        width: 48%;
+      }
+
+      .features {
+        height: 140px;
+        .feature {
+          display: flex;
+          flex-direction: row;
+          padding: 0.3rem 0;
+        }
+      }
+
+      .separator {
+        background: rgb(26, 26, 26);
+        height: 2px;
+        margin: 1rem auto;
+        padding: 0;
+        width: 100%;
+      }
+
+      .localities {
+        .locality {
+          display: flex;
+          flex-direction: row;
+          padding: 0.3rem 0;
+          .description {
+            font-size: 1.1rem;
+            a {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+      .cta-row {
+        bottom: 1.5rem;
+        left: 0;
+        position: absolute;;
+        right: 0;
       }
 
       .cta-btn {
         background-color: @cta-green;
+        width: 75%;
         &.secondary-cta {
           background-color: rgba(255, 255, 255, 0.15);
           padding-left: 2rem;
@@ -197,7 +257,7 @@ div.kite.row {
         }
       }
 
-      .row.cta-row {
+      .row.title-row, .row.loading-row {
         justify-content: space-between;
         padding-bottom: 1rem;
         align-items: center;
@@ -208,6 +268,13 @@ div.kite.row {
           background-size: contain;
           width: 100px;
           font-size: 1.2rem;
+          &.kite {
+            background-image: @small-logo;
+          }
+        }
+
+        .tagline {
+          font-size: 1.1rem;
         }
 
         .label {
@@ -216,6 +283,15 @@ div.kite.row {
 
         .separator {
           flex-grow: 1;
+        }
+      }
+
+      .row.loading-row {
+        font-size: 1.1rem;
+        margin: 0 auto;
+        width: 400px;
+        .loading-message {
+          align-items: center;
         }
       }
 

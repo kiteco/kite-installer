@@ -22,7 +22,7 @@ module.exports = {
     var plugin = { name: 'kite-installer' };
     var dm = new DecisionMaker(editor, plugin);
 
-    var throttle = dm.shouldOfferKite('', 1000);
+    var throttle = dm.shouldOfferKite('', 5000);
     var canInstall = StateController.canInstallKite();
 
     Promise.all([throttle, canInstall]).then((values) => {
