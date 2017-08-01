@@ -8,6 +8,7 @@ module.exports = () => {
   const InputEmail = require('../lib/install/input-email');
   const CreateAccount = require('../lib/install/create-account');
   const Login = require('../lib/install/login');
+  const Download = require('../lib/install/download');
   const BranchStep = require('../lib/install/branch-step');
   const ParallelSteps = require('../lib/install/parallel-steps');
 
@@ -33,6 +34,7 @@ module.exports = () => {
     ], {
       name: 'account-switch',
     }),
+    new Download(),
   ]);
 
   Logger.LEVEL = Logger.LEVELS.VERBOSE;
@@ -43,6 +45,6 @@ module.exports = () => {
   atom.workspace.getActivePane().activateItem(install);
 
   install.start()
-  .then(result => console.log(result));
-  // .catch(err => console.error(err));
+  .then(result => console.log(result))
+  .catch(err => console.error(err));
 };

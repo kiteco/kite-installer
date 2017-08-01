@@ -11,23 +11,53 @@ describe('Download', () => {
 
   fakeKiteInstallPaths();
 
-  beforeEach(() => {
-    step = new Download();
-    spyOn(StateController, 'downloadKiteRelease')
-    .andCallFake(() => Promise.resolve());
+  describe('when the download succeeds', () => {
+    beforeEach(() => {
+      step = new Download();
+      spyOn(StateController, 'downloadKiteRelease')
+      .andCallFake(() => Promise.resolve());
+    });
+
+    describe('with a valid email', () => {
+      beforeEach(() => {
+        promise = step.start();
+      });
+
+      it('calls the download method', () => {
+        expect(StateController.downloadKiteRelease).toHaveBeenCalled();
+      });
+
+      it('returns a promise that resolve when the request succeeds', () => {
+        waitsForPromise(() => promise.then(state => {
+          expect(state.install.done).toBeTruthy();
+        }));
+      });
+    });
   });
 
-  describe('with a valid email', () => {
+  describe('when the download fails', () => {
     beforeEach(() => {
-      promise = step.start();
+      step = new Download();
+      spyOn(StateController, 'downloadKiteRelease')
+        .andCallFake(() => Promise.reject(new Error()));
     });
 
-    it('calls the download method', () => {
-      expect(StateController.downloadKiteRelease).toHaveBeenCalled();
-    });
+    describe('with a valid email', () => {
+      beforeEach(() => {
+        promise = step.start();
+      });
 
-    it('returns a promise that resolve when the request succeeds', () => {
-      waitsForPromise(() => promise);
+      it('calls the download method', () => {
+        expect(StateController.downloadKiteRelease).toHaveBeenCalled();
+      });
+
+      it('returns a promise that resolve when the request succeeds', () => {
+        waitsForPromise({shouldReject: true}, () => promise);
+
+        waitsForPromise(() => promise.catch(err => {
+          expect(err.data.install.done).toBeFalsy();
+        }));
+      });
     });
   });
 });
