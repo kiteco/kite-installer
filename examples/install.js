@@ -44,11 +44,11 @@ module.exports = () => {
     ], {
       name: 'account-switch',
     }),
+    // new Download(),
     new Whitelist({
       name: 'whitelist',
       view: new WhitelistElement(),
     }),
-    // new Download(),
   ], {
     path: atom.project.getPaths()[0] || os.homedir(),
   });
