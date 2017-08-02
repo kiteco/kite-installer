@@ -12,7 +12,8 @@ module.exports = () => {
   const Login = require('../lib/install/login');
   const BranchStep = require('../lib/install/branch-step');
   // const Download = require('../lib/install/download');
-  // const ParallelSteps = require('../lib/install/parallel-steps');
+  const ParallelSteps = require('../lib/install/parallel-steps');
+  const PassStep = require('../lib/install/pass-step');
 
   const InputEmailElement = require('../lib/elements/atom/input-email-element');
   const LoginElement = require('../lib/elements/atom/login-element');
@@ -22,7 +23,12 @@ module.exports = () => {
 
   const install = new Install([
     new GetEmail({name: 'get-email'}),
-    new InputEmail({name: 'input-email', view: new InputEmailElement()}),
+    new ParallelSteps([
+      new PassStep(),
+      new InputEmail({view: new InputEmailElement()}),
+    ], {
+      name: 'input-email',
+    }),
     new CheckEmail({name: 'check-email', failureStep: 'input-email'}),
     new BranchStep([
       {
