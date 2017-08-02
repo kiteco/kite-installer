@@ -5,15 +5,14 @@ module.exports = () => {
   const Logger = require('../lib/logger');
   const Install = require('../lib/install');
   const GetEmail = require('../lib/install/get-email');
-  const PassStep = require('../lib/install/pass-step');
   const Whitelist = require('../lib/install/whitelist');
   const CheckEmail = require('../lib/install/check-email');
   const InputEmail = require('../lib/install/input-email');
   const CreateAccount = require('../lib/install/create-account');
   const Login = require('../lib/install/login');
-  const Download = require('../lib/install/download');
   const BranchStep = require('../lib/install/branch-step');
-  const ParallelSteps = require('../lib/install/parallel-steps');
+  // const Download = require('../lib/install/download');
+  // const ParallelSteps = require('../lib/install/parallel-steps');
 
   const InputEmailElement = require('../lib/elements/atom/input-email-element');
   const LoginElement = require('../lib/elements/atom/login-element');
