@@ -1,9 +1,12 @@
+const os = require('os');
+
 module.exports = () => {
   const AccountManager = require('../lib/account-manager');
   const Logger = require('../lib/logger');
   const Install = require('../lib/install');
   const GetEmail = require('../lib/install/get-email');
   const PassStep = require('../lib/install/pass-step');
+  const Whitelist = require('../lib/install/whitelist');
   const CheckEmail = require('../lib/install/check-email');
   const InputEmail = require('../lib/install/input-email');
   const CreateAccount = require('../lib/install/create-account');
@@ -14,6 +17,7 @@ module.exports = () => {
 
   const InputEmailElement = require('../lib/elements/atom/input-email-element');
   const LoginElement = require('../lib/elements/atom/login-element');
+  const WhitelistElement = require('../lib/elements/atom/whitelist-element');
 
   require('../lib/elements/atom/install-element');
 
@@ -35,8 +39,14 @@ module.exports = () => {
     ], {
       name: 'account-switch',
     }),
-    new Download(),
-  ]);
+    new Whitelist({
+      name: 'whitelist',
+      view: new WhitelistElement(),
+    }),
+    // new Download(),
+  ], {
+    path: atom.project.getPaths()[0] || os.homedir(),
+  });
 
   Logger.LEVEL = Logger.LEVELS.VERBOSE;
 
