@@ -24,13 +24,13 @@ module.exports = () => {
   const install = new Install([
     new GetEmail({name: 'get-email'}),
     new InputEmail({name: 'input-email', view: new InputEmailElement()}),
-    new CheckEmail({name: 'check-email', retryStep: 'input-email'}),
+    new CheckEmail({name: 'check-email', failureStep: 'input-email'}),
     new BranchStep([
       {
         match: (data) => data.account.exists,
         step: new Login({
           view: new LoginElement(),
-          retryStep: 'account-switch',
+          failureStep: 'account-switch',
         }),
       }, {
         match: (data) => !data.account.exists,
