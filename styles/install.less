@@ -1,0 +1,46 @@
+@import "syntax-variables";
+@import "ui-variables";
+
+kite-atom-install {
+  display: block;
+  margin: 0 auto;
+  overflow: auto;
+  max-width: 550px;
+  min-width: 310px;
+  width: 85%;
+
+  input[type=email], input[type=password] {
+    font-size: 1.2rem;
+    font-weight: 100;
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    font-size: 1.2rem;
+  }
+
+  .content {
+    padding: 1.5rem 2rem;
+  }
+
+  .status {
+    color: @text-color-error;
+  }
+
+  .hidden {
+    font-size: 1.2rem;
+    display: none;
+    margin-top: 1rem;
+  }
+
+  .secondary-cta {
+    padding: 1rem 0.2rem;
+    float: right;
+    color: @text-color;
+    font-size: 1.1rem;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
