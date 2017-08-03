@@ -14,10 +14,13 @@ module.exports = () => {
   // const Download = require('../lib/install/download');
   const ParallelSteps = require('../lib/install/parallel-steps');
   const PassStep = require('../lib/install/pass-step');
+  const VoidStep = require('../lib/install/void-step');
 
   const InputEmailElement = require('../lib/elements/atom/input-email-element');
   const LoginElement = require('../lib/elements/atom/login-element');
   const WhitelistElement = require('../lib/elements/atom/whitelist-element');
+  const InstallEndElement = require('../lib/elements/atom/install-end-element');
+  const InstallErrorElement = require('../lib/elements/atom/install-error-element');
 
   require('../lib/elements/atom/install-element');
 
@@ -49,6 +52,15 @@ module.exports = () => {
       name: 'whitelist',
       view: new WhitelistElement(),
     }),
+    new BranchStep([
+      {
+        match: (data) => !data.error,
+        step: new VoidStep({name: 'end', view: new InstallEndElement()}),
+      }, {
+        match: (data) => data.error,
+        step: new VoidStep({name: 'error', view: new InstallErrorElement()}),
+      },
+    ]),
   ], {
     path: atom.project.getPaths()[0] || os.homedir(),
   });
