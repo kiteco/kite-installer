@@ -29,7 +29,7 @@ describe('Download', () => {
 
       it('returns a promise that resolve when the request succeeds', () => {
         waitsForPromise(() => promise.then(state => {
-          expect(state.install.done).toBeTruthy();
+          expect(state.download.done).toBeTruthy();
         }));
       });
     });
@@ -55,7 +55,7 @@ describe('Download', () => {
         waitsForPromise({shouldReject: true}, () => promise);
 
         waitsForPromise(() => promise.catch(err => {
-          expect(err.data.install.done).toBeFalsy();
+          expect(err.data.download.done).toBeFalsy();
         }));
       });
     });
