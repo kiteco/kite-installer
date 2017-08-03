@@ -65,4 +65,61 @@ kite-atom-install {
       text-decoration: none;
     }
   }
+
+  kite-atom-install-end {
+    p, ul, li {
+      font-size: 1rem;
+    }
+
+    .welcome-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      align-content: center;
+
+      h3 {
+        font-weight: normal;
+        margin: 0;
+        font-size: 1.4rem;
+      }
+
+      .title-logo svg {
+        width: auto;
+        height: 24px;
+
+        path, polygon {
+          fill: @text-color;
+        }
+      }
+    }
+
+    .warning {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .description {
+      display: flex;
+      justify-content: space-between;
+      margin: 1rem 0;
+      align-items: center;
+      align-content: center;
+
+      .description-screenshot img {
+        width: 183px;
+        height: 200px;
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+    }
+
+    p.feedback {
+      border-top: 3px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+      padding-top: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
 }
