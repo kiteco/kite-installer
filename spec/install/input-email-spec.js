@@ -40,16 +40,5 @@ describe('InputEmail', () => {
     it('leaves the input empty', () => {
       expect(view.querySelector('input').value).toEqual('');
     });
-
-    describe('submitting the step without a valid email', () => {
-      it('does not validate the form and reports an error', () => {
-        const spy = jasmine.createSpy();
-        view.onDidSubmit(spy);
-        view.submit.dispatchEvent(new Event('click'));
-
-        expect(spy).not.toHaveBeenCalled();
-        expect(view.querySelector('input:invalid')).toExist();
-      });
-    });
   });
 });
