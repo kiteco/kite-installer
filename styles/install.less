@@ -25,12 +25,34 @@ kite-atom-install {
 
   .status {
     color: @text-color-error;
+    font-size: 1.1rem;
+    margin: 1rem 0;
+    text-align: center;
+  }
+
+  .logo {
+    text-align: center;
+    padding: 2rem 0;
+
+    svg {
+      width: 96px;
+      height: auto;
+      path, polygon {
+        fill: @text-color;
+      }
+    }
   }
 
   .hidden {
-    font-size: 1.2rem;
     display: none;
-    margin-top: 1rem;
+  }
+
+  .disabled {
+    pointer-events: none;
+
+    .ingore-disabled {
+      pointer-events: auto;
+    }
   }
 
   .secondary-cta {
