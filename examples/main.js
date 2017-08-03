@@ -1,5 +1,5 @@
 var AccountManager = require('../lib/account-manager.js');
-var DecisionMaker = require('../lib/decision-maker.js');
+var compatibility = require('../lib/compatibility.js');
 var Installer = require('../lib/installer.js');
 var Installation = require('../lib/models/installation.js');
 var StateController = require('../lib/state-controller.js');
@@ -20,13 +20,12 @@ module.exports = {
 
     var editor = { UUID: 'k', name: 'atom' };
     var plugin = { name: 'kite-installer' };
-    var dm = new DecisionMaker(editor, plugin);
 
-    var throttle = dm.shouldOfferKite('', 5000);
+    var compatible = compatibility.check();
     var canInstall = StateController.canInstallKite();
 
-    Promise.all([throttle, canInstall]).then((values) => {
-      var variant = values[0];
+    Promise.all([compatibility, canInstall]).then((values) => {
+      var variant = {};
       metrics.Tracker.name = 'atom kite-installer example';
       metrics.Tracker.props = variant;
       errors.trackUncaught();
