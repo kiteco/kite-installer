@@ -71,7 +71,7 @@ describe('StateController - Windows Support', () => {
         spyOn(fs, 'unlinkSync');
         fakeProcesses({
           exec: {
-            [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 0,
           },
         });
       });
@@ -99,7 +99,7 @@ describe('StateController - Windows Support', () => {
       beforeEach(() => {
         fakeProcesses({
           exec: {
-            [WindowsSupport.KITE_INSTALLER_PATH]: () => 1,
+            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 1,
           },
         });
       });
@@ -116,7 +116,7 @@ describe('StateController - Windows Support', () => {
         });
         fakeProcesses({
           exec: {
-            [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 0,
           },
         });
       });
@@ -142,7 +142,7 @@ describe('StateController - Windows Support', () => {
           spyOn(fs, 'unlinkSync');
           fakeProcesses({
             exec: {
-              [WindowsSupport.KITE_INSTALLER_PATH]: () => 0,
+              [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 0,
             },
             del: () => 0,
           });
