@@ -1,15 +1,11 @@
 {
   "name": "kite-installer",
-  "main": "./lib/index.js",
-  "version": "0.19.3",
-  "description": "Javascript library to install and manage Kite",
+  "main": "./examples/main.js",
+  "version": "0.0.0",
+  "description": "A simple plugin to install Kite from Atom",
   "author": "Daniel Hung",
   "keywords": [],
-  "license": "SEE LICENSE IN LICENSE",
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
-  },
+  "license": "MIT",
   "dependencies": {
     "mixpanel": "^0.5.0"
   },
