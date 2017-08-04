@@ -32,6 +32,7 @@ module.exports = {
       this.installation = new Installation(variant);
       var installer = new Installer();
       installer.init(this.installation.flow, () => {
+        atom.packages.activatePackage('kite');
         errors.ignoreUncaught();
       });
       var pane = atom.workspace.getActivePane();
@@ -56,7 +57,7 @@ module.exports = {
   config: {
     hostname: {
       type: 'string',
-      default: 'kite.com',
+      default: 'alpha.kite.com',
       title: 'Kite Host',
       description: 'Hostname of Kite server',
     },
