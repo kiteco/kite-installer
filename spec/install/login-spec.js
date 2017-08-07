@@ -1,6 +1,5 @@
 'use strict';
 
-const child_process = require('child_process');
 const AccountManager = require('../../lib/account-manager');
 const Login = require('../../lib/install/login');
 const LoginElement = require('../../lib/elements/atom/login-element');
