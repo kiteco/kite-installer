@@ -1,6 +1,7 @@
 'use strict';
 
 const child_process = require('child_process');
+const AccountManager = require('../../lib/account-manager');
 const Login = require('../../lib/install/login');
 const LoginElement = require('../../lib/elements/atom/login-element');
 const {withFakeServer, fakeResponse, withAccountManager, withRoutes, startStep} = require('../spec-helpers');
@@ -54,14 +55,13 @@ describe('Login', () => {
 
       describe('clicking on the forgot password button', () => {
         it('opens the reset password form in a browser', () => {
-          spyOn(child_process, 'spawn').andReturn({once: () => {}});
+          spyOn(AccountManager, 'resetPassword').andCallFake(() => {});
 
           view.forgotPassword.dispatchEvent(new Event('click'));
 
-          expect(child_process.spawn).toHaveBeenCalledWith('open', [
-            '-W',
-            'https://alpha.kite.com/account/resetPassword/request?email=some.email@company.com',
-          ], {});
+          expect(AccountManager.resetPassword).toHaveBeenCalledWith({
+            email: 'some.email@company.com',
+          });
         });
       });
 
