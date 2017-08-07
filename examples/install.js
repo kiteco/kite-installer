@@ -91,6 +91,7 @@ module.exports = () => {
     path: atom.project.getPaths()[0] || os.homedir(),
   }, {
     failureStep: 'termination',
+    title: 'Some Item Title Example',
   });
 
   Logger.LEVEL = Logger.LEVELS.DEBUG;
