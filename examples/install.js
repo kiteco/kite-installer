@@ -50,6 +50,7 @@ module.exports = () => {
           name: 'login',
           view: new LoginElement(),
           failureStep: 'account-switch',
+          backStep: 'input-email',
         }),
       }, {
         match: (data) => !data.account.exists,
