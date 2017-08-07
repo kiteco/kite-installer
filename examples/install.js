@@ -12,6 +12,7 @@ module.exports = () => {
   const InputEmail = require('../lib/install/input-email');
   const Install = require('../lib/install');
   const InstallPlugin = require('../lib/install/install-plugin');
+  const KiteVsJedi = require('../lib/install/kite-vs-jedi');
   const Logger = require('../lib/logger');
   const Login = require('../lib/install/login');
   const ParallelSteps = require('../lib/install/parallel-steps');
@@ -22,14 +23,22 @@ module.exports = () => {
   const InputEmailElement = require('../lib/elements/atom/input-email-element');
   const InstallEndElement = require('../lib/elements/atom/install-end-element');
   const InstallErrorElement = require('../lib/elements/atom/install-error-element');
+  const KiteVsJediElement = require('../lib/elements/atom/kite-vs-jedi-element');
   const LoginElement = require('../lib/elements/atom/login-element');
   const WhitelistElement = require('../lib/elements/atom/whitelist-element');
 
   require('../lib/elements/atom/install-element');
 
   const install = new Install([
+    new KiteVsJedi({
+      name: 'kite-vs-jedi',
+      view: new KiteVsJediElement(),
+    }),
     new GetEmail({name: 'get-email'}),
-    new InputEmail({name: 'input-email', view: new InputEmailElement()}),
+    new InputEmail({
+      name: 'input-email',
+      view: new InputEmailElement(),
+    }),
     new CheckEmail({
       name: 'check-email',
       failureStep: 'input-email',

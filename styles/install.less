@@ -3,12 +3,16 @@
 
 kite-atom-install {
   display: block;
-  margin: 0 auto;
   overflow: auto;
-  max-width: 550px;
-  min-width: 310px;
-  width: 85%;
-  padding: 1.5rem 2rem;
+  margin: 0 auto;
+
+  .install-wrapper {
+    max-width: 560px;
+    min-width: 320px;
+    width: 85%;
+    padding: 1.5rem 2rem;
+    margin: 0 auto;
+  }
 
   input[type=email], input[type=password] {
     font-size: 1.2rem;
@@ -66,6 +70,81 @@ kite-atom-install {
 
     &:hover {
       text-decoration: none;
+    }
+  }
+
+  .download-kite,
+  .install-kite,
+  .run-kite,
+  .install-plugin {
+    margin-bottom: 2 * @component-padding;
+  }
+
+  .download-kite {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    progress {
+      flex: 1 1 0;
+    }
+  }
+
+  kite-atom-kite-vs-jedi {
+    display: block;
+    max-width: 800px;
+    margin: 0 -120px;
+
+    ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      list-style: none;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-columns: 50%;
+      grid-gap: @component-padding;
+    }
+
+    .column {
+      display: grid;
+      grid-template-rows: 150px 150px;
+      grid-gap: @component-padding;
+      flex-grow: 1;
+    }
+
+    .inset-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+    }
+    .cta-row {
+      margin-top: 1em;
+    }
+
+    .localities {
+      padding-top: @component-padding;
+      border-top: 1px solid @text-color-subtle;
+      position: relative;
+
+      .locality.icon {
+        padding-left: 2em;
+
+        &:before {
+          position: absolute;
+          left: 0;
+        }
+      }
     }
   }
 
