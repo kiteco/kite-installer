@@ -7,11 +7,17 @@ kite-atom-install {
   margin: 0 auto;
 
   .install-wrapper {
-    max-width: 560px;
+    max-width: 800px;
     min-width: 320px;
     width: 85%;
     padding: 1.5rem 2rem;
     margin: 0 auto;
+
+    > *:not(.content) {
+      max-width: 520px;
+      margin: 0 auto;
+      display: block;
+    }
   }
 
   input[type=email], input[type=password] {
@@ -90,10 +96,16 @@ kite-atom-install {
     }
   }
 
+  .content > *:not(kite-atom-kite-vs-jedi) {
+    max-width: 520px;
+    margin: 0 auto;
+    display: block;
+  }
+
   kite-atom-kite-vs-jedi {
     display: block;
-    max-width: 800px;
-    margin: 0 -120px;
+    // max-width: 800px;
+    // margin: 0 -120px;
 
     ul {
       padding: 0;
