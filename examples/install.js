@@ -7,12 +7,11 @@ module.exports = () => {
     install: {
       KiteVsJedi,
       Install,
-      atom: {
-        KiteVsJediElement,
-        defaultFlow,
-      },
+      atom: atomInstall,
     },
   } = require('../lib');
+
+  const {KiteVsJediElement, defaultFlow} = atomInstall();
 
   const install = new Install([
     new KiteVsJedi({
