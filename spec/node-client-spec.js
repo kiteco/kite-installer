@@ -2,10 +2,10 @@
 
 const http = require('http');
 const https = require('https');
-const Client = require('../lib/client');
+const Client = require('../lib/node-client');
 const {fakeRequestMethod} = require('./spec-helpers');
 
-describe('Client', () => {
+describe('NodeClient', () => {
   let client, hostname, port, base, promise;
 
   beforeEach(() => {

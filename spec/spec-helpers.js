@@ -14,6 +14,11 @@ if (os.platform() !== 'win32') {
   process.env.LOCALAPPDATA = os.tmpDir();
 }
 
+const StateController = require('../lib/state-controller');
+const BrowserClient = require('../lib/browser-client');
+
+StateController.client = new BrowserClient('127.0.0.1', 46624, '', false);
+
 beforeEach(() => {
   jasmine.useRealClock();
 });
