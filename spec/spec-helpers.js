@@ -15,9 +15,9 @@ if (os.platform() !== 'win32') {
 }
 
 const StateController = require('../lib/state-controller');
-const BrowserClient = require('../lib/browser-client');
+const NodeClient = require('../lib/node-client');
 
-StateController.client = new BrowserClient('127.0.0.1', 46624, '', false);
+StateController.client = new NodeClient('127.0.0.1', 46624, '', false);
 
 beforeEach(() => {
   jasmine.useRealClock();
@@ -463,7 +463,7 @@ function withKiteReachable(routes, block) {
     routes = [];
   }
 
-  routes.push([o => o.path === '/system', o => fakeResponse(200)]);
+  routes.push([o => o.path === '/settings', o => fakeResponse(200)]);
 
   withKiteRunning(() => {
     describe(', reachable', () => {
