@@ -274,7 +274,7 @@ describe('StateController - OSX Support', () => {
                 });
               }),
             };
-           const url = 'http://kite.com/download';
+            const url = 'http://kite.com/download';
 
             waitsForPromise(() => StateController.downloadKite(url, options));
             runs(() => {
@@ -382,7 +382,7 @@ describe('StateController - OSX Support', () => {
           ]);
 
           expect(proc.spawn).toHaveBeenCalledWith('open', [
-            '-a', OSXSupport.installPath,
+            '-a', OSXSupport.installPath, '--args', '"--plugin-launch"',
           ]);
         });
       });
