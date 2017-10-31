@@ -245,7 +245,8 @@ describe('StateController - Windows Support', () => {
         waitsForPromise(() => StateController.runKite());
         runs(() => {
           expect(proc.spawn.mostRecentCall.args[0])
-          .toEqual(`${WindowsSupport.KITE_EXE_PATH} --plugin-launch`);
+          .toEqual(WindowsSupport.KITE_EXE_PATH);
+          // .toEqual(`${WindowsSupport.KITE_EXE_PATH} --plugin-launch`);
         });
       });
     });
