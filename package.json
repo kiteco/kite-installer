@@ -1,7 +1,7 @@
 {
   "name": "kite-installer",
   "main": "./lib/index.js",
-  "version": "0.22.4",
+  "version": "0.23.0",
   "description": "Javascript library to install and manage Kite",
   "author": "Daniel Hung",
   "keywords": [],
