@@ -71,7 +71,7 @@ describe('StateController - Windows Support', () => {
         spyOn(fs, 'unlinkSync');
         fakeProcesses({
           exec: {
-            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 0,
+            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding --plugin-launch']: () => 0,
           },
         });
       });
@@ -99,7 +99,7 @@ describe('StateController - Windows Support', () => {
       beforeEach(() => {
         fakeProcesses({
           exec: {
-            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 1,
+            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding --plugin-launch']: () => 1,
           },
         });
       });
@@ -116,7 +116,7 @@ describe('StateController - Windows Support', () => {
         });
         fakeProcesses({
           exec: {
-            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 0,
+            [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding --plugin-launch']: () => 0,
           },
         });
       });
@@ -142,7 +142,7 @@ describe('StateController - Windows Support', () => {
           spyOn(fs, 'unlinkSync');
           fakeProcesses({
             exec: {
-              [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding']: () => 0,
+              [WindowsSupport.KITE_INSTALLER_PATH + ' --skip-onboarding --plugin-launch']: () => 0,
             },
             del: () => 0,
           });
@@ -244,7 +244,9 @@ describe('StateController - Windows Support', () => {
       it('returns a resolved promise', () => {
         waitsForPromise(() => StateController.runKite());
         runs(() => {
-          expect(proc.spawn.mostRecentCall.args[0]).toEqual(WindowsSupport.KITE_EXE_PATH);
+          expect(proc.spawn.mostRecentCall.args[0])
+          .toEqual(WindowsSupport.KITE_EXE_PATH);
+          // .toEqual(`${WindowsSupport.KITE_EXE_PATH} --plugin-launch`);
         });
       });
     });
