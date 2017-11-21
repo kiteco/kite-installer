@@ -1,14 +1,15 @@
 @import "syntax-variables";
+@import "ui-variables";
 
 // Using the git-diff colors so they are visible on your syntax theme.
 @red-color: @syntax-color-removed;
 @green-color: @syntax-color-added;
 @blue-color: @syntax-color-renamed;
 
-@cta-green: rgb(80, 171, 89);
-@cta-green-deactivated: rgba(80, 171, 89, 0.25);
-@cta-blue: rgb(24, 136, 198);
-@cta-blue-deactivated: rgb(24, 136, 198, 0.25);
+@cta-green: @green-color;
+@cta-green-deactivated: rgba(@cta-green, 0.25);
+@cta-blue: @blue-color;
+@cta-blue-deactivated: rgb(@cta-blue, 0.25);
 
 @border-radius: 0.3rem;
 
