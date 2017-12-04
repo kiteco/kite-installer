@@ -33,6 +33,33 @@ describe('AccountManager', () => {
       });
     });
 
+
+    describe('when called with a password', () => {
+      withFakeServer([[
+        o => /\/api\/account\/create$/.test(o.path),
+        o => fakeResponse(200),
+      ]], () => {
+        it('returns a promise that is resolved after calling the endpoint', () => {
+          waitsForPromise(() => AccountManager.createAccount({
+            email: 'foo@bar.com',
+            password: 'foobarbaz',
+          }).then(() => {
+            expect(http.request).toHaveBeenCalled();
+          }));
+        });
+
+        it('calls the provided callback', () => {
+          const spy = jasmine.createSpy();
+          waitsForPromise(() => AccountManager.createAccount({
+            email: 'foo@bar.com',
+            password: 'foobarbaz',
+          }, spy).then(() => {
+            expect(spy).toHaveBeenCalled();
+          }));
+        });
+      });
+    });
+
     describe('when called without an email', () => {
       beforeEach(() => {
         spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
