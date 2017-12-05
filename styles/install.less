@@ -1,0 +1,241 @@
+@import "syntax-variables";
+@import "ui-variables";
+
+kite-atom-install {
+  display: block;
+  overflow: auto;
+  margin: 0 auto;
+
+  .install-wrapper {
+    max-width: 800px;
+    min-width: 320px;
+    width: 85%;
+    padding: 1.5rem 2rem;
+    margin: 0 auto;
+
+    > *:not(.content) {
+      max-width: 520px;
+      margin: 0 auto;
+      display: block;
+    }
+  }
+
+  input[type=email], input[type=password] {
+    font-size: 1.2rem;
+    font-weight: 100;
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    font-size: 1.2rem;
+  }
+
+  .status {
+    color: @text-color-error;
+    font-size: 1.1rem;
+    margin: 1rem 0;
+    text-align: center;
+
+    pre {
+      text-align: left;
+    }
+  }
+
+  .logo {
+    text-align: center;
+    padding: 2rem 0;
+
+    svg {
+      width: 96px;
+      height: auto;
+      path, polygon {
+        fill: @text-color;
+      }
+    }
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .disabled {
+    pointer-events: none;
+
+    input, a, .btn {
+      &:not(.ignore-disabled) {
+        opacity: 0.6;
+      }
+    }
+
+    .ingore-disabled {
+      pointer-events: auto;
+    }
+  }
+
+  .secondary-cta {
+    display: inline-block;
+    padding: 1rem 0.2rem;
+    float: right;
+    color: @text-color;
+    font-size: 1.1rem;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .secondary-actions {
+    padding: 1rem 0.2rem;
+    font-size: 1.1rem;
+
+    a {
+      color: @text-color;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+
+    .secondary-cta {
+      padding: 0 0.2rem;
+    }
+  }
+
+  .download-kite,
+  .install-kite,
+  .run-kite,
+  .install-plugin {
+    margin-bottom: 2 * @component-padding;
+  }
+
+  .download-kite {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    progress {
+      flex: 1 1 0;
+    }
+  }
+
+  .content > *:not(kite-atom-kite-vs-jedi) {
+    max-width: 520px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  kite-atom-kite-vs-jedi {
+    display: block;
+    // max-width: 800px;
+    // margin: 0 -120px;
+
+    ul {
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      list-style: none;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-columns: 50%;
+      grid-gap: @component-padding;
+    }
+
+    .column {
+      display: grid;
+      grid-template-rows: 150px 150px;
+      grid-gap: @component-padding;
+      flex-grow: 1;
+    }
+
+    .inset-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+    }
+    .cta-row {
+      margin-top: 1em;
+    }
+
+    .localities {
+      padding-top: @component-padding;
+      border-top: 1px solid @text-color-subtle;
+      position: relative;
+
+      .locality.icon {
+        padding-left: 2em;
+
+        &:before {
+          position: absolute;
+          left: 0;
+        }
+      }
+    }
+  }
+
+  kite-atom-install-end {
+    p, ul, li {
+      font-size: 1rem;
+    }
+
+    .welcome-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      align-content: center;
+
+      h3 {
+        font-weight: normal;
+        margin: 0;
+        font-size: 1.4rem;
+      }
+
+      .title-logo svg {
+        width: auto;
+        height: 24px;
+
+        path, polygon {
+          fill: @text-color;
+        }
+      }
+    }
+
+    .warning {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .description {
+      display: flex;
+      justify-content: space-between;
+      margin: 1rem 0;
+      align-items: center;
+      align-content: center;
+
+      .description-screenshot img {
+        width: 183px;
+        height: 200px;
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+    }
+
+    p.feedback {
+      border-top: 3px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.9rem;
+      padding-top: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}

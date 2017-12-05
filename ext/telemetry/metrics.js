@@ -39,11 +39,17 @@ function track(eventName, properties) {
   var eventData = {
     distinct_id: distinctID(),
     editor_uuid: EDITOR_UUID,
-    editor: 'atom',
-    atom_version: atom.getVersion(),
     kite_plugin_version: kitePkg.version,
     os: OS_VERSION,
   };
+
+  if (typeof atom !== 'undefined') {
+    eventData.editor = 'atom';
+    eventData.atom_version = atom.getVersion();
+  } else {
+    eventData.editor = 'vscode';
+  }
+
   for (var key in properties || {}) {
     eventData[key] = properties[key];
   }
