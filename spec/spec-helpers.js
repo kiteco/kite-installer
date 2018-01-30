@@ -9,9 +9,9 @@ const proc = require('child_process');
 // This ensure that the env variables required by the
 // windows support object are available even on another platform.
 if (os.platform() !== 'win32') {
-  process.env.TMP = os.tmpDir();
-  process.env.ProgramW6432 = os.tmpDir();
-  process.env.LOCALAPPDATA = os.tmpDir();
+  process.env.TMP = os.tmpdir();
+  process.env.ProgramW6432 = os.tmpdir();
+  process.env.LOCALAPPDATA = os.tmpdir();
 }
 
 const StateController = require('../lib/state-controller');
