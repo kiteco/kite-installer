@@ -1,10 +1,12 @@
 'use strict';
 
+const sinon = require('sinon');
+const {waitsForPromise} = require('kite-connect/test/helpers/async');
 const ParallelSteps = require('../../lib/install/parallel-steps');
 
 const dummyStep = (resolve = true) => {
   return {
-    start: jasmine.createSpy().andCallFake(() => {
+    start: sinon.stub().callsFake(() => {
       return resolve ? Promise.resolve() : Promise.reject();
     }),
   };
@@ -21,7 +23,7 @@ describe('ParallelSteps', () => {
     });
 
     it('resolves when both substeps are resolved', () => {
-      waitsForPromise(() => steps.start());
+      return waitsForPromise(() => steps.start());
     });
   });
 
@@ -33,7 +35,7 @@ describe('ParallelSteps', () => {
     });
 
     it('rejects the whole promise', () => {
-      waitsForPromise({shouldReject: true}, () => steps.start());
+      return waitsForPromise({shouldReject: true}, () => steps.start());
     });
   });
 });

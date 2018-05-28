@@ -1,12 +1,14 @@
 'use strict';
 
+const expect = require('expect.js');
+const {fakeResponse} = require('kite-connect/test/helpers/http');
+const {waitsForPromise} = require('kite-connect/test/helpers/async');
+
 const CheckEmail = require('../../lib/install/check-email');
-const {withFakeServer, fakeResponse, withAccountManager} = require('../spec-helpers');
+const {withAccountServer} = require('../spec-helpers');
 
 describe('CheckEmail', () => {
   let step;
-
-  withAccountManager();
 
   beforeEach(() => {
     step = new CheckEmail();
@@ -14,16 +16,16 @@ describe('CheckEmail', () => {
 
   describe('called with an email', () => {
     describe('that is not linked to an account', () => {
-      withFakeServer([
+      withAccountServer([
         [
           o => o.method === 'POST' && o.path === '/api/account/check-email',
           o => fakeResponse(200),
         ],
       ], () => {
         it('resolves with a passwordless account', () => {
-          waitsForPromise(() =>
+          return waitsForPromise(() =>
           step.start({account: {email: 'some.email@company.com'}}).then(data => {
-            expect(data.account).toEqual({
+            expect(data.account).to.eql({
               email: 'some.email@company.com',
               invalid: false,
               exists: false,
@@ -36,7 +38,7 @@ describe('CheckEmail', () => {
     });
 
     describe('that has an account', () => {
-      withFakeServer([
+      withAccountServer([
         [
           o => o.method === 'POST' && o.path === '/api/account/check-email',
           o => fakeResponse(403, JSON.stringify({
@@ -48,9 +50,9 @@ describe('CheckEmail', () => {
         ],
       ], () => {
         it('resolves with an existing account', () => {
-          waitsForPromise(() =>
+          return waitsForPromise(() =>
           step.start({account: {email: 'some.email@company.com'}}).then(data => {
-            expect(data.account).toEqual({
+            expect(data.account).to.eql({
               email: 'some.email@company.com',
               invalid: false,
               exists: true,
@@ -63,7 +65,7 @@ describe('CheckEmail', () => {
     });
 
     describe('that has an account but no password', () => {
-      withFakeServer([
+      withAccountServer([
         [
           o => o.method === 'POST' && o.path === '/api/account/check-email',
           o => fakeResponse(403, JSON.stringify({
@@ -75,9 +77,9 @@ describe('CheckEmail', () => {
         ],
       ], () => {
         it('resolves with an existing account', () => {
-          waitsForPromise(() =>
+          return waitsForPromise(() =>
           step.start({account: {email: 'some.email@company.com'}}).then(data => {
-            expect(data.account).toEqual({
+            expect(data.account).to.eql({
               email: 'some.email@company.com',
               invalid: false,
               exists: true,
@@ -90,7 +92,7 @@ describe('CheckEmail', () => {
     });
 
     describe('that is not a valid email', () => {
-      withFakeServer([
+      withAccountServer([
         [
           o => o.method === 'POST' && o.path === '/api/account/check-email',
           o => fakeResponse(403, JSON.stringify({
@@ -102,9 +104,9 @@ describe('CheckEmail', () => {
         ],
       ], () => {
         it('resolves with an existing account', () => {
-          waitsForPromise({shouldReject: true}, () =>
+          return waitsForPromise({shouldReject: true}, () =>
           step.start({account: {email: 'some'}}).catch(err => {
-            expect(err.data).toEqual({
+            expect(err.data).to.eql({
               account: {
                 email: 'some',
                 invalid: true,
@@ -122,14 +124,14 @@ describe('CheckEmail', () => {
   });
 
   describe('when a server error occurs', () => {
-    withFakeServer([
+    withAccountServer([
       [
         o => o.method === 'POST' && o.path === '/api/account/check-email',
         o => fakeResponse(500),
       ],
     ], () => {
       it('rejects the promise', () => {
-        waitsForPromise({
+        return waitsForPromise({
           shouldReject: true,
         }, () => step.start({account: {email: 'some.email@company.com'}}));
       });

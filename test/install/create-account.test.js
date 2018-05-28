@@ -1,21 +1,28 @@
 'use strict';
 
+const expect = require('expect.js');
+const sinon = require('sinon');
+const {fakeResponse} = require('kite-connect/test/helpers/http');
+const {waitsForPromise} = require('kite-connect/test/helpers/async');
+
 const CreateAccount = require('../../lib/install/create-account');
 const AccountManager = require('../../lib/account-manager');
-const {withFakeServer, fakeResponse, withAccountManager} = require('../spec-helpers');
+const {withAccountServer} = require('../spec-helpers');
 
 describe('CreateAccount', () => {
-  let step, promise;
-
-  withAccountManager();
+  let step, promise, spy;
 
   beforeEach(() => {
     step = new CreateAccount();
-    spyOn(AccountManager, 'createAccount').andCallThrough();
+    spy = sinon.spy(AccountManager, 'createAccount');
+  });
+
+  afterEach(() => {
+    spy.restore();
   });
 
   describe('with a valid email that', () => {
-    withFakeServer([[
+    withAccountServer([[
       o => o.method === 'POST' && o.path === '/api/account/createPasswordless',
       o => fakeResponse(200, '', {
         headers: {
@@ -36,14 +43,14 @@ describe('CreateAccount', () => {
       });
 
       it('calls the account creation endpoint', () => {
-        expect(AccountManager.createAccount).toHaveBeenCalledWith({
+        expect(AccountManager.createAccount.calledWith({
           email: 'some.email@company.com',
-        });
+        })).to.be.ok();
       });
 
       it('returns a promise that resolve when the request succeeds', () => {
-        waitsForPromise(() => promise.then(state => {
-          expect(state.account.sessionId).toEqual('foobar');
+        return waitsForPromise(() => promise.then(state => {
+          expect(state.account.sessionId).to.eql('foobar');
         }));
       });
     });

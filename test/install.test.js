@@ -2,6 +2,7 @@
 
 const Install = require('../lib/install');
 const GetEmail = require('../lib/install/get-email');
+const {waitsForPromise} = require('kite-connect/test/helpers/async');
 
 describe('Install', () => {
   let install;
@@ -13,6 +14,6 @@ describe('Install', () => {
   });
 
   it('behaves like a thenable', () => {
-    waitsForPromise(() => install.start());
+    return waitsForPromise(() => install.start());
   });
 });

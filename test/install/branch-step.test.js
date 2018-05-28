@@ -1,12 +1,15 @@
 'use strict';
 
+const expect = require('expect.js');
+const sinon = require('sinon');
 const BranchStep = require('../../lib/install/branch-step');
+const {waitsForPromise} = require('kite-connect/test/helpers/async');
 
 const dummyStep = (match = true) => {
   return {
     match() { return match; },
     step: {
-      start: jasmine.createSpy().andCallFake(() => {
+      start: sinon.stub().callsFake(() => {
         return Promise.resolve();
       }),
     },
@@ -24,8 +27,8 @@ describe('BranchStep', () => {
     });
 
     it('calls the corresponding step start method', () => {
-      waitsForPromise(() => branch.start().then((data) => {
-        expect(data.step).toEqual(step1.step);
+      return waitsForPromise(() => branch.start().then((data) => {
+        expect(data.step).to.eql(step1.step);
       }));
     });
   });
@@ -38,7 +41,7 @@ describe('BranchStep', () => {
     });
 
     it('rejects the whole promise', () => {
-      waitsForPromise({shouldReject: true}, () => branch.start());
+      return waitsForPromise({shouldReject: true}, () => branch.start());
     });
   });
 });
