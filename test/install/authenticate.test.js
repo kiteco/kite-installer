@@ -1,5 +1,6 @@
 'use strict';
 
+const expect = require('expect.js');
 const sinon = require('sinon');
 const KiteAPI = require('kite-api');
 
@@ -16,9 +17,17 @@ describe('Authenticate', () => {
       cooldown: 0,
     });
   });
+
   afterEach(() => {
     stubAuth && stubAuth.restore();
     stubIsAuth && stubIsAuth.restore();
+  });
+
+  it('has default values for retries and cooldown', () => {
+    const step = new Authenticate();
+
+    expect(step.tries).to.eql(10);
+    expect(step.cooldown).to.eql(1500);
   });
 
   describe('when the request succeeds and the user is correctly authenticated', () => {
@@ -46,6 +55,9 @@ describe('Authenticate', () => {
       return waitsForPromise({shouldReject: true}, () => startStep(step, {
         account: {},
       }));
+    });
+    it('the install step fails', () => {
+      return waitsForPromise({shouldReject: true}, () => startStep(step, {}));
     });
   });
 
