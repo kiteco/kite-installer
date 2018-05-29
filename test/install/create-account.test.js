@@ -21,7 +21,34 @@ describe('CreateAccount', () => {
     spy.restore();
   });
 
-  describe('with a valid email that', () => {
+  describe('when the endpoint responds with an error', () => {
+    withAccountServer([[
+      o => o.method === 'POST' && o.path === '/api/account/createPasswordless',
+      o => fakeResponse(401, '', {
+        headers: {
+          'set-cookie': ['kite-session=foobar'],
+        },
+      }),
+    ]], () => {
+      beforeEach(() => {
+        promise = step.start({
+          account: {
+            email: 'some.email@company.com',
+            invalid: false,
+            exists: false,
+            hasPassword: false,
+            reason: null,
+          },
+        });
+      });
+
+      it('returns a promise that reject', () => {
+        return waitsForPromise({shouldReject: true}, () => promise);
+      });
+    });
+  });
+
+  describe('with a valid email', () => {
     withAccountServer([[
       o => o.method === 'POST' && o.path === '/api/account/createPasswordless',
       o => fakeResponse(200, '', {
