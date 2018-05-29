@@ -64,4 +64,32 @@ describe('Whitelist', () => {
       }));
     });
   });
+
+  describe('when no path is provided to the step', () => {
+    beforeEach(() => {
+      stubWhitelist = sinon.stub(KiteAPI, 'whitelistPath').returns(Promise.resolve({}));
+    });
+
+    it('the install step succeeds with no calls to whitelist endpoint', () => {
+      return waitsForPromise(() => startStep(step, {}))
+      .then(() => {
+        expect(KiteAPI.whitelistPath.called).not.to.be.ok();
+      });
+    });
+  });
+
+  describe('when the skipped option have been picked', () => {
+    beforeEach(() => {
+      stubWhitelist = sinon.stub(KiteAPI, 'whitelistPath').returns(Promise.resolve({}));
+    });
+
+    it('the install step succeeds with no calls to whitelist endpoint', () => {
+      return waitsForPromise(() => startStep(step, {
+        whitelist: 'skipped',
+      }))
+      .then(() => {
+        expect(KiteAPI.whitelistPath.called).not.to.be.ok();
+      });
+    });
+  });
 });
