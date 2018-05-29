@@ -4,26 +4,7 @@ const expect = require('expect.js');
 const sinon = require('sinon');
 const {waitsForPromise} = require('kite-connect/test/helpers/async');
 const Flow = require('../../lib/install/flow');
-const BaseStep = require('../../lib/install/base-step');
-
-class DummyStep extends BaseStep {
-  constructor(action, options) {
-    if (typeof action == 'object') {
-      ([action, options] = [options, action]);
-    }
-    super(options);
-    this.action = action;
-    sinon.spy(this, 'start');
-  }
-
-  start(state, install) {
-    return new Promise((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
-      this.action && this.action(this, state, install);
-    });
-  }
-}
+const DummyStep = require('../helpers/dummy-step');
 
 describe('Flow', () => {
   let flow, steps, install;
