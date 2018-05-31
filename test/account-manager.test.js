@@ -163,7 +163,7 @@ describe('AccountManager', () => {
   describe('.resetPassword()', () => {
     describe('when the request succeeds', () => {
       withAccountServer([[
-        o => /\/account\/resetPassword\/request/.test(o.path),
+        o => /\/account\/reset-password\/request/.test(o.path),
         o => fakeResponse(200),
       ]], () => {
         it('returns a promise that is resolved after calling the endpoint', () => {
