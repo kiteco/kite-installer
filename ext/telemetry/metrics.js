@@ -51,7 +51,7 @@ function track(eventName, properties) {
   for (var key in properties || {}) {
     eventData[key] = properties[key];
   }
-  Logger.debug('mixpanel:', eventName, eventData);
+  Logger.debug(`track: ${ eventName }`, eventData);
   client.track(eventName, eventData);
 }
 
