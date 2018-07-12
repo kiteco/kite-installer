@@ -38,15 +38,14 @@ function track(eventName, properties) {
   var eventData = {
     distinct_id: distinctID(),
     editor_uuid: EDITOR_UUID,
-    kite_plugin_version: kitePkg.version,
-    os: OS_VERSION,
+    kite_installer_version: kitePkg.version,
+    os_name: os.type(),
+    os_release: os.release(),
   };
 
   if (typeof atom !== 'undefined') {
     eventData.editor = 'atom';
-    eventData.atom_version = atom.getVersion();
-  } else {
-    eventData.editor = 'vscode';
+    eventData.editor_version = atom.getVersion();
   }
 
   for (var key in properties || {}) {
@@ -57,14 +56,15 @@ function track(eventName, properties) {
 }
 
 var Tracker = {
-  name: null,
+  source: null,
   props: null,
   trackEvent: function(eventName, extras) {
     extras = extras || {};
+    extras.source = this.source;
     for (var key in this.props) {
       extras[key] = this.props[key];
     }
-    track(`${ this.name } - ${ eventName }`, extras);
+    track(eventName, extras);
   },
 };
 
