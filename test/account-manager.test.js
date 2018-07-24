@@ -1,92 +1,88 @@
 'use strict';
 
-const http = require('http');
+const expect = require('expect.js');
+const sinon = require('sinon');
 const AccountManager = require('../lib/account-manager');
-const {withFakeServer, fakeResponse, fakeRequestMethod} = require('./spec-helpers');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
+const {fakeResponse} = require('kite-connector/test/helpers/http');
+const {withAccountServer} = require('./spec-helpers');
 
 describe('AccountManager', () => {
-  beforeEach(() => AccountManager.initClient('127.0.0.1', 46624));
-  afterEach(() => AccountManager.disposeClient());
-
   describe('.createAccount()', () => {
     describe('when the request succeeds', () => {
-      withFakeServer([[
+      withAccountServer([[
         o => /\/api\/account\/createPasswordless/.test(o.path),
         o => fakeResponse(200),
       ]], () => {
         it('returns a promise that is resolved after calling the endpoint', () => {
-          waitsForPromise(() => AccountManager.createAccount({
+          return waitsForPromise(() => AccountManager.createAccount({
             email: 'foo@bar.com',
           }).then(() => {
-            expect(http.request).toHaveBeenCalled();
+            expect(AccountManager.client.request.called).to.be.ok();
           }));
         });
 
         it('calls the provided callback', () => {
-          const spy = jasmine.createSpy();
-          waitsForPromise(() => AccountManager.createAccount({
+          const spy = sinon.spy();
+          return waitsForPromise(() => AccountManager.createAccount({
             email: 'foo@bar.com',
           }, spy).then(() => {
-            expect(spy).toHaveBeenCalled();
+            expect(spy.called).to.be.ok();
           }));
         });
       });
     });
 
-
     describe('when called with a password', () => {
-      withFakeServer([[
+      withAccountServer([[
         o => /\/api\/account\/create$/.test(o.path),
         o => fakeResponse(200),
       ]], () => {
         it('returns a promise that is resolved after calling the endpoint', () => {
-          waitsForPromise(() => AccountManager.createAccount({
+          return waitsForPromise(() => AccountManager.createAccount({
             email: 'foo@bar.com',
             password: 'foobarbaz',
           }).then(() => {
-            expect(http.request).toHaveBeenCalled();
+            expect(AccountManager.client.request.called).to.be.ok();
           }));
         });
 
         it('calls the provided callback', () => {
-          const spy = jasmine.createSpy();
-          waitsForPromise(() => AccountManager.createAccount({
+          const spy = sinon.spy();
+          return waitsForPromise(() => AccountManager.createAccount({
             email: 'foo@bar.com',
             password: 'foobarbaz',
           }, spy).then(() => {
-            expect(spy).toHaveBeenCalled();
+            expect(spy.called).to.be.ok();
           }));
         });
       });
     });
 
     describe('when called without an email', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer();
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.createAccount({}));
+        return waitsForPromise({shouldReject: true}, () => AccountManager.createAccount({}));
       });
     });
 
     describe('when called without any data', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer();
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.createAccount());
+        return waitsForPromise({shouldReject: true}, () => AccountManager.createAccount());
       });
     });
 
     describe('when the request fails', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer([[
+        o => true,
+        o => fakeResponse(500),
+      ]]);
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.createAccount({
+        return waitsForPromise({shouldReject: true}, () => AccountManager.createAccount({
           email: 'foo@bar.com',
         }));
       });
@@ -95,38 +91,36 @@ describe('AccountManager', () => {
 
   describe('.login()', () => {
     describe('when the request succeeds', () => {
-      withFakeServer([[
+      withAccountServer([[
         o => /\/api\/account\/login/.test(o.path),
         o => fakeResponse(200),
       ]], () => {
         it('returns a promise that is resolved after calling the endpoint', () => {
-          waitsForPromise(() => AccountManager.login({
+          return waitsForPromise(() => AccountManager.login({
             email: 'foo@bar.com',
             password: 'foo',
           }).then(() => {
-            expect(http.request).toHaveBeenCalled();
+            expect(AccountManager.client.request.called).to.be.ok();
           }));
         });
 
         it('calls the provided callback', () => {
-          const spy = jasmine.createSpy();
-          waitsForPromise(() => AccountManager.login({
+          const spy = sinon.spy();
+          return waitsForPromise(() => AccountManager.login({
             email: 'foo@bar.com',
             password: 'foo',
           }, spy).then(() => {
-            expect(spy).toHaveBeenCalled();
+            expect(spy.called).to.be.ok();
           }));
         });
       });
     });
 
     describe('when called without an email', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer();
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () =>
+        return waitsForPromise({shouldReject: true}, () =>
           AccountManager.login({
             password: 'foo',
           }));
@@ -134,12 +128,10 @@ describe('AccountManager', () => {
     });
 
     describe('when called without a password', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer();
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () =>
+        return waitsForPromise({shouldReject: true}, () =>
           AccountManager.login({
             email: 'foo@bar.com',
           }));
@@ -147,22 +139,21 @@ describe('AccountManager', () => {
     });
 
     describe('when called without any data', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer();
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.login());
+        return waitsForPromise({shouldReject: true}, () => AccountManager.login());
       });
     });
 
     describe('when the request fails', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer([[
+        o => true,
+        o => fakeResponse(500),
+      ]]);
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.login({
+        return waitsForPromise({shouldReject: true}, () => AccountManager.login({
           email: 'foo@bar.com',
         }));
       });
@@ -171,56 +162,53 @@ describe('AccountManager', () => {
 
   describe('.resetPassword()', () => {
     describe('when the request succeeds', () => {
-      withFakeServer([[
-        o => /\/account\/resetPassword\/request/.test(o.path),
+      withAccountServer([[
+        o => /\/account\/reset-password\/request/.test(o.path),
         o => fakeResponse(200),
       ]], () => {
         it('returns a promise that is resolved after calling the endpoint', () => {
-          waitsForPromise(() => AccountManager.resetPassword({
+          return waitsForPromise(() => AccountManager.resetPassword({
             email: 'foo@bar.com',
           }).then(() => {
-            expect(http.request).toHaveBeenCalled();
+            expect(AccountManager.client.request.called).to.be.ok();
           }));
         });
 
         it('calls the provided callback', () => {
-          const spy = jasmine.createSpy();
-          waitsForPromise(() => AccountManager.resetPassword({
+          const spy = sinon.spy();
+          return waitsForPromise(() => AccountManager.resetPassword({
             email: 'foo@bar.com',
           }, spy).then(() => {
-            expect(spy).toHaveBeenCalled();
+            expect(spy.called).to.be.ok();
           }));
         });
       });
     });
 
     describe('when called without an email', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer();
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword({}));
+        return waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword({}));
       });
     });
 
     describe('when called without any data', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer();
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword());
+        return waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword());
       });
     });
 
     describe('when the request fails', () => {
-      beforeEach(() => {
-        spyOn(http, 'request').andCallFake(fakeRequestMethod(false));
-      });
+      withAccountServer([[
+        o => true,
+        o => fakeResponse(500),
+      ]]);
 
       it('returns a rejected promise', () => {
-        waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword({
+        return waitsForPromise({shouldReject: true}, () => AccountManager.resetPassword({
           email: 'foo@bar.com',
         }));
       });
