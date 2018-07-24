@@ -3,7 +3,7 @@
 const sinon = require('sinon');
 const expect = require('expect.js');
 const KiteAPI = require('kite-api');
-const KiteConnector = require('kite-connect');
+const KiteConnector = require('kite-connector');
 const StateController = require('../lib/state-controller');
 
 describe('StateController', () => {

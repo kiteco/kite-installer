@@ -3,7 +3,7 @@
 const expect = require('expect.js');
 const sinon = require('sinon');
 const BranchStep = require('../../lib/install/branch-step');
-const {waitsForPromise} = require('kite-connect/test/helpers/async');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
 
 const dummyStep = (match = true) => {
   return {

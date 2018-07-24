@@ -3,7 +3,7 @@
 const expect = require('expect.js');
 const sinon = require('sinon');
 const Install = require('../lib/install');
-const {waitsForPromise} = require('kite-connect/test/helpers/async');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
 const DummyStep = require('./helpers/dummy-step');
 
 describe('Install', () => {

@@ -2,8 +2,8 @@
 
 const expect = require('expect.js');
 const sinon = require('sinon');
-const {waitsForPromise} = require('kite-connect/test/helpers/async');
-const {fakeResponse} = require('kite-connect/test/helpers/http');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
+const {fakeResponse} = require('kite-connector/test/helpers/http');
 const AccountManager = require('../../lib/account-manager');
 const Login = require('../../lib/install/login');
 const {withAccountServer, withAccountRoutes, startStep} = require('../spec-helpers');

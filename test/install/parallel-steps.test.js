@@ -2,7 +2,7 @@
 
 const expect = require('expect.js');
 const sinon = require('sinon');
-const {waitsForPromise} = require('kite-connect/test/helpers/async');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
 const ParallelSteps = require('../../lib/install/parallel-steps');
 
 const dummyStep = (resolve = true, data) => {

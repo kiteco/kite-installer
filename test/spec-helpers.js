@@ -2,7 +2,7 @@
 const AccountManager = require('../lib/account-manager');
 const Install = require('../lib/install');
 // const InstallElement = require('../lib/elements/atom/install-element');
-const TestClient = require('kite-connect/lib/clients/test-client');
+const TestClient = require('kite-connector/lib/clients/test-client');
 
 function startStep(step, state) {
   const install = new Install([step], state);

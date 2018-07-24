@@ -5,7 +5,7 @@
 const expect = require('expect.js');
 const sinon = require('sinon');
 const KiteAPI = require('kite-api');
-const {waitsFor, waitsForPromise} = require('kite-connect/test/helpers/async');
+const {waitsFor, waitsForPromise} = require('kite-connector/test/helpers/async');
 
 const Download = require('../../lib/install/download');
 const {startStep} = require('../spec-helpers');

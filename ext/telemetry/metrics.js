@@ -6,7 +6,7 @@ const mixpanel = require('mixpanel');
 
 const localconfig = require('./localconfig');
 const kitePkg = require('../../package.json');
-const Logger = require('kite-connect/lib/logger');
+const Logger = require('kite-connector/lib/logger');
 
 const MIXPANEL_TOKEN = 'fb6b9b336122a8b29c60f4c28dab6d03';
 

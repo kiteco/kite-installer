@@ -1,8 +1,8 @@
 'use strict';
 
 const expect = require('expect.js');
-const {fakeResponse} = require('kite-connect/test/helpers/http');
-const {waitsForPromise} = require('kite-connect/test/helpers/async');
+const {fakeResponse} = require('kite-connector/test/helpers/http');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
 
 const CheckEmail = require('../../lib/install/check-email');
 const {withAccountServer} = require('../spec-helpers');

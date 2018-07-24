@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const Logger = require('kite-connect/lib/logger');
+const Logger = require('kite-connector/lib/logger');
 const configPath = typeof atom !== 'undefined' && atom.config.getUserConfigPath()
   ? path.join(path.dirname(atom.config.getUserConfigPath()), 'kite-config.json')
   : path.join(os.homedir(), '.kite', 'kite-config.json');

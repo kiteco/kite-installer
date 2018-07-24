@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('expect.js');
-const {waitsForPromise} = require('kite-connect/test/helpers/async');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
 const InputEmail = require('../../lib/install/input-email');
 const {startStep} = require('../spec-helpers');
 

@@ -2,7 +2,7 @@
 
 const expect = require('expect.js');
 
-const {waitsForPromise} = require('kite-connect/test/helpers/async');
+const {waitsForPromise} = require('kite-connector/test/helpers/async');
 const WhitelistChoice = require('../../lib/install/whitelist-choice');
 const {startStep} = require('../spec-helpers');
 
