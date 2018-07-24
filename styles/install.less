@@ -5,6 +5,15 @@ kite-atom-install {
   display: block;
   overflow: auto;
   margin: 0 auto;
+  line-height: 1.5;
+
+  h2 {
+    margin-bottom: 1.8rem;
+  }
+
+  .padded {
+    padding: 1.2rem;
+  }
 
   .install-wrapper {
     max-width: 800px;
@@ -18,6 +27,13 @@ kite-atom-install {
       margin: 0 auto;
       display: block;
     }
+  }
+
+  kite-atom-input-email,
+  kite-atom-login,
+  kite-atom-whitelist,
+  kite-atom-install-error {
+    font-size: 1.2rem;
   }
 
   input[type=email], input[type=password] {
@@ -104,8 +120,16 @@ kite-atom-install {
   .download-kite,
   .install-kite,
   .run-kite,
-  .install-plugin {
+  .authenticate-user,
+  .install-plugin,
+  .install-finished {
     margin-bottom: 2 * @component-padding;
+  }
+
+  .install-finished {
+    .icon {
+      margin-right: 10px;
+    }
   }
 
   .download-kite {
@@ -164,6 +188,9 @@ kite-atom-install {
     }
     .cta-row {
       margin-top: 1em;
+      .btn {
+        width: 90%;
+      }
     }
 
     .localities {
@@ -182,10 +209,22 @@ kite-atom-install {
     }
   }
 
-  kite-atom-install-end {
-    p, ul, li {
-      font-size: 1rem;
+  kite-atom-whitelist {
+    .actions {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-top: 2.5rem;
+
+      .secondary-cta {
+        padding: 0;
+      }
     }
+  }
+
+  kite-atom-install-end {
+    font-size: 1.1rem;
 
     .welcome-title {
       display: flex;
@@ -196,7 +235,7 @@ kite-atom-install {
       h3 {
         font-weight: normal;
         margin: 0;
-        font-size: 1.4rem;
+        font-size: 1.6rem;
       }
 
       .title-logo svg {
@@ -212,7 +251,6 @@ kite-atom-install {
     .warning {
       background-color: rgba(255, 255, 255, 0.05);
       padding: 1rem;
-      font-size: 1rem;
       color: rgba(255, 255, 255, 0.6);
     }
 
