@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "mixpanel": "^0.5.0",
-    "kite-api": "git://github.com/kiteco/kite-api-js.git#master",
-    "kite-connect": "git://github.com/kiteco/kite-connect-js.git#master"
+    "kite-api": "^1.0.0",
+    "kite-connector": "^1.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
