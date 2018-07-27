@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "mixpanel": "^0.5.0",
-    "kite-api": "^1.0.1",
+    "kite-api": "^1.0.2",
     "kite-connector": "^1.0.0"
   },
   "devDependencies": {
