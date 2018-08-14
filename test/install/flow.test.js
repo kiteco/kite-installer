@@ -126,6 +126,11 @@ describe('Flow', () => {
   });
 
   describe('with a failing step', () => {
+    let spy;
+    beforeEach(() => {
+      spy = sinon.spy();
+    });
+
     describe('with no failure catching step', () => {
       beforeEach(() => {
         steps = [
@@ -137,12 +142,19 @@ describe('Flow', () => {
           }),
         ];
         flow = new Flow(steps);
+        flow.onDidFailStep(spy);
       });
 
       it('rejects the returned promise at the first step', () => {
         return waitsForPromise({shouldReject: true}, () => flow.start({}, install)).then(() => {
           expect(steps[1].start.called).not.to.be.ok();
           expect(install.updateState.calledWith('failure 1')).to.be.ok();
+        });
+      });
+
+      it('emits a did-fail-step event', () => {
+        return waitsForPromise({shouldReject: true}, () => flow.start({}, install)).then(() => {
+          expect(spy.called).to.be.ok();
         });
       });
     });
@@ -161,12 +173,19 @@ describe('Flow', () => {
           }),
         ];
         flow = new Flow(steps, {failureStep: 'catch'});
+        flow.onDidFailStep(spy);
       });
 
       it('stops after the first step and branch to the failure step', () => {
         return waitsForPromise(() => flow.start({}, install)).then(() => {
           expect(steps[1].start.called).not.to.be.ok();
           expect(steps[2].start.called).to.be.ok();
+        });
+      });
+
+      it('emits a did-fail-step event', () => {
+        return waitsForPromise(() => flow.start({}, install)).then(() => {
+          expect(spy.called).to.be.ok();
         });
       });
     });
@@ -188,6 +207,7 @@ describe('Flow', () => {
           }),
         ];
         flow = new Flow(steps, {failureStep: 'catch'});
+        flow.onDidFailStep(spy);
       });
 
       it('stops after the first step and branch to the specified failure step', () => {
@@ -195,6 +215,12 @@ describe('Flow', () => {
           expect(steps[1].start.called).not.to.be.ok();
           expect(steps[2].start.called).not.to.be.ok();
           expect(steps[3].start.called).to.be.ok();
+        });
+      });
+
+      it('emits a did-fail-step event', () => {
+        return waitsForPromise(() => flow.start({}, install)).then(() => {
+          expect(spy.called).to.be.ok();
         });
       });
     });
