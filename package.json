@@ -17,7 +17,7 @@
   "dependencies": {
     "mixpanel": "^0.5.0",
     "kite-api": "^1.0.3",
-    "kite-connector": "https://github.com/kiteco/kite-connect-js.git#cn-improve-install-error-messages",
+    "kite-connector": "^1.0.3",
     "rollbar": "^2.4.4"
   },
   "devDependencies": {
