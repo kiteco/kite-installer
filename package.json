@@ -16,8 +16,8 @@
   },
   "dependencies": {
     "mixpanel": "^0.5.0",
-    "kite-api": "^1.0.3",
-    "kite-connector": "^1.1.0",
+    "kite-api": "https://github.com/kiteco/kite-api-js.git#cn-more-error-improvements",
+    "kite-connector": "https://github.com/kiteco/kite-connect-js.git#cn-more-error-improvements",
     "rollbar": "^2.4.4"
   },
   "devDependencies": {
