@@ -5,6 +5,7 @@ const sinon = require('sinon');
 const KiteAPI = require('kite-api');
 
 const {waitsForPromise} = require('kite-connector/test/helpers/async');
+const KiteWhitelistError = require('kite-connector/lib/kite-whitelist-error');
 const Whitelist = require('../../lib/install/whitelist');
 const {startStep} = require('../spec-helpers');
 
@@ -38,9 +39,10 @@ describe('Whitelist', () => {
 
   describe('when the request fails because the path is aready whitelisted', () => {
     beforeEach(() => {
-      stubWhitelist = sinon.stub(KiteAPI, 'whitelistPath').returns(Promise.reject({
-        data: KiteAPI.STATES.WHITELISTED,
-      }));
+      stubWhitelist = sinon.stub(KiteAPI, 'whitelistPath')
+      .returns(Promise.reject(new KiteWhitelistError('file whitelisted', {
+        state: KiteAPI.STATES.WHITELISTED,
+      })));
     });
 
     it('the install step succeeds', () => {
