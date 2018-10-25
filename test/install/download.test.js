@@ -130,7 +130,7 @@ describe('Download', () => {
     describe('then the install succeeds', () => {
       beforeEach(() => {
         return waitsForPromise(() => completeInstall())
-        .then(() => waitsFor(() => install.state.install.done));
+        .then(() => waitsFor(() => install.state.install.done, 20000));
       });
 
       it('marks the install as done', () => {
