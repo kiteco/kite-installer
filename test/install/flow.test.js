@@ -148,7 +148,12 @@ describe('Flow', () => {
       it('rejects the returned promise at the first step', () => {
         return waitsForPromise({shouldReject: true}, () => flow.start({}, install)).then(() => {
           expect(steps[1].start.called).not.to.be.ok();
-          expect(install.updateState.calledWith('failure 1')).to.be.ok();
+
+          // Removed because we were previously passing in JSON unserializable
+          // objects to the installer, resulting in a circular object error. That
+          // logic has been removed, so this check had to be removed as well.
+          //
+          // expect(install.updateState.calledWith('failure 1')).to.be.ok();
         });
       });
 
