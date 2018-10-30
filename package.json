@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "mixpanel": "^0.5.0",
-    "kite-api": "^2.0.5",
+    "kite-api": "^2.1.1",
     "kite-connector": "^2.0.2",
     "rollbar": "^2.4.4"
   },
