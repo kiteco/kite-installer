@@ -11,13 +11,13 @@
     "lcov_report": "nyc report --reporter=lcov",
     "lint:fix": "eslint --fix .",
     "lint": "eslint .",
-    "test-nocov": "mocha --timeout 5000 --recursive test/*.test.js test/**/*.test.js",
-    "test": "nyc mocha --timeout 5000 --recursive test/*.test.js test/**/*.test.js"
+    "test-nocov": "mocha --timeout 20000 --recursive test/*.test.js test/**/*.test.js",
+    "test": "nyc mocha --timeout 20000 --recursive test/*.test.js test/**/*.test.js"
   },
   "dependencies": {
     "mixpanel": "^0.5.0",
-    "kite-api": "^2.0.5",
-    "kite-connector": "^2.0.1",
+    "kite-api": "^2.1.2",
+    "kite-connector": "^2.0.3",
     "rollbar": "^2.4.4"
   },
   "devDependencies": {

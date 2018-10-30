@@ -35,10 +35,12 @@ describe('Download', () => {
   };
 
   const fakeInstall = () => {
-    let installed;
+    let installed, promise;
     stubInstall = sinon.stub(KiteAPI, 'installKite')
     .callsFake((options) => {
-      const promise = new Promise((resolve, reject) => {
+      if (promise) { return promise; }
+
+      return promise = new Promise((resolve, reject) => {
         completeInstall = () => {
           installed = true;
           resolve();
@@ -50,8 +52,6 @@ describe('Download', () => {
           return promise;
         };
       });
-
-      return promise;
     });
     stubIsInstalled = sinon.stub(KiteAPI, 'isKiteInstalled')
     .callsFake((options) => {
@@ -60,23 +60,21 @@ describe('Download', () => {
   };
 
   const fakeRun = () => {
-    let running;
+    let promise;
     stubRun = sinon.stub(KiteAPI, 'runKiteAndWait')
     .callsFake((options) => {
-      const promise = new Promise((resolve, reject) => {
+      if (promise) { return promise; }
+
+      return promise = new Promise((resolve, reject) => {
         completeRun = () => {
-          running = true;
           resolve();
           return promise;
         };
         failRun = () => {
-          running = false;
           reject();
           return promise;
         };
       });
-
-      return promise;
     });
   };
 
@@ -92,11 +90,20 @@ describe('Download', () => {
     stubIsInstalled && stubIsInstalled.restore();
     stubRun && stubRun.restore();
     spyUpdateState && spyUpdateState.restore();
+
+    completeDownload = undefined;
+    failDownload = undefined;
+    completeInstall = undefined;
+    failInstall = undefined;
+    completeRun = undefined;
+    failRun = undefined;
   });
 
   describe('when the download succeeds', () => {
     beforeEach(() => {
       step = new Download();
+      step.installInterval = 0;
+      step.runInterval = 0;
       promise = startStep(step);
       install = promise.install;
 
@@ -129,8 +136,12 @@ describe('Download', () => {
 
     describe('then the install succeeds', () => {
       beforeEach(() => {
+        return waitsFor(() => install.state.install);
+      });
+
+      beforeEach(() => {
         return waitsForPromise(() => completeInstall())
-        .then(() => waitsFor(() => install.state.install.done));
+        .then(() => waitsFor(() => install.state.install.done, 20000));
       });
 
       it('marks the install as done', () => {
@@ -168,8 +179,10 @@ describe('Download', () => {
       });
 
       describe('then the startup fails', () => {
+        beforeEach(() => {
+          return waitsForPromise({shouldReject: true}, () => failRun());
+        });
         it('rejects the step promise', () => {
-          failRun();
           return waitsForPromise({shouldReject: true}, () => promise).then(() => {
             expect(install.state).to.eql({
               download: {
@@ -187,6 +200,10 @@ describe('Download', () => {
     });
 
     describe('then the install fails', () => {
+      beforeEach(() => {
+        return waitsFor(() => install.state.install);
+      });
+
       it('rejects the step promise', () => {
         failInstall();
         return waitsForPromise({shouldReject: true}, () => promise).then(() => {

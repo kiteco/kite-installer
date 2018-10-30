@@ -150,8 +150,8 @@ kite-atom-install {
 
   kite-atom-kite-vs-jedi {
     display: block;
-    // max-width: 800px;
-    // margin: 0 -120px;
+    max-width: 800px;
+    min-width: 640px;
 
     ul {
       padding: 0;
@@ -163,49 +163,79 @@ kite-atom-install {
     }
 
     h3 {
+      font-size: 1.4rem;
+    }
+
+    h4 {
+      font-size: 1.2rem;
+    }
+
+    h3, h4 {
+      color: @text-color-highlight;
+      font-weight: 400;
       margin-top: 0;
     }
 
-    .row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-auto-columns: 50%;
-      grid-gap: @component-padding;
-    }
-
-    .column {
-      display: grid;
-      grid-template-rows: 150px 150px;
-      grid-gap: @component-padding;
-      flex-grow: 1;
-    }
-
-    .inset-panel {
-      position: relative;
+    .comparison {
+      align-items: stretch;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      padding: 1rem;
+      width: 100%;
 
-    }
-    .cta-row {
-      margin-top: 1em;
-      .btn {
-        width: 90%;
+      .bordered {
+        border-right: 1px solid;
       }
-    }
 
-    .localities {
-      padding-top: @component-padding;
-      border-top: 1px solid @text-color-subtle;
-      position: relative;
+      .heading {
+        padding-top: 0.4rem;
+        width: 15%;
 
-      .locality.icon {
-        padding-left: 2em;
-
-        &:before {
-          position: absolute;
-          left: 0;
+        .subtitle {
+          padding-top: 0.6rem;
         }
       }
+
+      .body {
+        padding: 0 1.25rem;
+        width: 60%;
+
+        .summary, .features {
+          margin-bottom: 1.5rem;
+        }
+      }
+
+      .actions {
+        padding-left: 1.25rem;
+        width: 25%;
+
+        .cta-container {
+          margin-bottom: 1.5rem;
+
+          button {
+            width: 100%;
+          }
+        }
+
+        .disclaimer {
+          font-size: 0.9rem;
+          font-style: italic;
+          opacity: 0.75;
+        }
+      }
+    }
+
+    #jedi .actions .cta-container button {
+      border: none;
+      &.disabled {
+        opacity: 0.9;
+      }
+    }
+
+    .dismiss {
+      margin-top: 4rem;
     }
   }
 
@@ -223,6 +253,7 @@ kite-atom-install {
     }
   }
 
+  kite-atom-install-wait,
   kite-atom-install-end {
     font-size: 1.1rem;
 
@@ -249,6 +280,10 @@ kite-atom-install {
     }
 
     .warning {
+      .icon {
+        padding-right: 0.5rem;
+      }
+
       background-color: rgba(255, 255, 255, 0.05);
       padding: 1rem;
       color: rgba(255, 255, 255, 0.6);
@@ -260,6 +295,10 @@ kite-atom-install {
       margin: 1rem 0;
       align-items: center;
       align-content: center;
+
+      p {
+        margin-bottom: 1rem;
+      }
 
       .description-screenshot img {
         width: 183px;
