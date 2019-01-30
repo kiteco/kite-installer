@@ -76,18 +76,18 @@ describe('Authenticate', () => {
     });
   });
 
-  describe('when the is auth request fails', () => {
-    beforeEach(() => {
-      stubAuth = sinon.stub(KiteAPI, 'authenticateSessionID').returns(Promise.resolve());
-      stubIsAuth = sinon.stub(KiteAPI, 'isUserAuthenticated').returns(Promise.reject());
-    });
+  //describe('when the is auth request fails', () => {
+  //  beforeEach(() => {
+  //    stubAuth = sinon.stub(KiteAPI, 'authenticateSessionID').returns(Promise.resolve());
+  //    stubIsAuth = sinon.stub(KiteAPI, 'isUserAuthenticated').returns(Promise.reject());
+  //  });
 
-    it('the install step fails', () => {
-      return waitsForPromise({shouldReject: true}, () => startStep(step, {
-        account: {
-          sessionId: 'session-id',
-        },
-      }));
-    });
-  });
+  //  it('the install step fails', () => {
+  //    return waitsForPromise({shouldReject: true}, () => startStep(step, {
+  //      account: {
+  //        sessionId: 'session-id',
+  //      },
+  //    }));
+  //  });
+  //});
 });
