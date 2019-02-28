@@ -28,7 +28,6 @@ describe('StateController', () => {
 
   [
     ['handleState', 'checkHealth'],
-    ['pathInWhitelist', 'isPathWhitelisted'],
   ].forEach(([a, b]) => {
     describe(`.${a}()`, () => {
       let stub;
@@ -97,10 +96,6 @@ describe('StateController', () => {
     'canAuthenticateUser',
     'authenticateUser',
     'authenticateSessionID',
-    'isPathWhitelisted',
-    'canWhitelistPath',
-    'whitelistPath',
-    'blacklistPath',
     'saveUserID',
   ].forEach(method => {
     describe(`.${method}()`, () => {
