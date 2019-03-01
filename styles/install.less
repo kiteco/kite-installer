@@ -16,9 +16,9 @@ kite-atom-install {
   }
 
   .install-wrapper {
-    max-width: 800px;
-    min-width: 320px;
-    width: 85%;
+    max-width: 1024px;
+    min-width: 768px;
+    width: 100%;
     padding: 1.5rem 2rem;
     margin: 0 auto;
 
@@ -150,8 +150,8 @@ kite-atom-install {
 
   kite-atom-kite-vs-jedi {
     display: block;
-    max-width: 800px;
-    min-width: 640px;
+    max-width: 1024px;
+    min-width: 768px;
 
     ul {
       padding: 0;
@@ -176,80 +176,67 @@ kite-atom-install {
       margin-top: 0;
     }
 
-    .comparison {
-      align-items: stretch;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+    h2 .icon {
+      margin-right: 0.75rem;
+    }
+
+    .kite-description {
       margin-bottom: 0.75rem;
-      padding: 1rem;
+      padding: 2rem;
       width: 100%;
 
-      .bordered {
-        border-right: 1px solid;
+      .summary {
+        font-size: 1.2rem;
+        font-style: italic;
+        margin-bottom: 1.2rem;
       }
 
-      .heading {
-        padding-top: 0.4rem;
-        width: 15%;
+      .columns {
+        align-items: stretch;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 1.75rem;
 
-        .subtitle {
-          padding-top: 0.6rem;
-        }
-      }
+        .body {
+          padding-right: 2rem;
+          width: 50%;
 
-      .body {
-        padding: 0 1.25rem;
-        width: 60%;
+          ul {
+            font-size: 1.1rem;
+            li {
+              padding: 0.5rem 0 0.5rem 1rem;;
+            }
+          }
 
-        .summary, .features {
-          margin-bottom: 1.5rem;
-        }
-      }
-
-      .actions {
-        padding-left: 1.25rem;
-        width: 25%;
-
-        .cta-container {
-          margin-bottom: 1.5rem;
-
-          button {
-            width: 100%;
+          .more {
+            font-size: 1.1rem;
+            margin-top: 1.2rem;
           }
         }
 
-        .disclaimer {
-          font-size: 0.9rem;
-          font-style: italic;
-          opacity: 0.75;
-        }
-      }
-    }
+        .actions {
+          width: 50%;
 
-    #jedi .actions .cta-container button {
-      border: none;
-      &.disabled {
-        opacity: 0.9;
+          video {
+            width: 100%;
+          }
+
+          .cta-container {
+            margin-top: 1.5rem;
+
+            button {
+              width: 67%;
+            }
+          }
+        }
       }
     }
 
     .dismiss {
-      margin-top: 4rem;
-    }
-  }
-
-  kite-atom-whitelist {
-    .actions {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      margin-top: 2.5rem;
-
-      .secondary-cta {
-        padding: 0;
-      }
+      margin-right: 0.25rem;
+      margin-top: 2rem;
+      text-align: right;
     }
   }
 

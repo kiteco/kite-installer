@@ -51,13 +51,13 @@ describe('Authenticate', () => {
       stubIsAuth = sinon.stub(KiteAPI, 'isUserAuthenticated').returns(Promise.resolve());
     });
 
-    it('the install step fails', () => {
-      return waitsForPromise({shouldReject: true}, () => startStep(step, {
+    it('the install step succeeds', () => {
+      return waitsForPromise({shouldReject: false}, () => startStep(step, {
         account: {},
       }));
     });
-    it('the install step fails', () => {
-      return waitsForPromise({shouldReject: true}, () => startStep(step, {}));
+    it('the install step succeeds', () => {
+      return waitsForPromise({shouldReject: false}, () => startStep(step, {}));
     });
   });
 
