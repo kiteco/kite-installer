@@ -1,7 +1,7 @@
 @import "syntax-variables";
 @import "ui-variables";
 
-kite-atom-install {
+kite-atom-install, kite-atom-install-error-view {
   display: block;
   overflow: auto;
   margin: 0 auto;
@@ -331,6 +331,14 @@ kite-atom-install {
           }
         }
       }
+    }
+  }
+}
+
+status-bar .status-bar-right {
+  kite-atom-install-statusbar {
+    .loading-spinner-tiny {
+      margin-right: 0.5rem !important;
     }
   }
 }
