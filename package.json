@@ -14,6 +14,13 @@
     "test-nocov": "mocha --timeout 20000 --recursive test/*.test.js test/**/*.test.js",
     "test": "nyc mocha --timeout 20000 --recursive test/*.test.js test/**/*.test.js"
   },
+  "consumedServices": {
+    "status-bar": {
+      "versions": {
+        "^1.0.0": "consumeStatusBar"
+      }
+    }
+  },
   "dependencies": {
     "mixpanel": "^0.5.0",
     "kite-api": "3.6.0",
